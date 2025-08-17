@@ -1,9 +1,13 @@
 // @ts-check
-import { defineConfig } from 'astro/config'
-import tailwindcss from '@tailwindcss/vite'
-import mermaid from 'astro-mermaid'
+import { defineConfig } from 'astro/config';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@astrojs/react';
 
 export default defineConfig({
-  integrations: [mermaid()],
-  vite: { plugins: [tailwindcss()] }
-})
+  site: 'https://www.eirequant.com',
+  base: '/',
+  integrations: [react()],
+  vite: {
+    plugins: [tailwindcss()],
+  },
+});

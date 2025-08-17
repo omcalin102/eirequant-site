@@ -2,12 +2,16 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout>
-  <h1 class="text-3xl font-bold mb-4">Welcome to EireQuant</h1>
-  <p class="mb-4">
-    A quantitative research project exploring models, portfolios, and financial insights.
-  </p>
-  <p>
-    Use the navigation above to explore models, portfolios, pipelines, and more.
-  </p>
+<BaseLayout title="EireQuant">
+  <section class="text-center py-16">
+    <h1 class="text-4xl font-bold mb-4">EireQuant</h1>
+    <p class="text-lg text-neutral-600 max-w-2xl mx-auto">
+      A next-generation quantitative research platform —
+      blending model families, portfolios, and real-time pipelines into one open showcase.
+    </p>
+    <div class="mt-8 flex gap-4 justify-center">
+      <a href="/models" class="px-6 py-3 bg-black text-white rounded-lg">Explore Models</a>
+      <a href="/blog" class="px-6 py-3 border rounded-lg">Read Blog</a>
+    </div>
+  </section>
 </BaseLayout>

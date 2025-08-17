@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import Chart from "../../components/Chart"; // no .tsx
+
+export async function getStaticPaths() {
+  const items = await getCollection("portfolios");
+  return items.map((p) => ({ params: { slug: p.slug }, props: { entry: p } }));
+}
+
+const { entry } = Astro.props;
+
+// demo option (replaced later by JSON artifacts)
+const navDemo = {
+  tooltip: { trigger: "axis" },
+  xAxis: { type: "category", data: ["Jan", "Feb", "Mar", "Apr", "May"] },
+  yAxis: { type: "value" },
+  series: [{ type: "line", data: [1, 1.01, 1.0, 1.03, 1.06] }],
+};
+---
+<BaseLayout title={`${entry.data.name} — Portfolio`}>
+  <h1 class="text-2xl font-semibold">{entry.data.name}</h1>
+  <p class="text-sm text-neutral-700 mt-2">{entry.data.objective}</p>
+
+  <section class="rounded-2xl border border-neutral-200 bg-white p-6 mt-6">
+    <h2 class="font-semibold mb-3">Theory</h2>
+    <p class="text-sm">Math/assumptions will be filled in; page is ready to ingest JSON results for the "Simulate" section below.</p>
+  </section>
+
+  <section class="rounded-2xl border border-neutral-200 bg-white p-6 mt-6">
+    <h2 class="font-semibold mb-3">Simulate (Chosen vs Baseline)</h2>
+    <!-- ECharts must be client-only -->
+    <Chart client:only="react" id="navChart" option={navDemo} />
+  </section>
+</BaseLayout>

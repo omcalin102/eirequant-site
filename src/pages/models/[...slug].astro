@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+// IMPORTANT: import without the .tsx extension
+import Chart from "../../components/Chart";
+
+export async function getStaticPaths() {
+  const models = await getCollection("models");
+  return models.map((m)=>({ params:{ slug:m.slug }, props:{ entry:m } }));
+}
+const { entry } = Astro.props;
+
+// demo option
+const demo = {
+  tooltip:{trigger:'axis'},
+  xAxis:{type:'category',data:["Jan","Feb","Mar","Apr","May"]},
+  yAxis:{type:'value'},
+  series:[{type:'line',data:[1,1.02,0.98,1.05,1.08]}]
+};
+---
+<BaseLayout title={`${entry.data.name} — Models`}>
+  <h1 class="text-2xl font-semibold">
+    {entry.data.name} <span class="text-neutral-600">({entry.data.version})</span>
+  </h1>
+  <p class="text-sm text-neutral-700 mt-2">{entry.data.synopsis}</p>
+
+  <section class="rounded-2xl border border-neutral-200 bg-white p-6 mt-6">
+    <h2 class="font-semibold mb-3">Equity Curve (demo)</h2>
+    <!-- key change is client:only="react" -->
+    <Chart client:only="react" id="navChart" option={demo} />
+  </section>
+</BaseLayout>

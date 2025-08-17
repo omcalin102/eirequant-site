@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MegaGraph from "../components/MegaGraph";
+---
+
+<BaseLayout title="Performance — EIREQuant">
+  <h1 class="text-2xl font-semibold mb-4">Mega Graph</h1>
+  <p class="text-sm text-neutral-600 mb-4">
+    Compare S&amp;P vs models/portfolios. Curves load from static JSON in <code>/public/data/</code>.
+  </p>
+
+  <!-- Force client-only hydration so ECharts never SSRs -->
+  <MegaGraph client:only="react" />
+</BaseLayout>

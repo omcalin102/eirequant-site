@@ -1,18 +1,20 @@
 ---
-import "../styles/global.css";
+const { title = "EireQuant", description = "" } = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EireQuant</title>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
-  <body class="bg-neutral-50 text-gray-900 font-sans">
-    <header class="p-4 border-b border-neutral-200">
-      <nav class="flex justify-between items-center">
-        <a href="/" class="text-xl font-bold">EireQuant</a>
-        <ul class="flex gap-6">
+  <body class="bg-neutral-50 text-neutral-900 font-sans antialiased">
+    <header class="p-4 shadow-md bg-white">
+      <nav class="max-w-6xl mx-auto flex justify-between items-center">
+        <a href="/" class="font-bold text-xl">EireQuant</a>
+        <ul class="flex gap-6 text-sm">
           <li><a href="/models">Models</a></li>
           <li><a href="/portfolios">Portfolios</a></li>
           <li><a href="/pipelines">Pipelines</a></li>
@@ -21,11 +23,16 @@ import "../styles/global.css";
         </ul>
       </nav>
     </header>
-    <main class="p-6">
+
+    <main class="max-w-6xl mx-auto p-6">
       <slot />
     </main>
-    <footer class="p-4 border-t border-neutral-200 text-sm text-center">
-      © {new Date().getFullYear()} EireQuant · Educational use only
+
+    <footer class="mt-10 border-t py-6 text-sm text-neutral-500">
+      <div class="max-w-6xl mx-auto flex justify-between">
+        <span>© {new Date().getFullYear()} EireQuant</span>
+        <span><a href="/contact">Contact</a></span>
+      </div>
     </footer>
   </body>
 </html>
