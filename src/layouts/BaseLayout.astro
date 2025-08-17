@@ -1,0 +1,31 @@
+---
+import "../styles/global.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EireQuant</title>
+  </head>
+  <body class="bg-neutral-50 text-gray-900 font-sans">
+    <header class="p-4 border-b border-neutral-200">
+      <nav class="flex justify-between items-center">
+        <a href="/" class="text-xl font-bold">EireQuant</a>
+        <ul class="flex gap-6">
+          <li><a href="/models">Models</a></li>
+          <li><a href="/portfolios">Portfolios</a></li>
+          <li><a href="/pipelines">Pipelines</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="p-6">
+      <slot />
+    </main>
+    <footer class="p-4 border-t border-neutral-200 text-sm text-center">
+      © {new Date().getFullYear()} EireQuant · Educational use only
+    </footer>
+  </body>
+</html>
