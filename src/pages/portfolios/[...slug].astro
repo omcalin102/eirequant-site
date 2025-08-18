@@ -3,12 +3,14 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import CurveChart from "../../components/CurveChart.tsx";
 
-const { slug } = Astro.params;
-const all = await getCollection("portfolios");
-const item = all.find(p => p.data.slug === slug);
-if (!item) throw new Error(`Portfolio not found: ${slug}`);
+const param = Astro.params.slug;
+const slugParam = Array.isArray(param) ? param.at(-1) : param;
 
-const { title, summary, allocation, rebalance, chartKey, drawdownKey, updated } = item.data;
+const all = await getCollection("portfolios");
+const item = all.find((p) => p.data.slug === slugParam);
+if (!item) throw new Error(`Portfolio not found: ${slugParam}`);
+
+const { title, summary, allocation, rebalance, chartKey, updated } = item.data;
 ---
 <BaseLayout title={`${title} · Portfolios · EireQuant`} description={summary ?? "Portfolio details."}>
   <h1>{title}</h1>
@@ -24,7 +26,7 @@ const { title, summary, allocation, rebalance, chartKey, drawdownKey, updated } 
         {allocation ? (
           <table class="alloc">
             <tbody>
-              {Object.entries(allocation).map(([k,v]) => (
+              {Object.entries(allocation).map(([k, v]) => (
                 <tr><td>{k}</td><td style="text-align:right">{v}%</td></tr>
               ))}
             </tbody>
@@ -35,9 +37,7 @@ const { title, summary, allocation, rebalance, chartKey, drawdownKey, updated } 
         <h3>Rebalance</h3>
         <p>{rebalance ?? "TBD"}</p>
       </div>
-      {updated && (
-        <div class="meta">Last updated: {updated}</div>
-      )}
+      {updated && <div class="meta">Last updated: {updated}</div>}
     </aside>
   </section>
 
