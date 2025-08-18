@@ -9,19 +9,20 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^4.3.0",
     "@headlessui/react": "^2.2.7",
-    "@tailwindcss/vite": "^4.1.12",
     "astro": "^5.13.2",
-    "astro-mermaid": "^1.0.4",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "recharts": "^3.1.2",
     "tailwindcss": "^4.1.12"
   },
   "devDependencies": {
+    "@astrojs/react": "^4.3.0",
+    "@tailwindcss/vite": "^4.1.12",
     "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7"
+    "@types/react-dom": "^19.1.7",
+    "astro-mermaid": "^1.0.4"
   }
 }

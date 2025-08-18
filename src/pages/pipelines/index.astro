@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Pipelines · EireQuant">
+  <h1>Pipelines</h1>
+  <p>Choose a pipeline or read the overview below.</p>
+
+  <div class="choices">
+    <a class="choice" href="/pipelines/live/">Live Pipeline</a>
+    <a class="choice" href="/pipelines/sim/">Simulation Pipeline</a>
+  </div>
+
+  <h2>Overview</h2>
+  <p>High-level description of the pipeline architecture will go here.</p>
+
+  <style>
+    .choices{ display:flex; gap:1rem; margin:1rem 0;}
+    .choice{ border:1px solid #eee; padding:.75rem 1rem; border-radius:12px; }
+    .choice:hover{ border-color:#ddd; background:#fafafa; }
+  </style>
+</BaseLayout>

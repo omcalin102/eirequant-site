@@ -1,35 +1,54 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import Chart from "../../components/Chart"; // no .tsx
+import CurveChart from "../../components/CurveChart.tsx";
 
-export async function getStaticPaths() {
-  const items = await getCollection("portfolios");
-  return items.map((p) => ({ params: { slug: p.slug }, props: { entry: p } }));
-}
+const { slug } = Astro.params;
+const all = await getCollection("portfolios");
+const item = all.find(p => p.data.slug === slug);
+if (!item) throw new Error(`Portfolio not found: ${slug}`);
 
-const { entry } = Astro.props;
-
-// demo option (replaced later by JSON artifacts)
-const navDemo = {
-  tooltip: { trigger: "axis" },
-  xAxis: { type: "category", data: ["Jan", "Feb", "Mar", "Apr", "May"] },
-  yAxis: { type: "value" },
-  series: [{ type: "line", data: [1, 1.01, 1.0, 1.03, 1.06] }],
-};
+const { title, summary, allocation, rebalance, chartKey, drawdownKey, updated } = item.data;
 ---
-<BaseLayout title={`${entry.data.name} — Portfolio`}>
-  <h1 class="text-2xl font-semibold">{entry.data.name}</h1>
-  <p class="text-sm text-neutral-700 mt-2">{entry.data.objective}</p>
+<BaseLayout title={`${title} · Portfolios · EireQuant`} description={summary ?? "Portfolio details."}>
+  <h1>{title}</h1>
+  {summary && <p class="lead">{summary}</p>}
 
-  <section class="rounded-2xl border border-neutral-200 bg-white p-6 mt-6">
-    <h2 class="font-semibold mb-3">Theory</h2>
-    <p class="text-sm">Math/assumptions will be filled in; page is ready to ingest JSON results for the "Simulate" section below.</p>
+  <section class="grid">
+    <div>
+      <CurveChart client:load chartKey={chartKey ?? ""} title="Equity Curve" showDrawdown />
+    </div>
+    <aside>
+      <div class="panel">
+        <h3>Allocation</h3>
+        {allocation ? (
+          <table class="alloc">
+            <tbody>
+              {Object.entries(allocation).map(([k,v]) => (
+                <tr><td>{k}</td><td style="text-align:right">{v}%</td></tr>
+              ))}
+            </tbody>
+          </table>
+        ) : <p>Allocation details coming soon.</p>}
+      </div>
+      <div class="panel">
+        <h3>Rebalance</h3>
+        <p>{rebalance ?? "TBD"}</p>
+      </div>
+      {updated && (
+        <div class="meta">Last updated: {updated}</div>
+      )}
+    </aside>
   </section>
 
-  <section class="rounded-2xl border border-neutral-200 bg-white p-6 mt-6">
-    <h2 class="font-semibold mb-3">Simulate (Chosen vs Baseline)</h2>
-    <!-- ECharts must be client-only -->
-    <Chart client:only="react" id="navChart" option={navDemo} />
-  </section>
+  <style>
+    .lead{ color:#555; }
+    .grid{ display:grid; grid-template-columns: 1.5fr .9fr; gap:1rem; align-items:start; }
+    .panel{ border:1px solid #eee; border-radius:12px; padding:1rem; background:#fff; margin-bottom:.75rem; }
+    .alloc{ width:100%; border-collapse:collapse; }
+    .alloc td{ padding:.25rem 0; border-bottom:1px solid #f3f3f3; }
+    .alloc tr:last-child td{ border-bottom:0; }
+    .meta{ color:#666; margin-top:.25rem; }
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
+  </style>
 </BaseLayout>

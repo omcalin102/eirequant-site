@@ -1,17 +1,61 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-const items = await getCollection("models");
+import modelSeries from "../../lib/modelSeries";
+
+const all = await getCollection("models");
+
+// Group models by series according to modelSeries order
+const grouped = modelSeries.map(s => {
+  const items = all
+    .filter(m => m.data.series === s.slug)
+    .sort((a,b) => (a.data.mark ?? 0) - (b.data.mark ?? 0));
+  return { meta: s, items };
+});
 ---
-<BaseLayout title="Models — EIREQuant">
-  <h1 class="text-2xl font-semibold mb-6">Models</h1>
-  <div class="grid gap-6 md:grid-cols-2">
-    {items.map(m => (
-      <a href={`/models/${m.slug}/`} class="block rounded-2xl border border-neutral-200 bg-white p-6 hover:scale-[1.01] transition">
-        <div class="text-xs uppercase tracking-wide text-neutral-600">{m.data.family}</div>
-        <h2 class="font-semibold mt-1">{m.data.name} <span class="text-neutral-600">({m.data.version})</span></h2>
-        <p class="text-sm text-neutral-700 mt-2 line-clamp-3">{m.data.synopsis}</p>
-      </a>
-    ))}
-  </div>
+<BaseLayout title="Models · EireQuant" description="Explore EireQuant model families and their Marks.">
+  <h1>Models</h1>
+  <p class="lead">Model families (“Series”) and their Marks.</p>
+
+  {grouped.map(({ meta, items }) => (
+    <section class="series" id={meta.slug}>
+      <header class="series-head">
+        <div>
+          <div class="kicker">Series</div>
+          <h2>{meta.title}</h2>
+          {meta.subtitle && <p class="sub">{meta.subtitle}</p>}
+        </div>
+        <a class="series-link" href={`/models/series/${meta.slug}/`}>View series →</a>
+      </header>
+
+      {items.length > 0 ? (
+        <div class="cards">
+          {items.map(({ data }) => (
+            <a class="card" href={`/models/${data.slug}/`}>
+              <div class="meta">Mk {data.mark} · {data.version ?? "v1.0.0"} · {data.status ?? "research"}</div>
+              <h3>{data.title}</h3>
+              <p>{data.summary ?? "Model description coming soon."}</p>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="empty">No marks published yet. Coming soon.</div>
+      )}
+    </section>
+  ))}
+
+  <style>
+    .lead{ color:#555; margin-bottom:1rem;}
+    .series{ border-top:1px solid #eee; padding-top:1rem; margin-top:1rem;}
+    .series:first-of-type{ border-top:0; padding-top:0; margin-top:.5rem;}
+    .series-head{ display:flex; align-items:end; justify-content:space-between; gap:1rem; }
+    .kicker{ font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; color:#666; }
+    .sub{ color:#666; margin:.25rem 0 0; }
+    .series-link{ white-space:nowrap; font-weight:600; color:var(--brand,#0E3B2D); }
+    .cards{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-top:.75rem; }
+    .card{ border:1px solid #eee; border-radius:12px; padding:1rem; background:#fff; transition:.15s border-color, .15s box-shadow; }
+    .card:hover{ border-color:#ddd; box-shadow:0 8px 24px rgba(0,0,0,.06); }
+    .card .meta{ font-size:.85rem; color:#666; margin-bottom:.25rem; text-transform:uppercase; letter-spacing:.03em;}
+    .empty{ color:#777; background:#fafafa; border:1px dashed #e5e5e5; border-radius:12px; padding:1rem; margin-top:.75rem;}
+  </style>
 </BaseLayout>

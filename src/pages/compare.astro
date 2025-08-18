@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MegaGraph from "../components/MegaGraph.tsx";
+---
+<BaseLayout title="Compare · EireQuant" description="Overlay benchmarks, models, and portfolios on a single chart.">
+  <h1>Compare</h1>
+  <p>Select any combination of benchmarks, models, and portfolios to compare equity curves.</p>
+  <MegaGraph client:load />
+  <p style="color:#666;margin-top:.5rem;">Notes: Stats are computed client-side (rf=0); curves should be total-return and aligned to the same frequency.</p>
+</BaseLayout>

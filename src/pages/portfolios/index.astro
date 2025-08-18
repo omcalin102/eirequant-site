@@ -1,19 +1,26 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-const items = await getCollection("portfolios");
+
+const items = (await getCollection("portfolios"))
+  .sort((a,b) => a.data.title.localeCompare(b.data.title));
 ---
-<BaseLayout title="Portfolios — EIREQuant">
-  <h1 class="text-2xl font-semibold mb-6">Portfolios</h1>
-  <div class="grid gap-6 md:grid-cols-2">
-    {items.length === 0
-      ? <div class="rounded-2xl border border-neutral-200 bg-white p-6">Under construction.</div>
-      : items.map((p) => (
-        <a href={`/portfolios/${p.slug}/`} class="block rounded-2xl border border-neutral-200 bg-white p-6 hover:scale-[1.01] transition">
-          <h2 class="font-semibold">{p.data.name}</h2>
-          <p class="text-sm text-neutral-700 mt-2">{p.data.objective}</p>
-        </a>
-      ))
-    }
+<BaseLayout title="Portfolios · EireQuant" description="Portfolio allocations with equity and drawdown metrics.">
+  <h1>Portfolios</h1>
+  <div class="cards">
+    {items.map(({ data }) => (
+      <a class="card" href={`/portfolios/${data.slug}/`}>
+        <div class="kicker">Portfolio</div>
+        <h3>{data.title}</h3>
+        <p>{data.summary ?? "Description coming soon."}</p>
+      </a>
+    ))}
   </div>
+
+  <style>
+    .cards{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-top:.75rem; }
+    .card{ border:1px solid #eee; border-radius:12px; padding:1rem; background:#fff; }
+    .card:hover{ border-color:#ddd; box-shadow:0 8px 24px rgba(0,0,0,.06); }
+    .kicker{ font-size:.8rem; text-transform:uppercase; color:#666; }
+  </style>
 </BaseLayout>

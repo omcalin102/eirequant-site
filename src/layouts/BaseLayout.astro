@@ -1,38 +1,44 @@
 ---
-const { title = "EireQuant", description = "" } = Astro.props;
----
+const {
+  title = "EireQuant",
+  description = "A next-generation quantitative research platform.",
+  ogImage = "/brand/og-default.png",
+  canonical,
+} = Astro.props;
 
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+---
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="stylesheet" href="/src/styles/global.css" />
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/global.css" />
+
+    <!-- Analytics (optional): Plausible; replace data-domain when ready) -->
+    <!-- <script defer data-domain="eirequant.com" src="https://plausible.io/js/script.js"></script> -->
   </head>
-  <body class="bg-neutral-50 text-neutral-900 font-sans antialiased">
-    <header class="p-4 shadow-md bg-white">
-      <nav class="max-w-6xl mx-auto flex justify-between items-center">
-        <a href="/" class="font-bold text-xl">EireQuant</a>
-        <ul class="flex gap-6 text-sm">
-          <li><a href="/models">Models</a></li>
-          <li><a href="/portfolios">Portfolios</a></li>
-          <li><a href="/pipelines">Pipelines</a></li>
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-      </nav>
-    </header>
-
-    <main class="max-w-6xl mx-auto p-6">
-      <slot />
-    </main>
-
-    <footer class="mt-10 border-t py-6 text-sm text-neutral-500">
-      <div class="max-w-6xl mx-auto flex justify-between">
-        <span>© {new Date().getFullYear()} EireQuant</span>
-        <span><a href="/contact">Contact</a></span>
-      </div>
-    </footer>
+  <body>
+    <Nav />
+    <main class="page"><slot /></main>
+    <Footer />
   </body>
 </html>

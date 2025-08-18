@@ -1,0 +1,93 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const updated = "2025-08-17";
+---
+<BaseLayout
+  title="About · EireQuant"
+  description="EireQuant is an open quantitative research showcase—model families, portfolios, and live/sim pipelines."
+>
+  <header class="hero">
+    <img src="/brand/logo-wordmark.svg" alt="EireQuant" />
+    <h1>About EireQuant</h1>
+    <p class="tagline">An open, living quant research lab—built in public.</p>
+    <p class="meta">Last updated: {updated}</p>
+  </header>
+
+  <section>
+    <h2>What we publish</h2>
+    <ul class="bullets">
+      <li><strong>Model families:</strong> grouped “series” of Marks (e.g., EQ Core Mk I–III, Sentinel).</li>
+      <li><strong>Portfolios:</strong> allocation rules with equity, drawdown, and turnover metrics.</li>
+      <li><strong>Compare:</strong> a “mega graph” to overlay benchmarks, models, and portfolios.</li>
+      <li><strong>Reports & notes:</strong> dev logs, research write-ups, and methodology summaries.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>How the site works</h2>
+    <p>
+      To keep the site fast and predictable, data lands as static <code>JSON</code> files under
+      <code>/public/data/**</code>. Pages and charts read those files at runtime. That means new models or
+      portfolios are as simple as: add an MD file in <code>content/**</code>, drop the JSON time-series, and update
+      the registry—no servers required.
+    </p>
+  </section>
+
+  <section>
+    <h2>Model families</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="kicker">Series</div>
+        <h3>EQ Core</h3>
+        <p>Daily classification on a small universe; the foundational baseline (Mk I–III).</p>
+        <a class="cta" href="/models/series/eq-core/">Explore EQ Core →</a>
+      </div>
+      <div class="card">
+        <div class="kicker">Series</div>
+        <h3>EQ Sentinel</h3>
+        <p>Risk-averse, longer holding periods; low volatility by design.</p>
+        <a class="cta" href="/models/series/eq-sentinel/">Explore Sentinel →</a>
+      </div>
+      <div class="card muted">
+        <div class="kicker">Series</div>
+        <h3>Next Series</h3>
+        <p>Reserved for upcoming research directions.</p>
+        <a class="cta" href="/models/">See all models →</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Roadmap (near-term)</h2>
+    <ol class="bullets">
+      <li>Wire Compare to the registry and compute CAGR/Sharpe client-side.</li>
+      <li>Publish portfolio hub + detail pages with drawdown charts.</li>
+      <li>Add data freshness/status panel sourced from the pipeline.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <p>Questions, ideas, or collaboration? <a href="/contact/">Get in touch</a>.</p>
+  </section>
+
+  <aside class="notice">
+    <p><strong>Important:</strong> EireQuant is a research project. Nothing on this site is investment advice. See the <a href="/disclaimer/">Disclaimer</a>, <a href="/terms/">Terms</a>, and <a href="/privacy/">Privacy</a>.</p>
+  </aside>
+
+  <style>
+    .hero { text-align:center; margin-top:.5rem; margin-bottom:1.25rem; }
+    .hero img{ height:40px; margin-bottom:.5rem; opacity:.9; }
+    .tagline{ color:#555; margin:.25rem 0 .25rem; }
+    .meta{ font-size:.85rem; color:#777; }
+    .bullets{ margin:.5rem 0 0 1rem; }
+    .bullets li{ margin:.25rem 0; }
+    .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:.5rem; }
+    .card{ border:1px solid #eee; border-radius:12px; padding:1rem; background:#fff; }
+    .card.muted{ opacity:.85; }
+    .kicker{ font-size:.8rem; letter-spacing:.04em; text-transform:uppercase; color:#666; }
+    .cta{ display:inline-block; margin-top:.5rem; font-weight:600; color:var(--brand,#0E3B2D); }
+    .notice{ margin-top:1.25rem; border:1px solid #f0d9a8; background:#fffaf0; padding:.75rem 1rem; border-radius:12px; color:#553; }
+  </style>
+</BaseLayout>
