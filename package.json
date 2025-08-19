@@ -23,6 +23,7 @@
     "@tailwindcss/vite": "^4.1.12",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
-    "astro-mermaid": "^1.0.4"
+    "astro-mermaid": "^1.0.4",
+    "gh-pages": "^6.3.0"
   }
 }

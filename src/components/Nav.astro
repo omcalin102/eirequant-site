@@ -1,208 +1,128 @@
 ---
-import modelSeries from "../lib/modelSeries";
-const pathname = Astro.url.pathname;
-
-// Build a map: seriesSlug -> [{title, slug}]
-const seriesToMarks = Object.fromEntries(
-  modelSeries.map(s => [
-    s.slug,
-    s.marks.map(m => ({
-      title: m.title,
-      href: `/models/${m.slug}/`
-    }))
-  ])
-);
-
-// Helper for active link styling
-function isActive(href: string) {
-  return pathname === href || pathname.startsWith(href);
-}
+const brandHref = "/";
 ---
-<nav class="site-nav">
+<header class="site-header">
   <div class="nav-inner">
-    <a href="/" class="brand">
-      <img src="/brand/logo-wordmark.png" alt="EireQuant" class="brand-mark" />
-      <span class="sr-only">EireQuant</span>
+    <a href={brandHref} class="brand" aria-label="EireQuant — Home">
+      <img class="logo" src="/brand/logo-wordmark.png" alt="EireQuant" decoding="async" />
     </a>
 
-    <button class="hamburger" aria-label="Open menu" aria-expanded="false" id="navToggle">
-      <span></span><span></span><span></span>
-    </button>
+    <nav class="primary" aria-label="Primary">
+      <ul class="menu">
+        <li><a href="/">Home</a></li>
 
-    <ul class="nav-links" id="navLinks">
-      <li class={`top-link ${isActive("/") ? "active" : ""}`}><a href="/">Home</a></li>
+        <!-- MODELS mega menu -->
+        <li class="dropdown">
+          <a href="/models" class="trigger" aria-haspopup="true" aria-expanded="false">Models ▾</a>
+          <div class="panel" role="menu">
+            <div class="grid">
+              <div class="series">
+                <h5>EQ Core Series</h5>
+                <a href="/models/eq-core-mk1">Mark 1</a>
+                <a href="/models/eq-core-mk2">Mark 2</a>
+                <a href="/models/eq-core-mk3">Mark 3</a>
 
-      <!-- MODELS DROPDOWN (two-column) -->
-      <li class="top-link has-dropdown" data-menu="models">
-        <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">Models <span class="caret">▾</span></button>
-        <div class="dropdown models-dropdown" role="menu" aria-label="Models">
-          <div class="models-left" id="modelsLeft">
-            {modelSeries.map((s, i) => (
-              <button
-                type="button"
-                class={`series-item ${i === 0 ? "current" : ""}`}
-                data-series={s.slug}
-                aria-controls={`panel-${s.slug}`}
-              >
-                <span class="series-title">{s.title}</span>
-                <span class="series-sub">{s.subtitle}</span>
-              </button>
-            ))}
-          </div>
-          <div class="models-right">
-            {modelSeries.map((s, i) => (
-              <div
-                class={`marks-panel ${i === 0 ? "current" : ""}`}
-                id={`panel-${s.slug}`}
-                data-series={s.slug}
-              >
-                <div class="panel-header">
-                  <a class="series-link" href={`/models/series/${s.slug}/`}>{s.title}</a>
-                </div>
-                <ul class="marks-list">
-                  {seriesToMarks[s.slug]?.map(m => (
-                    <li><a href={m.href}>{m.title}</a></li>
-                  ))}
-                </ul>
+                <h5>EQ Sentinel Series</h5>
+                <a href="/models/eq-sentinel-mk1">Mark 1</a>
+
+                <h5>Future Series</h5>
+                <a href="/models">Coming soon</a>
               </div>
-            ))}
+
+              <div class="links">
+                <h5>Quick access</h5>
+                <a href="/models/eq-core-mk1">EQ Core — Mark 1</a>
+                <a href="/models/eq-core-mk2">EQ Core — Mark 2</a>
+                <a href="/models/eq-core-mk3">EQ Core — Mark 3</a>
+                <a href="/models/eq-sentinel-mk1">EQ Sentinel — Mark 1</a>
+              </div>
+            </div>
           </div>
-        </div>
-      </li>
+        </li>
 
-      <!-- PORTFOLIOS -->
-      <li class={`top-link ${isActive("/portfolios/") ? "active" : ""}`}><a href="/portfolios/">Portfolios</a></li>
-
-      <!-- COMPARE -->
-      <li class={`top-link ${isActive("/compare") ? "active" : ""}`}><a href="/compare">Compare</a></li>
-
-      <!-- PIPELINES DROPDOWN -->
-      <li class="top-link has-dropdown" data-menu="pipelines">
-        <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">Pipelines <span class="caret">▾</span></button>
-        <div class="dropdown simple-dropdown" role="menu" aria-label="Pipelines">
-          <ul>
-            <li><a href="/pipelines/live/">Live Pipeline</a></li>
-            <li><a href="/pipelines/sim/">Simulation Pipeline</a></li>
-          </ul>
-          <div class="dropdown-foot">
-            <a href="/pipelines/">Overview</a>
+        <!-- PIPELINES dropdown -->
+        <li class="dropdown">
+          <a href="/pipelines" class="trigger" aria-haspopup="true" aria-expanded="false">Pipelines ▾</a>
+          <div class="panel small" role="menu">
+            <ul class="list">
+              <li><a href="/pipelines/live">Live Pipeline</a></li>
+              <li><a href="/pipelines/sim">Simulation Pipeline</a></li>
+            </ul>
           </div>
-        </div>
-      </li>
+        </li>
 
-      <!-- BLOG / ABOUT / CONTACT -->
-      <li class={`top-link ${isActive("/blog/") ? "active" : ""}`}><a href="/blog/">Blog</a></li>
-      <li class={`top-link ${isActive("/about") ? "active" : ""}`}><a href="/about">About</a></li>
-      <li class={`top-link ${isActive("/contact/") ? "active" : ""}`}><a href="/contact/">Contact</a></li>
-    </ul>
+        <li><a href="/portfolios">Portfolios</a></li>
+        <li><a href="/compare">Compare</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+      </ul>
+    </nav>
   </div>
 
-  <script is:inline>
-    // Mobile toggle
-    const toggle = document.getElementById('navToggle');
-    const links = document.getElementById('navLinks');
-    if (toggle && links) {
-      toggle.addEventListener('click', () => {
-        const open = links.classList.toggle('open');
-        toggle.setAttribute('aria-expanded', String(open));
-      });
+  <!-- Ship nav CSS with the component so it can’t go missing -->
+  <style is:global>
+    :root{
+      --nav-bg: #ffffffcc;
+      --nav-border: #e5e7eb;
+      --nav-shadow: 0 12px 32px rgba(0,0,0,.08);
+      --text: #111827;
+      --text-dim: #374151;
     }
 
-    // Open dropdown on click/focus (desktop)
-    for (const host of document.querySelectorAll('.has-dropdown')) {
-      const btn = host.querySelector('.dropdown-trigger');
-      const dd  = host.querySelector('.dropdown');
-      if (!btn || !dd) continue;
-
-      const open = (v) => {
-        dd.classList.toggle('open', v);
-        btn.setAttribute('aria-expanded', String(v));
-      };
-
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        open(!dd.classList.contains('open'));
-      });
-
-      btn.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') open(false);
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!host.contains(e.target)) open(false);
-      });
-
-      // Models two-column switching
-      if (host.dataset.menu === 'models') {
-        const left = host.querySelector('#modelsLeft');
-        left?.addEventListener('mouseover', (e) => {
-          const b = e.target.closest('.series-item');
-          if (!b) return;
-          const series = b.dataset.series;
-          // left highlight
-          left.querySelectorAll('.series-item').forEach(el => el.classList.toggle('current', el === b));
-          // right panel switch
-          dd.querySelectorAll('.marks-panel').forEach(p => {
-            p.classList.toggle('current', p.dataset.series === series);
-          });
-        });
-        left?.addEventListener('focusin', (e) => {
-          const b = e.target.closest('.series-item');
-          if (!b) return;
-          const series = b.dataset.series;
-          left.querySelectorAll('.series-item').forEach(el => el.classList.toggle('current', el === b));
-          dd.querySelectorAll('.marks-panel').forEach(p => p.classList.toggle('current', p.dataset.series === series));
-        });
-      }
+    /* Header shell */
+    header.site-header{
+      position: sticky; top: 0; z-index: 50;
+      background: var(--nav-bg); backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--nav-border);
     }
-  </script>
-</nav>
+    .nav-inner{
+      max-width: 1200px; margin: 0 auto;
+      padding: .5rem 1rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
 
-<style>
-  .site-nav { position: sticky; top: 0; z-index: 50; background: var(--bg-50,#fff); border-bottom: 1px solid rgba(0,0,0,.06); }
-  .nav-inner { display:flex; align-items:center; justify-content:space-between; max-width:1100px; margin:0 auto; padding:0.75rem 1rem; }
-  .brand { display:flex; align-items:center; gap:.5rem; }
-  .brand-mark { height:28px; }
-  .hamburger { display:none; background:none; border:0; padding:.5rem; cursor:pointer; }
-  .hamburger span { display:block; width:22px; height:2px; background:#111; margin:4px 0; }
-  .nav-links { display:flex; gap:1rem; align-items:center; }
-  .nav-links.open { display:block; }
-  .top-link > a, .top-link > button.dropdown-trigger { font-weight:600; color:#111; padding:.5rem .25rem; border:0; background:none; cursor:pointer; }
-  .top-link.active > a { color: var(--brand, #0E3B2D); }
-  .caret { margin-left:.25rem; opacity:.7; }
-  .has-dropdown { position:relative; }
-  .dropdown { position:absolute; top:100%; left:0; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 10px 30px rgba(0,0,0,.08); border-radius:12px; padding:.5rem; display:none; }
-  .dropdown.open { display:flex; }
-  .simple-dropdown { flex-direction:column; min-width:220px; }
-  .simple-dropdown ul { list-style:none; margin:0; padding:.25rem; }
-  .simple-dropdown li a { display:block; padding:.5rem .75rem; border-radius:8px; }
-  .simple-dropdown li a:hover { background:#f4f4f4; }
-  .simple-dropdown .dropdown-foot { padding:.25rem .5rem .5rem; border-top:1px solid #eee; margin-top:.25rem; }
-  /* Models two-column */
-  .models-dropdown { gap:0; padding:.75rem; }
-  .models-left { width:240px; border-right:1px solid #eee; padding:.25rem; display:flex; flex-direction:column; gap:.25rem; }
-  .series-item { text-align:left; border:0; background:transparent; padding:.5rem .75rem; border-radius:10px; cursor:pointer; }
-  .series-item.current, .series-item:hover { background:#f6f7f7; }
-  .series-title { display:block; font-weight:700; }
-  .series-sub { display:block; font-size:.85rem; color:#666; }
-  .models-right { min-width:260px; padding:.25rem .5rem; }
-  .marks-panel { display:none; min-width:260px; }
-  .marks-panel.current { display:block; }
-  .panel-header { padding:.25rem .25rem .5rem; border-bottom:1px solid #eee; margin-bottom:.5rem; }
-  .marks-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.25rem; }
-  .marks-list a { display:block; padding:.5rem .5rem; border-radius:8px; }
-  .marks-list a:hover { background:#f4f4f4; }
-  /* Mobile */
-  @media (max-width: 820px){
-    .hamburger{display:block;}
-    .nav-links{display:none; position:absolute; left:0; right:0; top:56px; background:#fff; border-bottom:1px solid #eee; flex-direction:column; padding:.5rem 1rem 1rem;}
-    .has-dropdown .dropdown{ position:static; box-shadow:none; border:0; border-radius:0; display:none; padding:0; }
-    .has-dropdown.open .dropdown{ display:block; }
-    .models-dropdown{ display:block; }
-    .models-left{ width:100%; border:0; }
-    .models-right{ padding:0; }
-    .panel-header{ display:none; }
-    .marks-panel{ display:block; }
-  }
-  .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
-</style>
+    /* Brand / logo constraints */
+    .brand{ display: flex; align-items: center; gap: .5rem; }
+    .brand .logo{ height: 56px; width: auto; max-width: 220px; }
+    @media (max-width: 768px){ .brand .logo{ height: 40px; } }
+
+    /* Primary menu reset */
+    nav.primary{ margin-left: auto; }
+    nav.primary ul, nav.primary li{ list-style: none; margin: 0; padding: 0; }
+    nav.primary a{ text-decoration: none; color: var(--text); }
+
+    /* Top row */
+    nav.primary > ul.menu{
+      display: flex; align-items: center; gap: 1rem;
+      font-weight: 600;
+    }
+    nav.primary > ul.menu > li > a{
+      display: inline-block; padding: .5rem .25rem;
+    }
+
+    /* Dropdown panels */
+    nav.primary li.dropdown{ position: relative; }
+    nav.primary .panel{
+      display: none;
+      position: absolute; left: 0; top: 100%; margin-top: .5rem;
+      background: #fff; color: var(--text);
+      border: 1px solid var(--nav-border); border-radius: 12px;
+      box-shadow: var(--nav-shadow);
+      padding: 1rem; min-width: 560px;
+    }
+    nav.primary li.dropdown:hover > .panel,
+    nav.primary li.dropdown:focus-within > .panel{ display: block; }
+
+    .panel.small{ min-width: 240px; padding: .5rem; }
+
+    /* Panel content */
+    .panel .grid{ display: grid; grid-template-columns: 220px 1fr; gap: 1rem; }
+    .panel h5{ margin: .25rem 0 .5rem; font-size: .9rem; font-weight: 700; color: var(--text); }
+    .panel .series a, .panel .links a{
+      display: block; padding: .35rem .5rem; border-radius: 8px; color: var(--text-dim);
+    }
+    .panel a:hover{ background: #f3f4f6; color: var(--text); }
+
+    .panel.small .list li a{ display: block; padding: .4rem .6rem; border-radius: 8px; }
+  </style>
+</header>
