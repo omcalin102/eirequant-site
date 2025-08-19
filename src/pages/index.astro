@@ -1,17 +1,24 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-
-<BaseLayout title="EireQuant">
-  <section class="text-center py-16">
-    <h1 class="text-4xl font-bold mb-4">EireQuant</h1>
-    <p class="text-lg text-neutral-600 max-w-2xl mx-auto">
-      A next-generation quantitative research platform —
-      blending model families, portfolios, and real-time pipelines into one open showcase.
+<BaseLayout
+  title="EireQuant"
+  description="A next-generation quantitative research platform — blending model families, portfolios, and real-time pipelines into one open showcase.">
+  <section style="text-align:center; margin: 4rem 0;">
+    <h1 style="font-size:clamp(2rem,4vw,3rem); margin-bottom:.5rem;">EireQuant</h1>
+    <p style="color:#555; max-width:740px; margin:0 auto 1.25rem;">
+      A next-generation quantitative research platform — blending model families, portfolios, and real-time pipelines into one open showcase.
     </p>
-    <div class="mt-8 flex gap-4 justify-center">
-      <a href="/models" class="px-6 py-3 bg-black text-white rounded-lg">Explore Models</a>
-      <a href="/blog" class="px-6 py-3 border rounded-lg">Read Blog</a>
+    <div style="display:inline-flex; gap:.75rem;">
+      <a href="/models/" class="btn btn-primary">Explore Models</a>
+      <a href="/blog/" class="btn btn-outline">Read Blog</a>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .btn{ padding:.7rem 1rem; border-radius:12px; border:1px solid #111; text-decoration:none; }
+  .btn-primary{ background:#111; color:#fff; }
+  .btn-outline{ background:#fff; color:#111; }
+  .btn:hover{ opacity:.9; }
+</style>

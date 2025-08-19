@@ -2,19 +2,34 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
-const items = (await getCollection("portfolios"))
-  .sort((a,b) => a.data.title.localeCompare(b.data.title));
+// Load all portfolio entries
+const raw = await getCollection("portfolios");
+
+// Resolve a display title that works with both schemas
+function resolveTitle(entry: any): string {
+  const d = entry?.data ?? {};
+  return (d.title ?? d.name ?? entry.slug ?? "").toString();
+}
+
+// Sort safely by resolved title
+const items = raw.sort((a, b) => resolveTitle(a).localeCompare(resolveTitle(b)));
 ---
 <BaseLayout title="Portfolios · EireQuant" description="Portfolio allocations with equity and drawdown metrics.">
   <h1>Portfolios</h1>
   <div class="cards">
-    {items.map(({ data }) => (
-      <a class="card" href={`/portfolios/${data.slug}/`}>
-        <div class="kicker">Portfolio</div>
-        <h3>{data.title}</h3>
-        <p>{data.summary ?? "Description coming soon."}</p>
-      </a>
-    ))}
+    {items.map((entry) => {
+      const d = entry.data as any;
+      const title = d.title ?? d.name ?? entry.slug;
+      const href = `/portfolios/${d.slug ?? entry.slug}/`;
+      const summary = d.summary ?? d.objective ?? "Description coming soon.";
+      return (
+        <a class="card" href={href}>
+          <div class="kicker">Portfolio</div>
+          <h3>{title}</h3>
+          <p>{summary}</p>
+        </a>
+      );
+    })}
   </div>
 
   <style>

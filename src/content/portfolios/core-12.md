@@ -1,23 +1,18 @@
 ---
+name: Core-12
+objective: Diversified 12-asset core allocation with periodic rebalancing.
+
+# keep all your existing fields below — do NOT remove anything
 title: Core-12
 slug: core-12
-summary: A diversified 12-asset portfolio with periodic rebalancing.
-chartKey: core12_equity
+summary: A 12-position core allocation demo. Placeholder until live data.
 rebalance: Monthly
 allocation:
   AAPL: 8
   MSFT: 8
-  AMZN: 8
-  GOOGL: 8
-  META: 8
-  NVDA: 8
-  JPM: 8
-  XOM: 8
-  UNH: 8
-  JNJ: 8
-  VOO: 10
-  TLT: 10
+  SPY: 10
+  AGG: 10
+  CASH: 64
+chartKey: portfolios/core12_equity
 updated: 2025-08-17
 ---
-
-A simple diversified portfolio used as a reference mix. Metrics and turnover data to follow.

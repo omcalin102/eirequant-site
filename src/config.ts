@@ -1,32 +1,32 @@
 import { defineCollection, z } from "astro:content";
 
-// Models collection
+// MODELS
 const models = defineCollection({
   type: "content",
   schema: z.object({
-    title: z.string(),
-    slug: z.string(),
+    title: z.string(),                       // e.g. "EQ-Core Mk II"
+    slug: z.string(),                        // e.g. "eq-core-mk2"
     series: z.enum(["eq-core", "eq-sentinel", "eq-tbd"]),
-    mark: z.number(),
+    mark: z.number(),                        // 1,2,3...
     version: z.string().optional(),
     status: z.enum(["research", "stable", "preview"]).default("research"),
     summary: z.string().optional(),
-    chartKey: z.string().optional(),
-    updated: z.string().optional(),
+    chartKey: z.string().optional(),         // key/path for CurveChart
+    updated: z.string().optional(),          // ISO date
   }),
 });
 
-// Portfolios collection
+// PORTFOLIOS
 const portfolios = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
     slug: z.string(),
     summary: z.string().optional(),
-    chartKey: z.string().optional(),     // e.g. "core12_equity"
-    drawdownKey: z.string().optional(),  // optional alt path if different
-    rebalance: z.string().optional(),    // e.g. "Monthly"
-    allocation: z.record(z.string(), z.number()).optional(), // { TICKER: weight }
+    chartKey: z.string().optional(),
+    drawdownKey: z.string().optional(),
+    rebalance: z.string().optional(),
+    allocation: z.record(z.string(), z.number()).optional(),
     updated: z.string().optional(),
   }),
 });
