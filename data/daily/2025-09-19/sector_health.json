@@ -1,0 +1,393 @@
+{
+  "run_date": "2025-09-19",
+  "sectors": [
+    {
+      "sector": "Healthcare",
+      "n_names": 60,
+      "median_beta": 0.756,
+      "median_mcap": 35677073408.0,
+      "median_liquidity": 277398615.59054375,
+      "top_names": [
+        {
+          "symbol": "LLY",
+          "name": "Eli Lilly and Company",
+          "market_cap": 674126495744.0
+        },
+        {
+          "symbol": "JNJ",
+          "name": "Johnson & Johnson",
+          "market_cap": 424325251072.0
+        },
+        {
+          "symbol": "ABBV",
+          "name": "AbbVie Inc.",
+          "market_cap": 393006219264.0
+        },
+        {
+          "symbol": "UNH",
+          "name": "UnitedHealth Group Incorporated",
+          "market_cap": 304931241984.0
+        },
+        {
+          "symbol": "ABT",
+          "name": "Abbott Laboratories",
+          "market_cap": 236772032512.0
+        }
+      ]
+    },
+    {
+      "sector": "Technology",
+      "n_names": 82,
+      "median_beta": 1.161,
+      "median_mcap": 47763884032.0,
+      "median_liquidity": 429716954.52926636,
+      "top_names": [
+        {
+          "symbol": "NVDA",
+          "name": "NVIDIA Corporation",
+          "market_cap": 4299597545472.0
+        },
+        {
+          "symbol": "MSFT",
+          "name": "Microsoft Corporation",
+          "market_cap": 3849859891200.0
+        },
+        {
+          "symbol": "AAPL",
+          "name": "Apple Inc.",
+          "market_cap": 3643315585024.0
+        },
+        {
+          "symbol": "AVGO",
+          "name": "Broadcom Inc.",
+          "market_cap": 1628932538368.0
+        },
+        {
+          "symbol": "ORCL",
+          "name": "Oracle Corporation",
+          "market_cap": 877123403776.0
+        }
+      ]
+    },
+    {
+      "sector": "Consumer Cyclical",
+      "n_names": 56,
+      "median_beta": 1.1425,
+      "median_mcap": 27210211328.0,
+      "median_liquidity": 314113381.62532806,
+      "top_names": [
+        {
+          "symbol": "AMZN",
+          "name": "Amazon.com, Inc.",
+          "market_cap": 2468713857024.0
+        },
+        {
+          "symbol": "TSLA",
+          "name": "Tesla, Inc.",
+          "market_cap": 1416747155456.0
+        },
+        {
+          "symbol": "HD",
+          "name": "The Home Depot, Inc.",
+          "market_cap": 413772283904.0
+        },
+        {
+          "symbol": "MCD",
+          "name": "McDonald's Corporation",
+          "market_cap": 215779704832.0
+        },
+        {
+          "symbol": "BKNG",
+          "name": "Booking Holdings Inc.",
+          "market_cap": 176453664768.0
+        }
+      ]
+    },
+    {
+      "sector": "Financial Services",
+      "n_names": 69,
+      "median_beta": 1.032,
+      "median_mcap": 54292635648.0,
+      "median_liquidity": 310725904.70738727,
+      "top_names": [
+        {
+          "symbol": "BRK-B",
+          "name": "Berkshire Hathaway Inc.",
+          "market_cap": 1063826751488.0
+        },
+        {
+          "symbol": "JPM",
+          "name": "JPMorgan Chase & Co.",
+          "market_cap": 865567506432.0
+        },
+        {
+          "symbol": "V",
+          "name": "Visa Inc.",
+          "market_cap": 663045144576.0
+        },
+        {
+          "symbol": "MA",
+          "name": "Mastercard Incorporated",
+          "market_cap": 528087547904.0
+        },
+        {
+          "symbol": "BAC",
+          "name": "Bank of America Corporation",
+          "market_cap": 387012984832.0
+        }
+      ]
+    },
+    {
+      "sector": "Consumer Defensive",
+      "n_names": 37,
+      "median_beta": 0.51,
+      "median_mcap": 31270690816.0,
+      "median_liquidity": 293901096.6391246,
+      "top_names": [
+        {
+          "symbol": "WMT",
+          "name": "Walmart Inc.",
+          "market_cap": 815861858304.0
+        },
+        {
+          "symbol": "COST",
+          "name": "Costco Wholesale Corporation",
+          "market_cap": 421817647104.0
+        },
+        {
+          "symbol": "PG",
+          "name": "The Procter & Gamble Company",
+          "market_cap": 365209321472.0
+        },
+        {
+          "symbol": "KO",
+          "name": "The Coca-Cola Company",
+          "market_cap": 285892608000.0
+        },
+        {
+          "symbol": "PM",
+          "name": "Philip Morris International Inc.",
+          "market_cap": 253646225408.0
+        }
+      ]
+    },
+    {
+      "sector": "Utilities",
+      "n_names": 31,
+      "median_beta": 0.564,
+      "median_mcap": 31792285696.0,
+      "median_liquidity": 228632271.01333618,
+      "top_names": [
+        {
+          "symbol": "NEE",
+          "name": "NextEra Energy, Inc.",
+          "market_cap": 146374524928.0
+        },
+        {
+          "symbol": "CEG",
+          "name": "Constellation Energy Corporation",
+          "market_cap": 103375003648.0
+        },
+        {
+          "symbol": "SO",
+          "name": "The Southern Company",
+          "market_cap": 100984348672.0
+        },
+        {
+          "symbol": "DUK",
+          "name": "Duke Energy Corporation",
+          "market_cap": 94154768384.0
+        },
+        {
+          "symbol": "VST",
+          "name": "Vistra Corp.",
+          "market_cap": 71585955840.0
+        }
+      ]
+    },
+    {
+      "sector": "Basic Materials",
+      "n_names": 20,
+      "median_beta": 1.0270000000000001,
+      "median_mcap": 31649423360.0,
+      "median_liquidity": 283892927.6964887,
+      "top_names": [
+        {
+          "symbol": "LIN",
+          "name": "Linde plc",
+          "market_cap": 224612368384.0
+        },
+        {
+          "symbol": "NEM",
+          "name": "Newmont Corporation",
+          "market_cap": 89765306368.0
+        },
+        {
+          "symbol": "SHW",
+          "name": "The Sherwin-Williams Company",
+          "market_cap": 86468788224.0
+        },
+        {
+          "symbol": "ECL",
+          "name": "Ecolab Inc.",
+          "market_cap": 75296743424.0
+        },
+        {
+          "symbol": "APD",
+          "name": "Air Products and Chemicals, Inc.",
+          "market_cap": 64573935616.0
+        }
+      ]
+    },
+    {
+      "sector": "Industrials",
+      "n_names": 71,
+      "median_beta": 1.1,
+      "median_mcap": 47239602176.0,
+      "median_liquidity": 306268372.9643504,
+      "top_names": [
+        {
+          "symbol": "GE",
+          "name": "GE Aerospace",
+          "market_cap": 319340740608.0
+        },
+        {
+          "symbol": "CAT",
+          "name": "Caterpillar Inc.",
+          "market_cap": 218564149248.0
+        },
+        {
+          "symbol": "RTX",
+          "name": "RTX Corporation",
+          "market_cap": 211810861056.0
+        },
+        {
+          "symbol": "GEV",
+          "name": "GE Vernova Inc.",
+          "market_cap": 169914007552.0
+        },
+        {
+          "symbol": "BA",
+          "name": "The Boeing Company",
+          "market_cap": 163065397248.0
+        }
+      ]
+    },
+    {
+      "sector": "Real Estate",
+      "n_names": 31,
+      "median_beta": 0.94,
+      "median_mcap": 27474229248.0,
+      "median_liquidity": 243467303.5381063,
+      "top_names": [
+        {
+          "symbol": "WELL",
+          "name": "Welltower Inc.",
+          "market_cap": 110483357696.0
+        },
+        {
+          "symbol": "PLD",
+          "name": "Prologis, Inc.",
+          "market_cap": 105344434176.0
+        },
+        {
+          "symbol": "AMT",
+          "name": "American Tower Corporation",
+          "market_cap": 90517643264.0
+        },
+        {
+          "symbol": "EQIX",
+          "name": "Equinix, Inc.",
+          "market_cap": 77434880000.0
+        },
+        {
+          "symbol": "SPG",
+          "name": "Simon Property Group, Inc.",
+          "market_cap": 68168851456.0
+        }
+      ]
+    },
+    {
+      "sector": "Energy",
+      "n_names": 22,
+      "median_beta": 1.0115,
+      "median_mcap": 46027094016.0,
+      "median_liquidity": 298886645.2816566,
+      "top_names": [
+        {
+          "symbol": "XOM",
+          "name": "Exxon Mobil Corporation",
+          "market_cap": 480979550208.0
+        },
+        {
+          "symbol": "CVX",
+          "name": "Chevron Corporation",
+          "market_cap": 314735427584.0
+        },
+        {
+          "symbol": "COP",
+          "name": "ConocoPhillips",
+          "market_cap": 114802778112.0
+        },
+        {
+          "symbol": "WMB",
+          "name": "The Williams Companies, Inc.",
+          "market_cap": 73404981248.0
+        },
+        {
+          "symbol": "EOG",
+          "name": "EOG Resources, Inc.",
+          "market_cap": 63335235584.0
+        }
+      ]
+    },
+    {
+      "sector": "Communication Services",
+      "n_names": 24,
+      "median_beta": 1.0139999999999998,
+      "median_mcap": 40641626112.0,
+      "median_liquidity": 398313506.7743603,
+      "top_names": [
+        {
+          "symbol": "GOOG",
+          "name": "Alphabet Inc.",
+          "market_cap": 3083407458304.0
+        },
+        {
+          "symbol": "GOOGL",
+          "name": "Alphabet Inc.",
+          "market_cap": 3083407196160.0
+        },
+        {
+          "symbol": "META",
+          "name": "Meta Platforms, Inc.",
+          "market_cap": 1955400777728.0
+        },
+        {
+          "symbol": "NFLX",
+          "name": "Netflix, Inc.",
+          "market_cap": 521371844608.0
+        },
+        {
+          "symbol": "TMUS",
+          "name": "T-Mobile US, Inc.",
+          "market_cap": 268041043968.0
+        }
+      ]
+    },
+    {
+      "sector": "Unknown",
+      "n_names": 1,
+      "median_beta": null,
+      "median_mcap": 609131954176.0,
+      "median_liquidity": 44676852256.673584,
+      "top_names": [
+        {
+          "symbol": "SPY",
+          "name": "SPDR S&P 500 ETF",
+          "market_cap": 609131954176.0
+        }
+      ]
+    }
+  ]
+}
