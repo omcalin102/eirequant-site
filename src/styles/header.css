@@ -1,0 +1,173 @@
+/* ===========================
+   Brand overlay (top-left)
+   =========================== */
+.brand-overlay {
+  position: fixed;
+  top: 10px;
+  left: 14px;
+  z-index: 30;           /* above header border so it “spills over” */
+  pointer-events: none;  /* never intercept clicks/hover */
+}
+.brand-overlay img {
+  width: 160px;          /* current good size */
+  height: auto;
+  display: block;
+  opacity: 0.98;
+}
+
+@media (max-width: 1024px) {
+  .brand-overlay img { width: 140px; }
+}
+@media (max-width: 640px) {
+  .brand-overlay img { width: 120px; }
+}
+
+/* ===========================
+   Header / Primary Nav
+   =========================== */
+.site-header {
+  position: relative;
+  z-index: 40;                  /* above the brand for menu interaction */
+  background: #fff;
+  border-bottom: 1px solid #ececec;
+
+  /* left padding keeps the header box from wrapping the logo */
+  padding: 12px 20px;
+  padding-left: 200px;          /* brand width + breathing room */
+
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  /* Make header a flex row and vertically center items */
+  display: flex;
+  align-items: center;
+}
+
+/* CRITICAL: let the <nav> fill the row so we can push links to the right */
+.site-header nav {
+  flex: 1 1 auto;
+}
+
+/* The row that holds top-level links */
+.nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  /* Now that <nav> fills the row, this pushes links to the right edge */
+  justify-content: flex-end;
+}
+
+/* Top-level links & triggers share a common style */
+.nav-link,
+.trigger {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  text-decoration: none;
+}
+
+.trigger {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Dropdown container */
+.dropdown {
+  position: relative;
+}
+
+/* The dropdown panel; invisible by default */
+.menu {
+  position: absolute;
+  top: calc(100% + 10px); /* attached to trigger; no hover “gap” */
+  left: 0;
+  min-width: 240px;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  padding: 10px;
+  display: none;
+}
+
+/* Show panel on hover OR keyboard focus */
+.dropdown:hover .menu,
+.dropdown:focus-within .menu {
+  display: block;
+}
+
+/* Column inside menu */
+.menu-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-section,
+.menu-link {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #222;
+  text-decoration: none;
+  font-weight: 500;
+}
+.menu-section:hover,
+.menu-link:hover {
+  background: #f5f5f5;
+}
+
+/* Second-level flyout (to the right) */
+.has-flyout {
+  position: relative;
+}
+.has-flyout > .menu-section {
+  padding-right: 26px; /* space for caret (optional) */
+}
+
+.flyout {
+  position: absolute;
+  top: -8px;            /* aligns top items across the two panels */
+  left: calc(100% + 8px);
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  padding: 8px;
+  display: none;
+}
+
+/* Keep flyout open while hovering within either parent item or flyout */
+.has-flyout:hover .flyout,
+.has-flyout:focus-within .flyout {
+  display: block;
+}
+
+.flyout-link {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #222;
+  text-decoration: none;
+  font-weight: 500;
+}
+.flyout-link:hover {
+  background: #f5f5f5;
+}
+
+/* Responsive tweaks */
+@media (max-width: 1024px) {
+  .site-header { padding-left: 180px; }
+}
+@media (max-width: 640px) {
+  .site-header {
+    padding-left: 140px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .nav-inner { gap: 18px; }
+  .nav-link, .trigger { font-size: 15px; }
+}

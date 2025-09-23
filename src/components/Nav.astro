@@ -1,128 +1,61 @@
 ---
-const brandHref = "/";
+/**
+ * Pure markup; behavior is handled via CSS :hover and :focus-within so the
+ * menus stay open while the pointer is over the panel (no “disconnect” gap).
+ */
 ---
-<header class="site-header">
+<nav class="site-header" aria-label="Primary">
   <div class="nav-inner">
-    <a href={brandHref} class="brand" aria-label="EireQuant — Home">
-      <img class="logo" src="/brand/logo-wordmark.png" alt="EireQuant" decoding="async" />
-    </a>
+    <a class="nav-link" href="/">Home</a>
 
-    <nav class="primary" aria-label="Primary">
-      <ul class="menu">
-        <li><a href="/">Home</a></li>
+    <!-- Models (with flyout submenus) -->
+    <div class="dropdown">
+      <button class="trigger" aria-haspopup="true">Models</button>
+      <div class="menu" role="menu">
+        <div class="menu-col">
+          <a class="menu-section" href="/models/">Overview</a>
 
-        <!-- MODELS mega menu -->
-        <li class="dropdown">
-          <a href="/models" class="trigger" aria-haspopup="true" aria-expanded="false">Models ▾</a>
-          <div class="panel" role="menu">
-            <div class="grid">
-              <div class="series">
-                <h5>EQ Core Series</h5>
-                <a href="/models/eq-core-mk1">Mark 1</a>
-                <a href="/models/eq-core-mk2">Mark 2</a>
-                <a href="/models/eq-core-mk3">Mark 3</a>
-
-                <h5>EQ Sentinel Series</h5>
-                <a href="/models/eq-sentinel-mk1">Mark 1</a>
-
-                <h5>Future Series</h5>
-                <a href="/models">Coming soon</a>
-              </div>
-
-              <div class="links">
-                <h5>Quick access</h5>
-                <a href="/models/eq-core-mk1">EQ Core — Mark 1</a>
-                <a href="/models/eq-core-mk2">EQ Core — Mark 2</a>
-                <a href="/models/eq-core-mk3">EQ Core — Mark 3</a>
-                <a href="/models/eq-sentinel-mk1">EQ Sentinel — Mark 1</a>
-              </div>
+          <div class="has-flyout">
+            <a class="menu-section" href="/models/#core">Core Series</a>
+            <div class="flyout" role="menu">
+              <a class="flyout-link" href="/models/eq-core-mk1/">Mark 1</a>
+              <a class="flyout-link" href="/models/eq-core-mk2/">Mark 2</a>
+              <a class="flyout-link" href="/models/eq-core-mk3/">Mark 3</a>
             </div>
           </div>
-        </li>
 
-        <!-- PIPELINES dropdown -->
-        <li class="dropdown">
-          <a href="/pipelines" class="trigger" aria-haspopup="true" aria-expanded="false">Pipelines ▾</a>
-          <div class="panel small" role="menu">
-            <ul class="list">
-              <li><a href="/pipelines/live">Live Pipeline</a></li>
-              <li><a href="/pipelines/sim">Simulation Pipeline</a></li>
-            </ul>
+          <div class="has-flyout">
+            <a class="menu-section" href="/models/#sentinel">Sentinel Series</a>
+            <div class="flyout" role="menu">
+              <a class="flyout-link" href="/models/eq-sentinel-mk1/">Mark 1</a>
+            </div>
           </div>
-        </li>
+        </div>
+      </div>
+    </div>
 
-        <li><a href="/portfolios">Portfolios</a></li>
-        <li><a href="/compare">Compare</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/blog">Blog</a></li>
-      </ul>
-    </nav>
+    <!-- Pipelines -->
+    <div class="dropdown">
+      <button class="trigger" aria-haspopup="true">Pipelines</button>
+      <div class="menu" role="menu">
+        <a class="menu-link" href="/pipelines/">Overview</a>
+        <a class="menu-link" href="/pipelines/live/">Live Pipeline</a>
+        <a class="menu-link" href="/pipelines/sim/">Simulation Pipeline</a>
+      </div>
+    </div>
+
+    <!-- Portfolios -->
+    <div class="dropdown">
+      <button class="trigger" aria-haspopup="true">Portfolios</button>
+      <div class="menu" role="menu">
+        <a class="menu-link" href="/portfolios/">Overview</a>
+        <a class="menu-link" href="/portfolios/core-12/">Core-12 Conf-Weighted</a>
+        <a class="menu-link" href="/portfolios/conf-weighted/">Conf-Weighted</a>
+      </div>
+    </div>
+
+    <a class="nav-link" href="/compare/">Compare</a>
+    <a class="nav-link" href="/about/">About</a>
+    <a class="nav-link" href="/blog/">Blog</a>
   </div>
-
-  <!-- Ship nav CSS with the component so it can’t go missing -->
-  <style is:global>
-    :root{
-      --nav-bg: #ffffffcc;
-      --nav-border: #e5e7eb;
-      --nav-shadow: 0 12px 32px rgba(0,0,0,.08);
-      --text: #111827;
-      --text-dim: #374151;
-    }
-
-    /* Header shell */
-    header.site-header{
-      position: sticky; top: 0; z-index: 50;
-      background: var(--nav-bg); backdrop-filter: saturate(180%) blur(12px);
-      border-bottom: 1px solid var(--nav-border);
-    }
-    .nav-inner{
-      max-width: 1200px; margin: 0 auto;
-      padding: .5rem 1rem;
-      display: flex; align-items: center; gap: 1rem;
-    }
-
-    /* Brand / logo constraints */
-    .brand{ display: flex; align-items: center; gap: .5rem; }
-    .brand .logo{ height: 56px; width: auto; max-width: 220px; }
-    @media (max-width: 768px){ .brand .logo{ height: 40px; } }
-
-    /* Primary menu reset */
-    nav.primary{ margin-left: auto; }
-    nav.primary ul, nav.primary li{ list-style: none; margin: 0; padding: 0; }
-    nav.primary a{ text-decoration: none; color: var(--text); }
-
-    /* Top row */
-    nav.primary > ul.menu{
-      display: flex; align-items: center; gap: 1rem;
-      font-weight: 600;
-    }
-    nav.primary > ul.menu > li > a{
-      display: inline-block; padding: .5rem .25rem;
-    }
-
-    /* Dropdown panels */
-    nav.primary li.dropdown{ position: relative; }
-    nav.primary .panel{
-      display: none;
-      position: absolute; left: 0; top: 100%; margin-top: .5rem;
-      background: #fff; color: var(--text);
-      border: 1px solid var(--nav-border); border-radius: 12px;
-      box-shadow: var(--nav-shadow);
-      padding: 1rem; min-width: 560px;
-    }
-    nav.primary li.dropdown:hover > .panel,
-    nav.primary li.dropdown:focus-within > .panel{ display: block; }
-
-    .panel.small{ min-width: 240px; padding: .5rem; }
-
-    /* Panel content */
-    .panel .grid{ display: grid; grid-template-columns: 220px 1fr; gap: 1rem; }
-    .panel h5{ margin: .25rem 0 .5rem; font-size: .9rem; font-weight: 700; color: var(--text); }
-    .panel .series a, .panel .links a{
-      display: block; padding: .35rem .5rem; border-radius: 8px; color: var(--text-dim);
-    }
-    .panel a:hover{ background: #f3f4f6; color: var(--text); }
-
-    .panel.small .list li a{ display: block; padding: .4rem .6rem; border-radius: 8px; }
-  </style>
-</header>
+</nav>

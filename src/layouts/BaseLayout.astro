@@ -1,7 +1,13 @@
 ---
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import "../styles/global.css"; // keep this import
+
+// Keep your global styles
+import "../styles/global.css";
+
+// Header/Nav + brand overlay styles
+import "../styles/header.css";
+
 const { title = "EireQuant", description = "Quant research platform." } = Astro.props;
 ---
 <!doctype html>
@@ -16,11 +22,21 @@ const { title = "EireQuant", description = "Quant research platform." } = Astro.
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-    {Astro.head}  <!-- ✅ This lets Astro inject CSS/JS links -->
+    {Astro.head}
   </head>
   <body>
+    <!-- Floating brand; sits above the header border but never captures pointer -->
+    <div class="brand-overlay" aria-hidden="true">
+      <!-- Use the wordmark you already ship in /public/brand/ -->
+      <img src="/brand/logo-wordmark.png" alt="" />
+    </div>
+
     <Nav />
-    <main id="main" class="page"><slot /></main>
+
+    <main id="main" class="page">
+      <slot />
+    </main>
+
     <Footer />
   </body>
 </html>
