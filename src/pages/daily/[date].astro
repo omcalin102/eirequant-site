@@ -1,0 +1,27 @@
+---
+const { date } = Astro.params;
+const base = `/data/daily/${date}`;
+
+const load = async (p) => (await fetch(p)).ok ? fetch(p).then(r=>r.json()) : null;
+const ms = await load(`${base}/model_selection.json`);
+const rg = await load(`${base}/risk_greeks.json`);
+const sh = await load(`${base}/sector_health.json`);
+---
+<html lang="en">
+  <head><title>Daily — {date}</title></head>
+  <body class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold mb-6">Daily Snapshot — {date}</h1>
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-3">Model Selection</h2>
+      <pre class="bg-gray-50 p-4 rounded-2xl overflow-auto text-sm">{JSON.stringify(ms, null, 2)}</pre>
+    </section>
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-3">Risk Greeks</h2>
+      <pre class="bg-gray-50 p-4 rounded-2xl overflow-auto text-sm">{JSON.stringify(rg, null, 2)}</pre>
+    </section>
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-3">Sector Health</h2>
+      <pre class="bg-gray-50 p-4 rounded-2xl overflow-auto text-sm">{JSON.stringify(sh, null, 2)}</pre>
+    </section>
+  </body>
+</html>

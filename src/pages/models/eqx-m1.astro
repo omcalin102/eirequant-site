@@ -1,0 +1,30 @@
+---
+const catalog = await fetch('/data/models/eqx-m1/catalog.json').then(r=>r.json());
+const calib   = await fetch('/data/models/eqx-m1/calibration.json').then(r=>r.json());
+const perf    = await fetch('/data/models/eqx-m1/by_regime_perf.json').then(r=>r.json());
+
+const chartSrcFor = (key) => `/img/models/eqx-m1/charts/${key}.png`;
+---
+<html lang="en">
+  <head><title>EQX M1 — Model Card</title></head>
+  <body class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold mb-1">EQX M1 — Model Card</h1>
+    <p class="text-sm text-gray-500 mb-8">Generated: {catalog.generated_at}</p>
+
+    <section class="grid md:grid-cols-3 gap-4 mb-10">
+      <div class="p-4 rounded-2xl shadow"><h3 class="font-semibold mb-2">Schema</h3><p>v{catalog.schema_version}</p></div>
+      <div class="p-4 rounded-2xl shadow"><h3 class="font-semibold mb-2">Env</h3><p>{catalog.env}</p></div>
+      <div class="p-4 rounded-2xl shadow"><h3 class="font-semibold mb-2">ECE</h3><p>{calib?.ece ?? '—'}</p></div>
+    </section>
+
+    <h2 class="text-2xl font-semibold mb-4">Performance Snapshots</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {catalog.items.map((it) => (
+        <figure class="rounded-2xl overflow-hidden shadow">
+          <img src={chartSrcFor(it.key)} alt={it.label} loading="lazy" />
+          <figcaption class="text-sm p-2">{it.label}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </body>
+</html>
