@@ -1,64 +1,42 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import modelSeries from "../../../lib/modelSeries";
 
-// 1) Generate static paths for each distinct `series` value in your models content
-export async function getStaticPaths() {
-  const models = await getCollection("models");
-  const seriesSet = new Set<string>();
-  for (const m of models) {
-    if (m?.data?.series) seriesSet.add(m.data.series);
-  }
-  return Array.from(seriesSet).map((slug) => ({ params: { series: slug } }));
-}
-
-// 2) Load all models for the requested series
-const { series } = Astro.params;
+const { series = "" } = Astro.params;
+const meta = modelSeries.find(s => s.slug === series) ?? { title: series, subtitle:"" };
 const all = await getCollection("models");
-const items = all
-  .filter((m) => m.data.series === series)
-  .sort((a, b) => (a.data.mark ?? 0) - (b.data.mark ?? 0));
-
-// 3) Nice titles for known series; fallback if a new one appears
-const seriesTitleMap: Record<string, string> = {
-  "eq-core": "EQ Core Series",
-  "eq-sentinel": "EQ Sentinel Series",
-};
-const seriesTitle = seriesTitleMap[String(series)] ?? String(series);
-
-// Helper to resolve a working slug for links (prefer frontmatter slug, fallback to entry slug)
-const withResolved = items.map((entry) => ({
-  hrefSlug: entry.data.slug ?? entry.slug,
-  data: entry.data,
-}));
+const items = all.filter(m => m.data.series === series).sort((a,b)=>(a.data.mark ?? 0) - (b.data.mark ?? 0));
+export const prerender = true;
 ---
-<BaseLayout title={`Models · ${seriesTitle} · EireQuant`} description={`Marks in the ${seriesTitle}.`}>
-  <h1>{seriesTitle}</h1>
-  <p class="lead">Browse Marks belonging to the {seriesTitle}.</p>
+<BaseLayout title={`${meta.title} · Models · EireQuant`} description={meta.subtitle ?? "Model family"}>
+  <section class="card">
+    <h1 class="h1">{meta.title}</h1>
+    {meta.subtitle && <p class="muted">{meta.subtitle}</p>}
+  </section>
 
-  {withResolved.length > 0 ? (
-    <div class="cards">
-      {withResolved.map(({ hrefSlug, data }) => (
-        <a class="card" href={`/models/${hrefSlug}/`}>
-          <div class="meta">
-            {data.mark ? `Mk ${data.mark}` : ""}{data.version ? ` · ${data.version}` : ""}
-            {data.status ? ` · ${data.status}` : ""}
-          </div>
-          <h3>{data.title ?? data.name}</h3>
-          <p>{data.summary ?? data.synopsis ?? "Details coming soon."}</p>
+  {items.length ? (
+    <section class="grid">
+      {items.map(({ data }) => (
+        <a class="tile" href={`/models/${data.slug}/`}>
+          <div class="tile-h">Mk {data.mark} · {data.version ?? "v1.0.0"} · {data.status ?? "research"}</div>
+          <div class="tile-sub">{data.title}</div>
+          <div class="tile-cta">Open →</div>
         </a>
       ))}
-    </div>
+    </section>
   ) : (
-    <div class="empty">No marks published for this series yet. Check back soon.</div>
+    <section class="card"><p class="muted">No marks published yet.</p></section>
   )}
 
   <style>
-    .lead{ color:#555; margin-bottom:1rem;}
-    .cards{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
-    .card{ border:1px solid #eee; border-radius:12px; padding:1rem; background:#fff; transition:.15s border-color, .15s box-shadow; }
-    .card:hover{ border-color:#ddd; box-shadow:0 8px 24px rgba(0,0,0,.06); }
-    .meta{ font-size:.85rem; color:#666; margin-bottom:.35rem; text-transform:uppercase; letter-spacing:.03em;}
-    .empty{ color:#777; background:#fafafa; border:1px dashed #e5e5e5; border-radius:12px; padding:1rem; margin-top:.75rem;}
+    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
+    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
+    .muted{ color:#6b6b6b; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:16px; }
+    .tile{ display:block; text-decoration:none; color:inherit; border:2px solid #d7d7d7; border-radius:6px; background:#fff; padding:16px; min-height:120px; }
+    .tile-h{ font-weight:700; margin-bottom:6px; }
+    .tile-sub{ color:#333; }
+    .tile-cta{ margin-top:12px; font-weight:600; color:#0645ad; }
   </style>
 </BaseLayout>

@@ -1,0 +1,17 @@
+{
+  "active": false,
+  "env": "dev",
+  "generated_at": "2025-09-23T20:57:59.779696",
+  "last_update_utc": "2025-09-23T20:57:59.779696",
+  "ops_7d": {
+    "avg_errors": 0.42857142857142855,
+    "avg_gen_time": 0.0,
+    "avg_runtime": 0.0,
+    "errors": 0,
+    "gen_time": 0.0,
+    "runtime": 0.0
+  },
+  "schema_version": "1.2",
+  "sim_date": "2025-09-19",
+  "stage": "finalize"
+}

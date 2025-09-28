@@ -2,24 +2,74 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
-export async function getStaticPaths() {
-  const posts = await getCollection("posts");
-  return posts.map((p) => ({
-    params: { slug: p.slug },
-    props: { post: p },
-  }));
+const { slug = "" } = Astro.params;
+const posts = await getCollection("posts");
+const entry = posts.find(p => p.slug === slug);
+
+if (!entry) {
+  throw new Error(`Post not found: ${slug}`);
 }
 
-const { post } = Astro.props;
-const { Content } = await post.render(); // <-- get the renderer
+const { Content } = await entry.render();
 ---
+<BaseLayout title={`${entry.data.title} · Blog · EireQuant`} description={entry.data.summary ?? "EireQuant blog post"}>
+  <!-- LEFT rail -->
+  <Fragment slot="left">
+    <section class="card">
+      <h3 class="card-title">Navigation</h3>
+      <ul class="list">
+        <li><a href="/blog/">All posts</a></li>
+        <li><a href="/pipelines/live/">Live Pipeline</a></li>
+        <li><a href="/models/eqx-m1/">EQX-M1 Card</a></li>
+      </ul>
+    </section>
+  </Fragment>
 
-<BaseLayout title={`${post.data.title} — Blog`}>
-  <article class="prose max-w-none">
-    <h1>{post.data.title}</h1>
-    <p class="text-sm text-neutral-600">
-      {post.data.date} · {post.data.type?.toUpperCase?.()}
-    </p>
+  <!-- CENTER article -->
+  <article class="card article">
+    <h1 class="h1">{entry.data.title}</h1>
+    <p class="meta">{entry.data.date} · {(entry.data.type ?? "post").toUpperCase?.()}</p>
     <Content />
   </article>
+
+  <!-- RIGHT rail: digestibles -->
+  <Fragment slot="right">
+    <section class="card">
+      <h3 class="card-title">Live snapshot</h3>
+      <ul class="list" id="digest"></ul>
+      <div class="muted small"><a href="/pipelines/live/">Open Live Pipeline →</a></div>
+    </section>
+  </Fragment>
+
+  <style>
+    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
+    .article :where(h2,h3){ font-family: Georgia, 'Times New Roman', serif; margin-top:1rem; }
+    .article :where(p,li){ line-height:1.55; }
+    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
+    .meta{ color:#6b6b6b; margin:0 0 12px 0; }
+    .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+    .card-title{ margin:0 0 6px 0; font-weight:700; }
+    .muted{ color:#6b6b6b; } .small{ font-size:13px; }
+  </style>
+
+  <script type="module">
+    const $ = (s)=>document.querySelector(s);
+    const fmtPct = (x)=> (x==null? "—" : (Math.round(x*1000)/10).toFixed(1)+"%");
+    async function j(p){ try{ const r = await fetch(p); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
+    (async () => {
+      const digest = $("#digest");
+      const lb = await j("/data/models/eqx-m1/ticker_leaderboard.json");
+      if (lb?.items?.length){
+        const t = lb.items[0];
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>Top ticker:</strong> ${t.ticker ?? "-"} <span class="muted">(${fmtPct(t.score ?? t.confidence ?? 0)})</span>`;
+        digest.appendChild(li);
+      }
+      const status = await j("/data/pipeline/status.json");
+      if (status){
+        const li = document.createElement("li"); li.innerHTML = `<strong>Status:</strong> ${status.state ?? status.status ?? "—"}`;
+        digest.appendChild(li);
+      }
+    })();
+  </script>
 </BaseLayout>

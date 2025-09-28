@@ -1,10 +1,234 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import MegaGraph from "../components/MegaGraph.tsx";
+export const prerender = true;
 ---
-<BaseLayout title="Compare · EireQuant" description="Overlay benchmarks, models, and portfolios on a single chart.">
-  <h1>Compare</h1>
-  <p>Select any combination of benchmarks, models, and portfolios to compare equity curves.</p>
-  <MegaGraph client:load />
-  <p style="color:#666;margin-top:.5rem;">Notes: Stats are computed client-side (rf=0); curves should be total-return and aligned to the same frequency.</p>
+<BaseLayout title="Compare · EireQuant" description="Overlay benchmarks and model windows, with live stats.">
+  <section class="card">
+    <h1 class="h1">Compare</h1>
+    <p class="muted">Select benchmarks and model windows to overlay. Stats update automatically (rf = 0).</p>
+  </section>
+
+  <!-- Controls -->
+  <section class="card">
+    <div class="controls">
+      <div>
+        <h3 class="h3">Benchmarks</h3>
+        <ul id="bm-list" class="list"></ul>
+      </div>
+      <div>
+        <h3 class="h3">Model windows (EQX-M1)</h3>
+        <select id="model-window">
+          <option value="">— Select a window —</option>
+          <option value="equity_last_1w">Last 1w</option>
+          <option value="equity_last_1m">Last 1m</option>
+          <option value="equity_last_3m">Last 3m</option>
+          <option value="equity_last_1y">Last 1y</option>
+          <option value="equity_5y_1">5y (1)</option>
+          <option value="equity_5y_3">5y (3)</option>
+          <option value="equity_5y_4">5y (4)</option>
+          <option value="equity_5y_5">5y (5)</option>
+          <option value="equity_25y">25y</option>
+        </select>
+      </div>
+      <div>
+        <h3 class="h3">Regime overlay</h3>
+        <select id="regime">
+          <option value="">— None —</option>
+          <option value="equity_last_1m">Last 1m</option>
+          <option value="equity_last_3m">Last 3m</option>
+          <option value="equity_last_1y">Last 1y</option>
+          <option value="equity_25y">25y</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Big chart (canvas) -->
+  <section class="card">
+    <canvas id="chart" height="280" style="width:100%; border:1px solid #d7d7d7;"></canvas>
+    <div class="muted small">For a richer interactive view you can also use the built-in component below.</div>
+  </section>
+
+  <!-- Existing component (kept) -->
+  <section class="card">
+    <MegaGraph client:load />
+  </section>
+
+  <!-- Stats table -->
+  <section class="card">
+    <h2 class="h2">Statistics</h2>
+    <table class="table" id="stats">
+      <thead><tr><th>Series</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>MaxDD</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <style>
+    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
+    .h1,.h2,.h3{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
+    .muted{ color:#6b6b6b; }
+    .small{ font-size:13px; }
+    .controls{ display:grid; grid-template-columns: 2fr 2fr 1fr; gap:16px; align-items:end; }
+    @media (max-width: 1100px){ .controls{ grid-template-columns:1fr; } }
+    .list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+    .table{ width:100%; border-collapse:collapse; font-size:16px; }
+    .table th, .table td{ padding:6px 8px; border-bottom:1px solid #eee; text-align:left; }
+  </style>
+
+  <script type="module">
+    const $ = (s)=>document.querySelector(s);
+    const colors = ["#0b3d91","#a52a2a","#2f6f2f","#7a3a9a","#4b4b4b","#c05c0b","#145a7a","#6b2f2f"];
+    let colorIdx = 0;
+    const nextColor = () => colors[(colorIdx++) % colors.length];
+
+    async function j(path){ try{ const r = await fetch(path); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
+
+    // Basic equity curve drawing + stats
+    const ctx = $("#chart").getContext("2d");
+    function drawSeries(series){
+      const canvas = $("#chart");
+      const w = canvas.width = canvas.clientWidth;
+      const h = canvas.height = canvas.clientHeight;
+      ctx.clearRect(0,0,w,h);
+      if (!series.length) return;
+
+      // Find global min/max date + equity
+      const allPts = series.flatMap(s => s.data);
+      const dates = allPts.map(p => new Date(p.date).getTime());
+      const eqs   = allPts.map(p => +p.equity);
+      const minT = Math.min(...dates), maxT = Math.max(...dates);
+      const minY = Math.min(...eqs),   maxY = Math.max(...eqs);
+      const pad = 16;
+
+      function xScale(t){ return pad + (w-2*pad) * ((t - minT)/((maxT-minT)||1)); }
+      function yScale(y){ return h - pad - (h-2*pad) * ((y - minY)/((maxY-minY)||1)); }
+
+      // axes (light)
+      ctx.strokeStyle = "#ddd"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h-pad); ctx.lineTo(w-pad, h-pad); ctx.stroke();
+
+      // draw each series
+      series.forEach(s => {
+        ctx.beginPath();
+        s.data.forEach((p,i) => {
+          const t = new Date(p.date).getTime();
+          const x = xScale(t), y = yScale(+p.equity);
+          if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        });
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = s.color;
+        ctx.stroke();
+      });
+    }
+
+    function statsFromSeries(data){
+      // data: [{date, equity}, ...] sorted by date
+      if (!data?.length) return {cagr:"—", vol:"—", sharpe:"—", mdd:"—"};
+      const parseDate = (d)=> new Date(d).getTime();
+      const sorted = data.slice().sort((a,b)=>parseDate(a.date)-parseDate(b.date));
+      const first = +sorted[0].equity, last = +sorted[sorted.length-1].equity;
+      const days = (parseDate(sorted.at(-1).date) - parseDate(sorted[0].date)) / (1000*60*60*24) || 1;
+      const cagr = Math.pow(last/first, 365/days) - 1;
+
+      // returns + frequency inference
+      const rets = [];
+      for (let i=1;i<sorted.length;i++){
+        const r = (sorted[i].equity / sorted[i-1].equity) - 1;
+        rets.push(r);
+      }
+      // infer period
+      const gaps = [];
+      for (let i=1;i<sorted.length;i++){
+        gaps.push((parseDate(sorted[i].date)-parseDate(sorted[i-1].date))/(1000*60*60*24));
+      }
+      const medGap = gaps.sort((a,b)=>a-b)[Math.floor(gaps.length/2)] || 1;
+      const ann = medGap <= 2 ? 252 : medGap <= 10 ? 52 : medGap <= 40 ? 12 : 1;
+
+      // stdev
+      const mean = rets.reduce((a,b)=>a+b,0)/(rets.length||1);
+      const varr = rets.reduce((a,b)=>a+(b-mean)*(b-mean),0)/(Math.max(rets.length-1,1));
+      const volA = Math.sqrt(varr) * Math.sqrt(ann);
+      const sharpe = volA ? (cagr/volA) : 0;
+
+      // Max drawdown
+      let peak = -Infinity, mdd = 0;
+      sorted.forEach(p => { peak = Math.max(peak, +p.equity); mdd = Math.min(mdd, (+p.equity/peak)-1); });
+
+      const pct = (x)=> (isFinite(x)? (Math.round(x*1000)/10).toFixed(1)+"%" : "—");
+      return { cagr: pct(cagr), vol: pct(volA), sharpe: (isFinite(sharpe)? sharpe.toFixed(2) : "—"), mdd: pct(mdd) };
+    }
+
+    // Registry → list benchmarks
+    const bmList = $("#bm-list");
+    const chosen = new Map(); // name -> {data,color}
+    async function loadBenchmark(id, title){
+      const curve = await j(`/data/universe_v1/curves/${id}.json`);
+      const series = Array.isArray(curve) ? curve : (curve?.data || []);
+      const color = nextColor();
+      chosen.set(title, { data: series, color });
+    }
+    function refresh(){
+      drawSeries(Array.from(chosen, ([name, s]) => ({...s, name})));
+      // stats
+      const tbody = $("#stats tbody"); tbody.innerHTML = "";
+      for (const [name,s] of chosen){
+        const st = statsFromSeries(s.data);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${name}</td><td>${st.cagr}</td><td>${st.vol}</td><td>${st.sharpe}</td><td>${st.mdd}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // init controls
+    (async () => {
+      // Benchmarks registry
+      const reg = await j("/data/universe_v1/registry.json");
+      const list = reg?.benchmarks || reg?.items || [{ id:"sp500_total", title:"S&P 500 (Total)" }];
+      list.slice(0,8).forEach(item => {
+        const id = item.id || item.key || "sp500_total";
+        const title = item.title || item.name || id;
+        const li = document.createElement("li");
+        const cb = document.createElement("input");
+        cb.type = "checkbox"; cb.id = `bm-${id}`;
+        const lab = document.createElement("label");
+        lab.setAttribute("for", cb.id); lab.textContent = title;
+        cb.addEventListener("change", async (e) => {
+          if (cb.checked){
+            await loadBenchmark(id, title);
+          } else {
+            chosen.delete(title);
+          }
+          refresh();
+        });
+        li.append(cb, lab); bmList.appendChild(li);
+      });
+
+      // Default select SP500 if present
+      const def = document.querySelector('input[id="bm-sp500_total"]');
+      if (def){ def.checked = true; def.dispatchEvent(new Event("change")); }
+
+      // Model windows selector
+      $("#model-window").addEventListener("change", async (e) => {
+        const val = e.currentTarget.value;
+        if (!val) return;
+        const data = await j(`/data/models/eqx-m1/equity/${val}.json`);
+        const series = Array.isArray(data) ? data : (data?.data || data?.items || []);
+        chosen.set(`EQX-M1 · ${val.replace(/^equity_/, "")}`, { data: series, color: nextColor() });
+        refresh();
+      });
+
+      // Regime overlay (optional, shaded background; light stub)
+      $("#regime").addEventListener("change", async (e) => {
+        // You can add shaded overlays here later using the selected regime JSON.
+        // For now this is a no-op while keeping the control in place.
+        refresh();
+      });
+
+      // initial draw
+      refresh();
+      // handle resize
+      window.addEventListener("resize", () => refresh());
+    })();
+  </script>
 </BaseLayout>

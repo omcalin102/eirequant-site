@@ -1,23 +1,25 @@
 ---
 /**
- * Pure markup; behavior is handled via CSS :hover and :focus-within so the
- * menus stay open while the pointer is over the panel (no “disconnect” gap).
+ * Pure markup; open-on-hover via CSS (:hover / :focus-within) with a small
+ * “safe zone” so the panel doesn’t flicker when moving the cursor.
+ * On touch devices the <button> triggers open via :focus-within.
  */
 ---
 <nav class="site-header" aria-label="Primary">
   <div class="nav-inner">
+    <!-- Top-level links -->
     <a class="nav-link" href="/">Home</a>
 
-    <!-- Models (with flyout submenus) -->
+    <!-- Models -->
     <div class="dropdown">
       <button class="trigger" aria-haspopup="true">Models</button>
-      <div class="menu" role="menu">
+      <div class="menu" role="menu" aria-label="Models">
         <div class="menu-col">
           <a class="menu-section" href="/models/">Overview</a>
 
           <div class="has-flyout">
             <a class="menu-section" href="/models/#core">Core Series</a>
-            <div class="flyout" role="menu">
+            <div class="flyout" role="menu" aria-label="Core Series">
               <a class="flyout-link" href="/models/eq-core-mk1/">Mark 1</a>
               <a class="flyout-link" href="/models/eq-core-mk2/">Mark 2</a>
               <a class="flyout-link" href="/models/eq-core-mk3/">Mark 3</a>
@@ -26,10 +28,14 @@
 
           <div class="has-flyout">
             <a class="menu-section" href="/models/#sentinel">Sentinel Series</a>
-            <div class="flyout" role="menu">
+            <div class="flyout" role="menu" aria-label="Sentinel Series">
               <a class="flyout-link" href="/models/eq-sentinel-mk1/">Mark 1</a>
             </div>
           </div>
+
+          <!-- Experimental Series first (for EQX-M1) -->
+          <a class="menu-section" href="/models/#experimental">Experimental Series</a>
+          <a class="flyout-link" href="/models/eqx-m1/">EQX-M1 (Model Card)</a>
         </div>
       </div>
     </div>
@@ -37,17 +43,17 @@
     <!-- Pipelines -->
     <div class="dropdown">
       <button class="trigger" aria-haspopup="true">Pipelines</button>
-      <div class="menu" role="menu">
+      <div class="menu" role="menu" aria-label="Pipelines">
         <a class="menu-link" href="/pipelines/">Overview</a>
         <a class="menu-link" href="/pipelines/live/">Live Pipeline</a>
-        <a class="menu-link" href="/pipelines/sim/">Simulation Pipeline</a>
+        <a class="menu-link" href="/pipelines/sim/">Workstation (Sim)</a>
       </div>
     </div>
 
     <!-- Portfolios -->
     <div class="dropdown">
       <button class="trigger" aria-haspopup="true">Portfolios</button>
-      <div class="menu" role="menu">
+      <div class="menu" role="menu" aria-label="Portfolios">
         <a class="menu-link" href="/portfolios/">Overview</a>
         <a class="menu-link" href="/portfolios/core-12/">Core-12 Conf-Weighted</a>
         <a class="menu-link" href="/portfolios/conf-weighted/">Conf-Weighted</a>

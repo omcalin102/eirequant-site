@@ -1,7 +1,79 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+export const prerender = true;
 ---
-<BaseLayout title="Simulation Pipeline · EireQuant">
-  <h1>Simulation Pipeline</h1>
-  <p>Sim pipeline summary and recent simulation dates (to be populated).</p>
+<BaseLayout title="Workstation (Sim) · EireQuant" description="Where new models are created and tested. Methods, notes, and roadmap.">
+  <section class="card">
+    <h1 class="h1">Workstation (Sim)</h1>
+    <p class="muted">Research sandbox for prototyping models, validating ideas, and documenting methodology.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">What lives here</h2>
+    <ul class="list">
+      <li><strong>Model experiments:</strong> drafts and ablations prior to publishing.</li>
+      <li><strong>Data notes:</strong> feature engineering, cleaning, checks.</li>
+      <li><strong>Evaluation:</strong> windowed tests, regime slicing, calibration.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Recent artifacts</h2>
+    <p class="muted small">Pulled from the same static store we publish to production.</p>
+    <div class="grid2">
+      <div>
+        <h3 class="h3">EQX-M1 windows</h3>
+        <ul class="list" id="windows"></ul>
+      </div>
+      <div>
+        <h3 class="h3">Calibration snapshot</h3>
+        <div id="ece" class="stat"><span class="k">ECE</span><span class="v">—</span></div>
+        <div id="calib-note" class="muted small"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Roadmap</h2>
+    <ul class="list">
+      <li>Publish EQX-M1 notes (features, loss, controls).</li>
+      <li>Prototype M2 variants; compare by regime.</li>
+      <li>Automate reproducible experiment manifests.</li>
+    </ul>
+  </section>
+
+  <style>
+    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
+    .h1,.h2,.h3{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
+    .muted{ color:#6b6b6b; } .small{ font-size:13px; }
+    .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width:1100px){ .grid2{ grid-template-columns:1fr; } }
+    .stat{ display:inline-flex; gap:8px; border:1px solid #d7d7d7; padding:8px 12px; }
+    .stat .k{ font-weight:700; }
+    .stat .v{ font-variant-numeric: tabular-nums; }
+  </style>
+
+  <script type="module">
+    const $ = (s)=>document.querySelector(s);
+    async function j(p){ try{ const r = await fetch(p); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
+    (async () => {
+      const windows = [
+        "equity_last_1w","equity_last_1m","equity_last_3m","equity_last_1y",
+        "equity_5y_1","equity_5y_3","equity_5y_4","equity_5y_5","equity_25y"
+      ];
+      const ul = $("#windows");
+      windows.forEach(w => {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="/compare/?m=${encodeURIComponent(w)}">EQX-M1 · ${w.replace(/^equity_/,'')}</a>`;
+        ul.appendChild(li);
+      });
+
+      const calib = await j("/data/models/eqx-m1/calibration.json");
+      if (calib){
+        document.querySelector("#ece .v").textContent = calib.ece!=null ? (Math.round(calib.ece*1000)/1000).toString() : "—";
+        if (Array.isArray(calib.bins)) document.querySelector("#calib-note").textContent = `Bins: ${calib.bins.length}`;
+      }
+    })();
+  </script>
 </BaseLayout>

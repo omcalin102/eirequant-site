@@ -1,7 +1,194 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+export const prerender = true;
 ---
-<BaseLayout title="Live Pipeline · EireQuant">
-  <h1>Live Pipeline</h1>
-  <p>Live pipeline status, last run, modules, and logs (to be populated).</p>
+<BaseLayout title="Live Pipeline · EireQuant" description="Status, selections, greeks, sectors, and controls for the current day.">
+  <!-- HEADER STRIP -->
+  <section class="card">
+    <h1 class="h1">Live Pipeline</h1>
+    <p class="muted">Current live outputs for the latest run.</p>
+    <div class="strip">
+      <div class="kv"><span>Status</span><strong id="status">—</strong></div>
+      <div class="kv"><span>Last run</span><strong id="lastrun">—</strong></div>
+      <div class="kv"><span>Trading</span><strong id="trading">—</strong></div>
+      <div class="kv"><span>Current regime</span><strong id="regime">—</strong></div>
+    </div>
+  </section>
+
+  <!-- MODEL SELECTIONS -->
+  <section class="card">
+    <h2 class="h2">Model Selection</h2>
+    <table class="table" id="picks">
+      <thead><tr><th>Ticker</th><th>Action</th><th>Confidence</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div id="picks-empty" class="muted">No selections.</div>
+  </section>
+
+  <!-- GREEKS + SECTORS -->
+  <section class="card">
+    <div class="grid2">
+      <div>
+        <h2 class="h2">Portfolio Greeks</h2>
+        <div class="stats">
+          <div class="stat"><div class="k">Δ</div><div class="v" id="delta">—</div></div>
+          <div class="stat"><div class="k">Γ</div><div class="v" id="gamma">—</div></div>
+          <div class="stat"><div class="k">ν</div><div class="v" id="vega">—</div></div>
+        </div>
+      </div>
+      <div>
+        <h2 class="h2">Sector Health</h2>
+        <ul class="heat" id="sector-heat"></ul>
+        <div id="sector-empty" class="muted">No sector data.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTROL TRACE + OPS HEALTH -->
+  <section class="card">
+    <div class="grid2">
+      <div>
+        <h2 class="h2">Policy Control Trace</h2>
+        <canvas id="pid" height="160" style="width:100%; border:1px solid #d7d7d7;"></canvas>
+        <div class="muted small">Simple inline chart from <code>pid_policy_trace.json</code>.</div>
+      </div>
+      <div>
+        <h2 class="h2">Ops Health</h2>
+        <ul class="list" id="ops"></ul>
+        <div id="ops-empty" class="muted">No module status available.</div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
+    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 4px 0; }
+    .h2{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
+    .muted{ color:#6b6b6b; }
+    .small{ font-size:13px; }
+
+    .strip{ display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-top:10px; }
+    .kv{ border:1px solid #d7d7d7; padding:10px; display:flex; justify-content:space-between; }
+    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width: 1100px){ .grid2{ grid-template-columns:1fr; } .strip{ grid-template-columns:1fr 1fr; } }
+
+    .table{ width:100%; border-collapse:collapse; font-size:16px; }
+    .table th, .table td{ padding:6px 8px; border-bottom:1px solid #eee; text-align:left; }
+
+    .stats{ display:flex; gap:12px; }
+    .stat{ flex:1; border:1px solid #d7d7d7; padding:10px; text-align:center; }
+    .stat .k{ font-weight:700; font-family: Georgia, 'Times New Roman', serif; }
+    .stat .v{ font-size:18px; }
+
+    .heat{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+    .heat li{ border-left:8px solid #ccc; padding-left:8px; display:flex; justify-content:space-between; }
+    .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+  </style>
+
+  <script type="module">
+    const $ = (s) => document.querySelector(s);
+    const fmtPct = (x) => (x==null?"—":(Math.round(x*1000)/10).toFixed(1)+"%");
+    const leftColor = (score) => {
+      if (score >= 0.5) return "#3b7f3b";
+      if (score >= 0.1) return "#93b593";
+      if (score <= -0.5) return "#a33a3a";
+      if (score <= -0.1) return "#d7a1a1";
+      return "#cfcfcf";
+    };
+    async function j(path){ try{ const r = await fetch(path); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
+
+    // tiny line plotter for the PID canvas (no deps)
+    function drawLineCanvas(canvas, arr){
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.clientWidth;
+      const h = canvas.height = canvas.clientHeight;
+      ctx.clearRect(0,0,w,h);
+      if (!arr || !arr.length) return;
+      const xs = arr.map((_,i)=>i);
+      const ys = arr.map(v => +v || 0);
+      const ymin = Math.min(...ys), ymax = Math.max(...ys);
+      const pad = 8;
+      const scaleX = (i) => pad + (w-2*pad) * (i/(xs.length-1 || 1));
+      const scaleY = (y) => h - pad - (h-2*pad) * ((y - ymin)/((ymax - ymin) || 1));
+      ctx.beginPath();
+      ctx.moveTo(scaleX(0), scaleY(ys[0]));
+      for (let i=1;i<ys.length;i++) ctx.lineTo(scaleX(i), scaleY(ys[i]));
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#222";
+      ctx.stroke();
+    }
+
+    (async () => {
+      // header strip
+      const status = await j("/data/pipeline/status.json");
+      if (status) $("#status").textContent = status.state ?? status.status ?? "—";
+
+      const latest = await j("/data/daily/latest.json");
+      const date = latest?.date ?? "";
+      $("#lastrun").textContent = date || "—";
+
+      const pom = await j("/data/models/eqx-m1/pause_o_meter.json");
+      if (pom) $("#trading").textContent = pom.state ?? pom.mode ?? "—";
+
+      const reg = await j("/data/models/eqx-m1/current_regime.json");
+      if (reg) $("#regime").textContent = reg.name ?? reg.regime ?? "—";
+
+      // core daily widgets
+      if (date){
+        const base = `/data/daily/${date}`;
+
+        const picks = await j(`${base}/model_selection.json`);
+        const tbody = $("#picks tbody");
+        if (picks?.items?.length){
+          $("#picks-empty").style.display = "none";
+          picks.items.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${row.ticker ?? "-"}</td><td>${row.action ?? "-"}</td><td>${fmtPct(row.confidence)}</td>`;
+            tbody.appendChild(tr);
+          });
+        }
+
+        const greeks = await j(`${base}/risk_greeks.json`);
+        if (greeks){
+          $("#delta").textContent = fmtPct(greeks.delta);
+          $("#gamma").textContent = fmtPct(greeks.gamma);
+          $("#vega").textContent  = fmtPct(greeks.vega);
+        }
+
+        const sectors = await j(`${base}/sector_health.json`);
+        const heat = $("#sector-heat");
+        if (sectors?.items?.length){
+          $("#sector-empty").style.display = "none";
+          sectors.items.forEach(s => {
+            const li = document.createElement("li");
+            li.style.borderLeftColor = leftColor(s.score ?? 0);
+            li.innerHTML = `<span>${s.sector ?? "—"}</span><span>${(s.score ?? 0).toFixed(2)}</span>`;
+            heat.appendChild(li);
+          });
+        }
+      }
+
+      // PID trace
+      const pid = await j("/data/models/eqx-m1/pid_policy_trace.json");
+      const values = Array.isArray(pid) ? pid
+                   : Array.isArray(pid?.values) ? pid.values
+                   : Array.isArray(pid?.points) ? pid.points.map(p => p.value ?? p.y)
+                   : [];
+      drawLineCanvas($("#pid"), values);
+
+      // Ops health
+      const oh = await j("/data/models/eqx-m1/ops_health.json");
+      const list = $("#ops");
+      if (oh?.items?.length){
+        $("#ops-empty").style.display = "none";
+        oh.items.forEach(m => {
+          const li = document.createElement("li");
+          const s = m.state ?? m.status ?? "OK";
+          li.textContent = `${m.name ?? "module"} — ${s}`;
+          if (String(s).toUpperCase() !== "OK") li.style.color = "#a33a3a";
+          list.appendChild(li);
+        });
+      }
+    })();
+  </script>
 </BaseLayout>

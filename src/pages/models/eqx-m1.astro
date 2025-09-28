@@ -1,30 +1,283 @@
 ---
-const catalog = await fetch('/data/models/eqx-m1/catalog.json').then(r=>r.json());
-const calib   = await fetch('/data/models/eqx-m1/calibration.json').then(r=>r.json());
-const perf    = await fetch('/data/models/eqx-m1/by_regime_perf.json').then(r=>r.json());
+/* EQX-M1 model card — central column focus, neat, early-2000s crisp */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+export const prerender = true;
 
-const chartSrcFor = (key) => `/img/models/eqx-m1/charts/${key}.png`;
+const title = "EQX-M1 · Model Card";
+const description = "EQ Experimental Series — Model M1. Performance, key metrics, and methodology.";
 ---
-<html lang="en">
-  <head><title>EQX M1 — Model Card</title></head>
-  <body class="max-w-6xl mx-auto px-4 py-10">
-    <h1 class="text-3xl font-bold mb-1">EQX M1 — Model Card</h1>
-    <p class="text-sm text-gray-500 mb-8">Generated: {catalog.generated_at}</p>
-
-    <section class="grid md:grid-cols-3 gap-4 mb-10">
-      <div class="p-4 rounded-2xl shadow"><h3 class="font-semibold mb-2">Schema</h3><p>v{catalog.schema_version}</p></div>
-      <div class="p-4 rounded-2xl shadow"><h3 class="font-semibold mb-2">Env</h3><p>{catalog.env}</p></div>
-      <div class="p-4 rounded-2xl shadow"><h3 class="font-semibold mb-2">ECE</h3><p>{calib?.ece ?? '—'}</p></div>
-    </section>
-
-    <h2 class="text-2xl font-semibold mb-4">Performance Snapshots</h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {catalog.items.map((it) => (
-        <figure class="rounded-2xl overflow-hidden shadow">
-          <img src={chartSrcFor(it.key)} alt={it.label} loading="lazy" />
-          <figcaption class="text-sm p-2">{it.label}</figcaption>
-        </figure>
-      ))}
+<BaseLayout {title} {description}>
+  <!-- CENTER COLUMN CONTENT -->
+  <section class="card">
+    <h1 class="h1">EQX-M1 · Model Card</h1>
+    <div class="meta-row">
+      <div><span class="k">Generated</span> <span id="gen">—</span></div>
+      <div><span class="k">Schema</span> <span id="schema">—</span></div>
+      <div><span class="k">Env</span> <span id="env">—</span></div>
+      <div class="badge" id="regime">Regime: —</div>
+      <div class="badge" id="trading">Trading: —</div>
     </div>
-  </body>
-</html>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Key Metrics</h2>
+    <div class="grid2">
+      <div>
+        <h3 class="h3">By Regime Performance</h3>
+        <table class="table" id="perf-table">
+          <thead><tr><th>Regime</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>Win%</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div>
+        <h3 class="h3">Calibration</h3>
+        <div class="stat">
+          <div class="k">ECE</div>
+          <div class="v" id="ece">—</div>
+        </div>
+        <div id="calib-extra" class="muted"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">What the Model Does</h2>
+    <div id="prose">
+      <!-- Populated from model_card_eqx_m1.json: objective, inputs, validation, caveats -->
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Performance Gallery</h2>
+    <div id="gallery" class="gallery"></div>
+    <div class="muted small">Static PNGs for speed. Use Compare to view interactive windows.</div>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Regime Context</h2>
+    <div class="timeline" id="timeline"></div>
+    <div class="spacer8"></div>
+    <h3 class="h3">Transitions</h3>
+    <table class="table" id="transitions">
+      <thead><tr><th>From</th><th>To</th><th>Count</th><th>Prob.</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Drivers & Sensitivities</h2>
+    <div class="grid2">
+      <div>
+        <h3 class="h3">Top Drivers</h3>
+        <ul class="list" id="drivers"></ul>
+      </div>
+      <div>
+        <h3 class="h3">Greek Proxies</h3>
+        <table class="table" id="greek-proxies">
+          <thead><tr><th>Feature</th><th>Sign</th><th>Note</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Sectors & Tickers</h2>
+    <div class="grid2">
+      <div>
+        <h3 class="h3">Sector Performance</h3>
+        <table class="table" id="sector-perf">
+          <thead><tr><th>Sector</th><th>Score</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div>
+        <h3 class="h3">Ticker Leaderboard</h3>
+        <ol class="list" id="leaderboard"></ol>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
+  .h1{ font-family: Georgia, 'Times New Roman', serif; font-size:32px; margin:0; }
+  .h2{ font-family: Georgia, 'Times New Roman', serif; font-size:24px; margin:0 0 8px 0; }
+  .h3{ font-size:18px; margin:0 0 6px 0; }
+  .muted{ color:#6b6b6b; }
+  .small{ font-size:13px; }
+  .spacer8{ height:8px; }
+
+  .meta-row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:8px; }
+  .meta-row .k{ font-weight:700; margin-right:6px; }
+  .badge{ border:1px solid #d7d7d7; padding:4px 8px; border-radius:6px; font-size:14px; }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width: 1100px){ .grid2{ grid-template-columns:1fr; } }
+
+  .table{ width:100%; border-collapse:collapse; font-size:16px; }
+  .table th, .table td{ padding:6px 8px; border-bottom:1px solid #eee; text-align:left; }
+  .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+
+  .stat{ border:1px solid #d7d7d7; padding:12px; display:inline-flex; align-items:baseline; gap:8px; }
+  .stat .k{ font-weight:700; font-family: Georgia, 'Times New Roman', serif; }
+  .stat .v{ font-size:18px; }
+
+  /* Gallery */
+  .gallery{ display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+  @media (min-width: 980px){ .gallery{ grid-template-columns:repeat(4, 1fr); } }
+  .gallery figure{ margin:0; border:2px solid #d7d7d7; border-radius:6px; overflow:hidden; background:#fff; }
+  .gallery img{ display:block; width:100%; height:auto; }
+  .gallery figcaption{ padding:6px 8px; font-size:14px; border-top:1px solid #eee; }
+  
+  /* Timeline (simple badges; can be upgraded later) */
+  .timeline{ display:flex; flex-wrap:wrap; gap:8px; }
+  .timeline .seg{ border:1px solid #d7d7d7; padding:4px 8px; border-radius:6px; font-size:14px; background:#fafafa; }
+</style>
+
+<script type="module">
+  const $ = (s) => document.querySelector(s);
+  const fmtPct = (x) => (x==null?"—":(Math.round(x*1000)/10).toFixed(1)+"%");
+  async function j(path){ try{ const r = await fetch(path); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
+
+  (async () => {
+    // Meta from catalog
+    const cat = await j("/data/models/eqx-m1/catalog.json");
+    if (cat){
+      $("#gen").textContent    = cat.generated_at ?? "—";
+      $("#schema").textContent = cat.schema_version ?? "—";
+      $("#env").textContent    = cat.env ?? "—";
+    }
+
+    // Current regime
+    const regime = await j("/data/models/eqx-m1/current_regime.json");
+    if (regime){ $("#regime").textContent = `Regime: ${regime.name ?? regime.regime ?? "—"}`; }
+
+    // Trading / pause-o-meter
+    const pom = await j("/data/models/eqx-m1/pause_o_meter.json");
+    if (pom){ $("#trading").textContent = `Trading: ${pom.state ?? pom.mode ?? "—"}`; }
+
+    // Key metrics: by-regime perf
+    const perf = await j("/data/models/eqx-m1/by_regime_perf.json");
+    const tbody = $("#perf-table tbody");
+    if (perf?.items?.length){
+      perf.items.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${r.regime ?? r.name ?? "—"}</td>
+                        <td>${fmtPct(r.cagr ?? r.CAGR)}</td>
+                        <td>${fmtPct(r.vol ?? r.Vol)}</td>
+                        <td>${(r.sharpe ?? r.Sharpe ?? "—")}</td>
+                        <td>${fmtPct(r.win ?? r.win_rate ?? r.Win)}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Calibration
+    const calib = await j("/data/models/eqx-m1/calibration.json");
+    if (calib){
+      $("#ece").textContent = calib.ece!=null ? (Math.round(calib.ece*1000)/1000).toString() : "—";
+      if (Array.isArray(calib.bins)){
+        $("#calib-extra").textContent = `Bins: ${calib.bins.length}`;
+      }
+    }
+
+    // Model card prose
+    const prose = await j("/data/models/eqx-m1/model_card_eqx_m1.json");
+    const proseEl = $("#prose");
+    const add = (title, text) => {
+      if (!text) return;
+      const h = document.createElement("h3"); h.className = "h3"; h.textContent = title;
+      const p = document.createElement("p"); p.textContent = text;
+      proseEl.appendChild(h); proseEl.appendChild(p);
+    };
+    if (prose){
+      add("Objective", prose.objective ?? prose.summary);
+      add("Inputs", prose.inputs ?? prose.features);
+      add("Validation", prose.validation ?? prose.methodology);
+      add("Caveats", prose.caveats ?? prose.limitations);
+    }
+
+    // Gallery from catalog
+    const gal = $("#gallery");
+    if (cat?.items?.length){
+      cat.items.forEach(it => {
+        const fig = document.createElement("figure");
+        fig.innerHTML = `
+          <img src="/img/models/eqx-m1/charts/${it.key}.png" alt="${it.label ?? it.key}">
+          <figcaption>${it.label ?? it.key}</figcaption>
+        `;
+        gal.appendChild(fig);
+      });
+    }
+
+    // Regime timeline
+    const tl = await j("/data/models/eqx-m1/regime_timeline.json");
+    const tlel = $("#timeline");
+    if (tl?.segments?.length){
+      tl.segments.forEach(s => {
+        const d = document.createElement("div");
+        d.className = "seg";
+        const a = s.start ?? s.from ?? "…", b = s.end ?? s.to ?? "…";
+        d.textContent = `${s.name ?? s.regime ?? "—"} (${a} → ${b})`;
+        tlel.appendChild(d);
+      });
+    }
+
+    // Transitions
+    const trans = await j("/data/models/eqx-m1/regime_transitions.json");
+    const tBody = $("#transitions tbody");
+    if (trans?.items?.length){
+      trans.items.forEach(x => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${x.from ?? "—"}</td><td>${x.to ?? "—"}</td><td>${x.count ?? "—"}</td><td>${(x.prob!=null)?(Math.round(x.prob*1000)/10).toFixed(1)+"%":"—"}</td>`;
+        tBody.appendChild(tr);
+      });
+    }
+
+    // Drivers
+    const drv = await j("/data/models/eqx-m1/top_drivers.json");
+    const drvEl = $("#drivers");
+    if (drv?.items?.length){
+      drv.items.slice(0,10).forEach(d => {
+        const li = document.createElement("li");
+        li.textContent = `${d.sign ? (d.sign>0 ? "▲" : "▼") + " " : ""}${d.name ?? d.driver ?? "feature"}` + (d.note ? ` — ${d.note}` : "");
+        drvEl.appendChild(li);
+      });
+    }
+
+    // Greek proxies
+    const gp = await j("/data/models/eqx-m1/greek_proxies.json");
+    const gpBody = $("#greek-proxies tbody");
+    if (gp?.items?.length){
+      gp.items.forEach(g => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${g.name ?? g.feature ?? "—"}</td>
+                        <td>${g.sign!=null ? (g.sign>0?"Positive":"Negative") : "—"}</td>
+                        <td>${g.note ?? ""}</td>`;
+        gpBody.appendChild(tr);
+      });
+    }
+
+    // Sector perf
+    const sp = await j("/data/models/eqx-m1/sector_perf.json");
+    const spBody = $("#sector-perf tbody");
+    if (sp?.items?.length){
+      sp.items.forEach(s => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${s.sector ?? "—"}</td><td>${(s.score ?? 0).toFixed(2)}</td>`;
+        spBody.appendChild(tr);
+      });
+    }
+
+    // Ticker leaderboard
+    const lb = await j("/data/models/eqx-m1/ticker_leaderboard.json");
+    const lbEl = $("#leaderboard");
+    if (lb?.items?.length){
+      lb.items.slice(0,10).forEach((t,i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${i+1}.</strong> ${t.ticker ?? "-"} <span class="muted">(${fmtPct(t.score ?? t.confidence ?? 0)})</span>`;
+        lbEl.appendChild(li);
+      });
+    }
+  })();
+</script>

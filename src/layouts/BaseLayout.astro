@@ -2,9 +2,8 @@
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 
-// Keep your global styles
+// Keep global styles
 import "../styles/global.css";
-
 // Header/Nav + brand overlay styles
 import "../styles/header.css";
 
@@ -18,25 +17,75 @@ const { title = "EireQuant", description = "Quant research platform." } = Astro.
     <title>{title}</title>
     <meta name="description" content={description} />
 
+    <!-- (ok to keep Inter if used elsewhere; body font is set in CSS below) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     {Astro.head}
   </head>
-  <body>
-    <!-- Floating brand; sits above the header border but never captures pointer -->
+  <body class="eq-shell">
+    <!-- Floating brand; never captures pointer -->
     <div class="brand-overlay" aria-hidden="true">
-      <!-- Use the wordmark you already ship in /public/brand/ -->
       <img src="/brand/logo-wordmark.png" alt="" />
     </div>
 
     <Nav />
 
-    <main id="main" class="page">
-      <slot />
+    <!-- Three-column layout on every page -->
+    <main id="main" class="page three-col" tabindex="-1">
+      <!-- Left rail (optional) -->
+      <aside class="rail rail-left" aria-label="Side navigation and quick links">
+        <slot name="left" />
+      </aside>
+
+      <!-- Center column -->
+      <section class="center" aria-label="Main content">
+        <slot />
+      </section>
+
+      <!-- Right rail (optional) -->
+      <aside class="rail rail-right" aria-label="Related content">
+        <slot name="right" />
+      </aside>
     </main>
 
     <Footer />
+
+    <style>
+      /* Sticky footer + early-2000s base type */
+      .eq-shell {
+        position: relative;            /* anchor for brand overlay */
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        color: #161616;
+        background: #fff;
+        font-family: Verdana, Tahoma, Geneva, Segoe UI, sans-serif;
+        font-size: 18px;
+        line-height: 1.55;
+      }
+
+      /* Three-column grid shell */
+      .three-col {
+        max-width: 1460px;
+        margin-inline: auto;
+        padding: 2rem 1rem;
+        display: grid;
+        grid-template-columns: 220px minmax(720px, 980px) 220px;
+        gap: 24px;
+        min-height: 72vh; /* keeps footer from floating up on sparse pages */
+      }
+
+      .rail { display: flex; flex-direction: column; gap: 16px; }
+      .center { display: flex; flex-direction: column; gap: 32px; }
+
+      /* Responsive: collapse rails under 1100px */
+      @media (max-width: 1100px) {
+        .three-col { grid-template-columns: 1fr; }
+        .rail-left, .rail-right { order: 2; }
+        .center { order: 1; }
+      }
+    </style>
   </body>
 </html>

@@ -1,41 +1,33 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-
-// Load all portfolio entries
-const raw = await getCollection("portfolios");
-
-// Resolve a display title that works with both schemas
-function resolveTitle(entry: any): string {
-  const d = entry?.data ?? {};
-  return (d.title ?? d.name ?? entry.slug ?? "").toString();
-}
-
-// Sort safely by resolved title
-const items = raw.sort((a, b) => resolveTitle(a).localeCompare(resolveTitle(b)));
+const portfolios = (await getCollection("portfolios")).sort((a,b)=>a.data.title.localeCompare(b.data.title));
+export const prerender = true;
 ---
-<BaseLayout title="Portfolios · EireQuant" description="Portfolio allocations with equity and drawdown metrics.">
-  <h1>Portfolios</h1>
-  <div class="cards">
-    {items.map((entry) => {
-      const d = entry.data as any;
-      const title = d.title ?? d.name ?? entry.slug;
-      const href = `/portfolios/${d.slug ?? entry.slug}/`;
-      const summary = d.summary ?? d.objective ?? "Description coming soon.";
-      return (
-        <a class="card" href={href}>
-          <div class="kicker">Portfolio</div>
-          <h3>{title}</h3>
-          <p>{summary}</p>
-        </a>
-      );
-    })}
-  </div>
+<BaseLayout title="Portfolios · EireQuant" description="Allocation rules with equity, drawdown, and turnover metrics.">
+  <section class="card">
+    <h1 class="h1">Portfolios</h1>
+    <p class="muted">Weighting rules built on top of models; more detail pages to follow.</p>
+  </section>
+
+  <section class="grid">
+    {portfolios.map(p => (
+      <a class="tile" href={`/portfolios/${p.slug}/`}>
+        <div class="tile-h">{p.data.title}</div>
+        <div class="tile-sub">{p.data.summary ?? "Coming soon."}</div>
+        <div class="tile-cta">Open →</div>
+      </a>
+    ))}
+  </section>
 
   <style>
-    .cards{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-top:.75rem; }
-    .card{ border:1px solid #eee; border-radius:12px; padding:1rem; background:#fff; }
-    .card:hover{ border-color:#ddd; box-shadow:0 8px 24px rgba(0,0,0,.06); }
-    .kicker{ font-size:.8rem; text-transform:uppercase; color:#666; }
+    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
+    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
+    .muted{ color:#6b6b6b; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:16px; }
+    .tile{ display:block; text-decoration:none; color:inherit; border:2px solid #d7d7d7; border-radius:6px; background:#fff; padding:16px; min-height:140px; }
+    .tile-h{ font-weight:700; margin-bottom:6px; }
+    .tile-sub{ color:#333; }
+    .tile-cta{ margin-top:12px; font-weight:600; color:#0645ad; }
   </style>
 </BaseLayout>

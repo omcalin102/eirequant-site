@@ -1,173 +1,189 @@
-/* ===========================
-   Brand overlay (top-left)
-   =========================== */
-.brand-overlay {
-  position: fixed;
-  top: 10px;
-  left: 14px;
-  z-index: 30;           /* above header border so it “spills over” */
-  pointer-events: none;  /* never intercept clicks/hover */
-}
-.brand-overlay img {
-  width: 160px;          /* current good size */
-  height: auto;
-  display: block;
-  opacity: 0.98;
+/* ====== EireQuant Header / Nav ====== */
+:root {
+    --eq-header-h: 76px; /* consistent header height */
+    --eq-logo-h: 56px; /* wordmark height (auto width) */
+    --eq-maxw: 1460px;
+    --eq-border: #d7d7d7; /* pronounced early-2000s borders */
 }
 
-@media (max-width: 1024px) {
-  .brand-overlay img { width: 140px; }
-}
-@media (max-width: 640px) {
-  .brand-overlay img { width: 120px; }
-}
-
-/* ===========================
-   Header / Primary Nav
-   =========================== */
+/* Header bar */
 .site-header {
-  position: relative;
-  z-index: 40;                  /* above the brand for menu interaction */
-  background: #fff;
-  border-bottom: 1px solid #ececec;
-
-  /* left padding keeps the header box from wrapping the logo */
-  padding: 12px 20px;
-  padding-left: 200px;          /* brand width + breathing room */
-
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-
-  /* Make header a flex row and vertically center items */
-  display: flex;
-  align-items: center;
+    position: relative;
+    z-index: 10;
+    height: var(--eq-header-h);
+    border-bottom: 1px solid var(--eq-border);
+    background: #fff;
 }
 
-/* CRITICAL: let the <nav> fill the row so we can push links to the right */
-.site-header nav {
-  flex: 1 1 auto;
-}
-
-/* The row that holds top-level links */
+/* Inner container – leaves space for the floating wordmark on the left */
 .nav-inner {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-
-  /* Now that <nav> fills the row, this pushes links to the right edge */
-  justify-content: flex-end;
+    height: 100%;
+    max-width: var(--eq-maxw);
+    margin-inline: auto;
+    padding: 0 16px 0 168px; /* room for brand overlay */
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 16px; /* body is 18px; nav slightly smaller */
+    line-height: 1;
 }
 
-/* Top-level links & triggers share a common style */
+/* Floating brand wordmark (purely decorative, never intercepts clicks) */
+.brand-overlay {
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    height: var(--eq-logo-h);
+    pointer-events: none;
+    z-index: 20;
+}
+
+    .brand-overlay img {
+        height: var(--eq-logo-h);
+        width: auto;
+        display: block;
+    }
+
+/* Top-level links + items share the same visual language */
 .nav-link,
-.trigger {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111;
-  text-decoration: none;
-}
-
-.trigger {
-  background: transparent;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-}
-
-/* Dropdown container */
-.dropdown {
-  position: relative;
-}
-
-/* The dropdown panel; invisible by default */
-.menu {
-  position: absolute;
-  top: calc(100% + 10px); /* attached to trigger; no hover “gap” */
-  left: 0;
-  min-width: 240px;
-  background: #fff;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-  padding: 10px;
-  display: none;
-}
-
-/* Show panel on hover OR keyboard focus */
-.dropdown:hover .menu,
-.dropdown:focus-within .menu {
-  display: block;
-}
-
-/* Column inside menu */
-.menu-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
+.trigger,
+.menu-link,
 .menu-section,
-.menu-link {
-  display: block;
-  padding: 8px 10px;
-  border-radius: 6px;
-  color: #222;
-  text-decoration: none;
-  font-weight: 500;
-}
-.menu-section:hover,
-.menu-link:hover {
-  background: #f5f5f5;
-}
-
-/* Second-level flyout (to the right) */
-.has-flyout {
-  position: relative;
-}
-.has-flyout > .menu-section {
-  padding-right: 26px; /* space for caret (optional) */
-}
-
-.flyout {
-  position: absolute;
-  top: -8px;            /* aligns top items across the two panels */
-  left: calc(100% + 8px);
-  min-width: 220px;
-  background: #fff;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-  padding: 8px;
-  display: none;
-}
-
-/* Keep flyout open while hovering within either parent item or flyout */
-.has-flyout:hover .flyout,
-.has-flyout:focus-within .flyout {
-  display: block;
-}
-
 .flyout-link {
-  display: block;
-  padding: 8px 10px;
-  border-radius: 6px;
-  color: #222;
-  text-decoration: none;
-  font-weight: 500;
-}
-.flyout-link:hover {
-  background: #f5f5f5;
+    color: #1b1b1b;
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 4px; /* small, not pill */
+    line-height: 1;
+    cursor: pointer;
+    background: transparent;
+    border: none; /* buttons look like links */
+    font: inherit;
 }
 
-/* Responsive tweaks */
-@media (max-width: 1024px) {
-  .site-header { padding-left: 180px; }
+    /* Hover/visited feel (classic) */
+    .nav-link:hover,
+    .menu-link:hover,
+    .menu-section:hover,
+    .flyout-link:hover {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+
+a:visited {
+    color: #4b2f6b; /* subtle visited color */
 }
-@media (max-width: 640px) {
-  .site-header {
-    padding-left: 140px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-  .nav-inner { gap: 18px; }
-  .nav-link, .trigger { font-size: 15px; }
+
+/* Keyboard accessibility */
+.nav-link:focus-visible,
+.trigger:focus-visible,
+.menu-link:focus-visible,
+.menu-section:focus-visible,
+.flyout-link:focus-visible {
+    outline: 2px solid #0a66c2;
+    outline-offset: 2px;
+}
+
+/* Dropdown root */
+.dropdown {
+    position: relative;
+}
+
+/* Base dropdown panel (hidden by default) */
+.menu {
+    position: absolute;
+    left: 0;
+    top: calc(100% - 2px);
+    min-width: 240px;
+    padding: 10px;
+    background: #fff;
+    border: 2px solid var(--eq-border);
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity .12s ease, transform .12s ease, visibility 0s linear .12s;
+}
+
+/* Keep panel open while hovering the trigger or panel; works on touch via focus-within */
+.dropdown:hover > .menu,
+.dropdown:focus-within > .menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: opacity .12s ease, transform .12s ease;
+}
+
+/* “Safe zone” – prevents flicker when moving from button to panel */
+.menu::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+}
+
+/* Column stack inside dropdowns */
+.menu-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Nested flyouts */
+.has-flyout {
+    position: relative;
+    padding-right: 6px;
+}
+
+    .has-flyout > .flyout {
+        position: absolute;
+        top: 0;
+        left: calc(100% + 6px);
+        min-width: 180px;
+        padding: 8px;
+        background: #fff;
+        border: 2px solid var(--eq-border);
+        border-radius: 6px;
+        box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateX(6px);
+        transition: opacity .12s ease, transform .12s ease, visibility 0s linear .12s;
+    }
+
+    .has-flyout:hover > .flyout,
+    .has-flyout:focus-within > .flyout {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateX(0);
+    }
+
+/* Compact separators if you want to group items
+.menu-link + .menu-section { margin-top: 6px; border-top: 1px dashed #e6e6e6; padding-top: 8px; }
+*/
+
+/* Narrow screens – let items wrap, keep wordmark reasonable */
+@media (max-width: 980px) {
+    .nav-inner {
+        padding-left: 140px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .brand-overlay {
+        top: 12px;
+        left: 12px;
+        height: 48px;
+    }
+
+        .brand-overlay img {
+            height: 48px;
+        }
 }
