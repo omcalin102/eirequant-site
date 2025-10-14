@@ -4,98 +4,134 @@ import { getCollection } from "astro:content";
 const posts = (await getCollection("posts")).sort((a,b)=>a.data.date<b.data.date?1:-1);
 export const prerender = true;
 ---
-<BaseLayout title="Blog · EireQuant" description="Analyses, pipeline notes, and monthly reviews.">
-  <!-- LEFT RAIL (optional simple nav) -->
-  <Fragment slot="left">
-    <section class="card">
-      <h3 class="card-title">Browse</h3>
-      <ul class="list">
-        <li><a href="/blog/">All posts</a></li>
-        <li><a href="/pipelines/live/">Live Pipeline</a></li>
-        <li><a href="/models/eqx-m1/">EQX-M1 Model Card</a></li>
-      </ul>
-    </section>
-  </Fragment>
 
-  <!-- CENTER: FT-like vertical list -->
-  <section class="card">
-    <h1 class="h1">Blog</h1>
-    <p class="muted">Professional yet readable summaries of research, pipeline notes, and reviews.</p>
-  </section>
+<BaseLayout title="Blog · EireQuant" description="Analyses, pipeline notes, and market commentary.">
+  <div class="grid">
+    <!-- LEFT -->
+    <aside class="rail">
+      <section class="card">
+        <h3 class="card-title">Browse</h3>
+        <ul class="list">
+          <li><a href="/blog/">All posts</a></li>
+          <li><a href="/pipelines/live/">Live Pipeline</a></li>
+          <li><a href="/models/eqx-m1/">EQX-M1 Model Card</a></li>
+        </ul>
+      </section>
+    </aside>
 
-  <section class="list-wrap">
-    {posts.map(p => (
-      <a href={`/blog/${p.slug}/`} class="post">
-        <h2 class="post-title">{p.data.title}</h2>
-        <div class="post-meta">{p.data.date} · {(p.data.type ?? "").toUpperCase?.() || "POST"}</div>
-        {p.data.summary && <p class="post-sum">{p.data.summary}</p>}
-      </a>
-    ))}
-  </section>
+    <!-- CENTER -->
+    <main class="center">
+      <section class="card hero">
+        <h1 class="h1">Blog</h1>
+        <p class="muted">
+          Project analysis, model notes, and topical macro economic commentary.
+        </p>
+      </section>
 
-  <!-- RIGHT RAIL: digestibles -->
-  <Fragment slot="right">
-    <section class="card">
-      <h3 class="card-title">From the pipeline</h3>
-      <ul class="list" id="digest"></ul>
-      <div class="muted small"><a href="/pipelines/live/">Open Live Pipeline →</a></div>
-    </section>
-  </Fragment>
+      <section class="list-wrap">
+        {posts.map(p => (
+          <a href={`/blog/${p.slug}/`} class="post">
+            <h2 class="post-title">{p.data.title}</h2>
+            <div class="post-meta">{p.data.date} · {(p.data.type ?? "Post").toUpperCase()}</div>
+            {p.data.summary && <p class="post-sum">{p.data.summary}</p>}
+          </a>
+        ))}
+      </section>
+    </main>
+
+    <!-- RIGHT -->
+    <aside class="rail">
+      <section class="card">
+        <h3 class="card-title">What you’ll find</h3>
+        <p class="muted">
+          This section hosts research write-ups from the pipeline—model behaviour, calibration and regime work,
+          and operations learnings where process matters as much as performance. It also features topical pieces:
+          macro events that affect positioning and technology notes when new tools or methods change how we build.
+        </p>
+        <p class="muted">
+          Most articles are authored by myself. From time to time we’ll feature outside
+          contributors and guest analysts who bring domain perspective and independent views.
+          If you’d like to contribute or share feedback, <a href="/contact/">get in touch</a>.
+        </p>
+      </section>
+
+      <section class="card">
+        <h3 class="card-title">From the pipeline</h3>
+        <ul class="list" id="digest"></ul>
+        <div class="muted small"><a href="/pipelines/live/">Open Live Pipeline →</a></div>
+      </section>
+    </aside>
+  </div>
 
   <style>
-    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
-    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
-    .muted{ color:#6b6b6b; }
-    .small{ font-size:13px; }
+    .grid{display:grid;grid-template-columns:260px 1fr 260px;gap:1rem;align-items:start}
+    @media(max-width:1100px){.grid{grid-template-columns:1fr}}
+    .rail{display:grid;gap:1rem}
+    .center{display:grid;gap:1rem}
 
-    .list-wrap{ display:flex; flex-direction:column; gap:12px; }
-    .post{
-      display:block; text-decoration:none; color:inherit;
-      border:2px solid #d7d7d7; border-radius:6px; background:#fff; padding:16px;
-    }
-    .post:hover{ box-shadow:0 2px 12px rgba(0,0,0,.06); }
-    .post-title{ margin:0 0 4px 0; font-size:20px; font-weight:700; }
-    .post-meta{ color:#555; font-size:14px; margin-bottom:6px; }
-    .post-sum{ color:#333; }
+    .card{border:1px solid var(--border,#e6e6e6);padding:16px;background:#fff;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .card-title{margin:0 0 6px 0;font-weight:700}
+    .hero{padding:18px 18px 14px}
+    .h1{font-size:28px;line-height:1.2;margin:0 0 6px 0}
+    .muted{color:#555}
+    .small{font-size:13px}
 
-    .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+    .list{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+    .list a{text-decoration:none}
+
+    .list-wrap{display:flex;flex-direction:column;gap:12px}
+    .post{display:block;text-decoration:none;color:inherit;border:1px solid var(--border,#e6e6e6);border-radius:10px;background:#fff;padding:16px;transition:box-shadow .15s ease,transform .05s ease}
+    .post:hover{box-shadow:0 6px 18px rgba(0,0,0,.06);transform:translateY(-1px)}
+    .post-title{margin:0 0 4px 0;font-size:20px;font-weight:700}
+    .post-meta{color:#666;font-size:14px;margin-bottom:6px}
+    .post-sum{color:#222}
   </style>
 
   <script type="module">
-    const $ = (s)=>document.querySelector(s);
-    const fmtPct = (x)=> (x==null? "—" : (Math.round(x*1000)/10).toFixed(1)+"%");
-    async function j(path){ try{ const r = await fetch(path); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
+    const baseHref = () => (document.querySelector("base")?.getAttribute("href") || "/").replace(/\/+$/, "/");
+    const url = (p) => (baseHref() + String(p).replace(/^\//,"")).replace(/([^:]\/)\/+/g,"$1");
+    const fmtPct = (x)=> (x==null || !isFinite(+x)) ? "—" : (Math.round(+x*1000)/10).toFixed(1)+"%";
+    async function j(p){ try{ const r = await fetch(url(p), {cache:"no-cache"}); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
 
     (async () => {
-      const latest = await j("/data/daily/latest.json");
+      const list = document.querySelector("#digest");
+      if (!list) return;
+
+      const latest = await j("/data/latest.json");
       const date = latest?.date ?? "";
-      const digest = $("#digest");
 
-      // Top ticker by confidence (from ticker_leaderboard)
+      // top ticker from model leaderboard
       const lb = await j("/data/models/eqx-m1/ticker_leaderboard.json");
-      if (lb?.items?.length){
-        const t = lb.items[0];
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>Top ticker:</strong> ${t.ticker ?? "-"} <span class="muted">(${fmtPct(t.score ?? t.confidence ?? 0)})</span>`;
-        digest.appendChild(li);
-      }
-
-      // Net delta (from daily greeks)
-      if (date){
-        const g = await j(`/data/daily/${date}/risk_greeks.json`);
-        if (g){
+      if (lb) {
+        let row = null;
+        if (Array.isArray(lb.top) && lb.top.length) row = lb.top[0];
+        else if (Array.isArray(lb.leaders) && lb.leaders.length) row = lb.leaders[0];
+        if (row) {
+          const ticker = row.ticker ?? row.symbol ?? (Array.isArray(row) ? row[0] : "—");
+          const score = typeof row.omega === "number" ? row.omega : (typeof row.score === "number" ? row.score : (Array.isArray(row) ? row[1] : null));
           const li = document.createElement("li");
-          li.innerHTML = `<strong>Net Δ:</strong> ${fmtPct(g.delta)}`;
-          digest.appendChild(li);
+          li.innerHTML = `<strong>Top ticker:</strong> ${ticker} <span class="muted">(${fmtPct(score)})</span>`;
+          list.appendChild(li);
         }
       }
 
-      // Spotlight sector
+      // simple risk snapshot
+      if (date){
+        const g = await j(`/data/daily/${date}/risk_greeks.json`);
+        if (g){
+          const delta = g.delta ?? g.Delta ?? g.stats?.beta_median ?? null;
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>Net Δ:</strong> ${fmtPct(delta)}`;
+          list.appendChild(li);
+        }
+      }
+
+      // sector spotlight
       const sp = await j("/data/models/eqx-m1/sector_of_month.json");
       if (sp){
         const li = document.createElement("li");
         li.innerHTML = `<strong>Sector spotlight:</strong> ${sp.sector ?? "—"}`;
-        digest.appendChild(li);
+        list.appendChild(li);
       }
     })();
   </script>

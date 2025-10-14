@@ -1,0 +1,93 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Code & Experiments · Workstation · EireQuant">
+  <h1>Code & experiments</h1>
+
+  <section class="panel">
+    <p class="lead">Design notes, runnable outlines, and ablation checklists.</p>
+    <div class="quick">
+      <a class="q" href="/pipelines/sim/architecture/">Pipeline, explained</a>
+      <a class="q" href="/pipelines/sim/math/">Mathematics</a>
+      <a class="q" href="/compare/">Compare</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Repository layout (site)</h2>
+    <pre><code>src/
+  components/...
+  pages/
+    pipelines/
+      live/
+      sim/
+        architecture.astro
+        math.astro
+        code.astro
+public/
+  data/
+    daily/&lt;date&gt;/*.json
+    models/eqx-m1/**/*.json
+</code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Publisher outline</h2>
+    <pre><code># 1) compute artifacts
+artifacts = run_pipeline()
+# 2) write JSON
+write("public/data/models/eqx-m1/...", artifacts.model)
+write("public/data/daily/&lt;date&gt;/model_selection.json", artifacts.daily)
+# 3) bump latest
+write("public/data/daily/latest.json", &#123;"date": "&lt;date&gt;"&#125;)
+# 4) build & deploy (GitHub Pages)</code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Experiment template</h2>
+    <pre><code>exp:
+  id: 2025-09-19-eqx-ablation-01
+  data: universe_v1
+  target: 5d return, cls
+  model: EQX-M1
+  cv: regime-stratified K=5
+  metrics: AUC, ECE, stability
+  notes: "remove sector block, compare"</code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Ablation checklist</h2>
+    <ul class="bullets">
+      <li>Remove sector block</li>
+      <li>Remove volatility block</li>
+      <li>Alter horizon h</li>
+      <li>Swap policy gains (Kp/Ki/Kd)</li>
+      <li>Clamp variants and turnover caps</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>Diagnostics to track</h2>
+    <ul class="bullets">
+      <li>ECE before/after scaling</li>
+      <li>Regime stability deltas</li>
+      <li>Slippage & turnover</li>
+      <li>Outlier sensitivity</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>Notes</h2>
+    <p>Keep short conclusions here and push longer write-ups to the blog. Link key artifacts from Compare or the model card.</p>
+  </section>
+
+  <style>
+    .lead{color:#444;margin:.1rem 0 .6rem}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .quick{display:flex;gap:.6rem;flex-wrap:wrap}
+    .q{display:inline-block;border:1px solid var(--border);border-radius:12px;background:#fff;padding:.5rem .75rem;text-decoration:none;color:inherit}
+    pre{background:#fafafa;border:1px solid var(--border);border-radius:10px;padding:.75rem;overflow:auto}
+    code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .bullets{list-style:disc;margin:.25rem 0 0 1.2rem;display:grid;gap:.35rem}
+  </style>
+</BaseLayout>

@@ -1,67 +1,167 @@
 ---
-/**
- * Pure markup; open-on-hover via CSS (:hover / :focus-within) with a small
- * “safe zone” so the panel doesn’t flicker when moving the cursor.
- * On touch devices the <button> triggers open via :focus-within.
- */
+interface Props { currentPath?: string }
+const { currentPath = "/" } = Astro.props;
+
+const links = {
+  models: {
+    overview: "/models/",
+    core: {
+      label: "Core Series",
+      href: "/models/#core",
+      marks: [] as { label: string; href: string }[], // none yet
+    },
+    sentinel: {
+      label: "Sentinel Series",
+      href: "/models/#sentinel",
+      marks: [] as { label: string; href: string }[], // none yet
+    },
+    experimental: {
+      label: "Experimental Series",
+      href: "/models/series/experimental/",
+      marks: [{ label: "EQX-M1 (Model Card)", href: "/models/eqx-m1/" }],
+    },
+  },
+  pipelines: [
+    { label: "Overview", href: "/pipelines/" },
+    { label: "Live Pipeline", href: "/pipelines/live/" },
+    { label: "Workstation (Sim)", href: "/pipelines/sim/" },
+  ],
+};
+
+const isActive = (path: string) =>
+  currentPath === path || (path !== "/" && currentPath.startsWith(path));
 ---
 <nav class="site-header" aria-label="Primary">
-  <div class="nav-inner">
-    <!-- Top-level links -->
-    <a class="nav-link" href="/">Home</a>
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="EireQuant home">
+      <img src="/brand/logo-wordmark.png" alt="EireQuant" />
+    </a>
 
-    <!-- Models -->
-    <div class="dropdown">
-      <button class="trigger" aria-haspopup="true">Models</button>
-      <div class="menu" role="menu" aria-label="Models">
-        <div class="menu-col">
-          <a class="menu-section" href="/models/">Overview</a>
+    <input id="nav-toggle" class="nav-toggle" type="checkbox" aria-label="Open menu" />
+    <label for="nav-toggle" class="hamburger" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </label>
 
-          <div class="has-flyout">
-            <a class="menu-section" href="/models/#core">Core Series</a>
-            <div class="flyout" role="menu" aria-label="Core Series">
-              <a class="flyout-link" href="/models/eq-core-mk1/">Mark 1</a>
-              <a class="flyout-link" href="/models/eq-core-mk2/">Mark 2</a>
-              <a class="flyout-link" href="/models/eq-core-mk3/">Mark 3</a>
-            </div>
-          </div>
+    <ul class="primary">
+      <li>
+        <a
+          class={`toplink ${isActive("/") ? "active" : ""}`}
+          href="/"
+          aria-current={isActive("/") ? "page" : undefined}
+        >
+          Home
+        </a>
+      </li>
 
-          <div class="has-flyout">
-            <a class="menu-section" href="/models/#sentinel">Sentinel Series</a>
-            <div class="flyout" role="menu" aria-label="Sentinel Series">
-              <a class="flyout-link" href="/models/eq-sentinel-mk1/">Mark 1</a>
-            </div>
-          </div>
+      <li class="dropdown">
+        <button
+          class={`trigger ${isActive("/models/") ? "active" : ""}`}
+          type="button"
+          aria-haspopup="true"
+        >
+          Models
+        </button>
+        <div class="menu" role="menu" aria-label="Models">
+          <ul class="menu-col">
+            <li>
+              <a class="menu-link" href={links.models.overview} role="menuitem">Overview</a>
+            </li>
 
-          <!-- Experimental Series first (for EQX-M1) -->
-          <a class="menu-section" href="/models/#experimental">Experimental Series</a>
-          <a class="flyout-link" href="/models/eqx-m1/">EQX-M1 (Model Card)</a>
+            <li class="has-flyout">
+              <a class="menu-section" href={links.models.core.href}>{links.models.core.label}</a>
+              {links.models.core.marks.length > 0 && (
+                <div class="flyout" role="menu" aria-label="Core Marks">
+                  {links.models.core.marks.map(m => (
+                    <a class="flyout-link" href={m.href} role="menuitem">{m.label}</a>
+                  ))}
+                </div>
+              )}
+            </li>
+
+            <li class="has-flyout">
+              <a class="menu-section" href={links.models.sentinel.href}>{links.models.sentinel.label}</a>
+              {links.models.sentinel.marks.length > 0 && (
+                <div class="flyout" role="menu" aria-label="Sentinel Marks">
+                  {links.models.sentinel.marks.map(m => (
+                    <a class="flyout-link" href={m.href} role="menuitem">{m.label}</a>
+                  ))}
+                </div>
+              )}
+            </li>
+
+            <li class="has-flyout">
+              <a class="menu-section" href={links.models.experimental.href}>{links.models.experimental.label}</a>
+              <div class="flyout" role="menu" aria-label="Experimental">
+                {links.models.experimental.marks.map(m => (
+                  <a class="flyout-link" href={m.href} role="menuitem">{m.label}</a>
+                ))}
+              </div>
+            </li>
+          </ul>
         </div>
-      </div>
-    </div>
+      </li>
 
-    <!-- Pipelines -->
-    <div class="dropdown">
-      <button class="trigger" aria-haspopup="true">Pipelines</button>
-      <div class="menu" role="menu" aria-label="Pipelines">
-        <a class="menu-link" href="/pipelines/">Overview</a>
-        <a class="menu-link" href="/pipelines/live/">Live Pipeline</a>
-        <a class="menu-link" href="/pipelines/sim/">Workstation (Sim)</a>
-      </div>
-    </div>
+      <li class="dropdown">
+        <button
+          class={`trigger ${isActive("/pipelines/") ? "active" : ""}`}
+          type="button"
+          aria-haspopup="true"
+        >
+          Pipelines
+        </button>
+        <div class="menu" role="menu" aria-label="Pipelines">
+          <ul class="menu-col">
+            <li>
+              <a class="menu-link" href="/pipelines/" role="menuitem" data-nav="pipelines-overview">
+                Overview
+              </a>
+            </li>
+            {links.pipelines
+              .filter(p => p.label !== "Overview")
+              .map(p => (
+                <li><a class="menu-link" href={p.href} role="menuitem">{p.label}</a></li>
+              ))}
+          </ul>
+        </div>
+      </li>
 
-    <!-- Portfolios -->
-    <div class="dropdown">
-      <button class="trigger" aria-haspopup="true">Portfolios</button>
-      <div class="menu" role="menu" aria-label="Portfolios">
-        <a class="menu-link" href="/portfolios/">Overview</a>
-        <a class="menu-link" href="/portfolios/core-12/">Core-12 Conf-Weighted</a>
-        <a class="menu-link" href="/portfolios/conf-weighted/">Conf-Weighted</a>
-      </div>
-    </div>
-
-    <a class="nav-link" href="/compare/">Compare</a>
-    <a class="nav-link" href="/about/">About</a>
-    <a class="nav-link" href="/blog/">Blog</a>
+      <li>
+        <a
+          class={`toplink ${isActive("/compare/") ? "active" : ""}`}
+          href="/compare/"
+          aria-current={isActive("/compare/") ? "page" : undefined}
+        >
+          Compare
+        </a>
+      </li>
+      <li>
+        <a
+          class={`toplink ${isActive("/about/") ? "active" : ""}`}
+          href="/about/"
+          aria-current={isActive("/about/") ? "page" : undefined}
+        >
+          About
+        </a>
+      </li>
+      <li>
+        <a
+          class={`toplink ${isActive("/blog/") ? "active" : ""}`}
+          href="/blog/"
+          aria-current={isActive("/blog/") ? "page" : undefined}
+        >
+          Blog
+        </a>
+      </li>
+    </ul>
   </div>
 </nav>
+
+<style>
+  /* Minimal active styling that works with your existing header.css */
+  .toplink.active,
+  .trigger.active {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

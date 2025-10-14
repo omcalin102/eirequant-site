@@ -5,84 +5,186 @@ import modelSeries from "../../lib/modelSeries";
 
 const all = await getCollection("models");
 
-// Group models by series according to modelSeries order
+// Display overrides & series copy (kept local so we don't need to edit modelSeries now)
+const titleOverride: Record<string,string> = {
+  "eq-tbd": "EQ Experimental Series",
+};
+
+const subtitleOverride: Record<string,string> = {
+  "eq-core": "Daily tilts designed to be held, not chased. Core aims for interpretable, low-churn edges that survive across regimes. Rolling-window training, budgeted turnover, sector & symbol caps, and reliability checks (ECE) keep behavior honest.",
+  "eq-sentinel": "Risk sentries and overlays. Sentinel watches for volatility spikes, liquidity stress, and structural breaks. Outputs are hedges, halts, and confidence dials rather than raw bets. The goal is to cut left-tail and time-to-recover, not maximize headline return.",
+  "eq-tbd": "Incubator for new ideas. Experimental hosts research marks under live shadowing. We monitor calibration drift, operational health, and regime stability. Candidates that pass promote to Core or become Sentinel modules; the rest are documented and retired—no curve-fitting by omission.",
+};
+
 const grouped = modelSeries.map(s => {
   const items = all
     .filter(m => m.data.series === s.slug)
     .sort((a,b) => (a.data.mark ?? 0) - (b.data.mark ?? 0));
-  return { meta: s, items };
+  const title = titleOverride[s.slug] ?? s.title;
+  const subtitle = subtitleOverride[s.slug] ?? s.subtitle;
+  return { meta: { ...s, title, subtitle }, items };
 });
-
-// Simple blurb for Experimental Series (we want this surfaced first)
-const experimentalIntro = "Research-first family for prototypes and cutting-edge signals. EQX-M1 is the first tangible model in this series.";
 ---
 <BaseLayout title="Models · EireQuant" description="Explore EireQuant model families and their Marks.">
+  <div class="models-grid">
+    <!-- LEFT RAIL -->
+    <aside class="rail rail-left">
+      <section class="panel">
+        <h3 class="hsmall">Financial models, briefly</h3>
+        <p>
+          A financial “model” is a set of rules that turns messy market inputs into a small number of
+          <em>decisions</em>: tilt long or short, size up or down, hedge or pause. Good models aren’t just clever—they’re
+          <strong>calibrated</strong> (honest about uncertainty), <strong>regime-aware</strong>, and built to survive
+          <strong>frictions</strong> (costs, liquidity, downtime).
+        </p>
+        <p>
+          At EireQuant, we combine price/flow/news features, train with rolling windows, and validate across regimes.
+          We monitor calibration (ECE), operational health, and drawdown sensitivity. Constraints—gross/net, per-symbol
+          and per-sector caps, turnover budgets—make the output usable. You can peek under the hood here:
+        </p>
+        <p class="small">
+          <a class="pill-link" href="/pipelines/sim/">See the Sim/Workstation pipeline →</a>
+        </p>
+      </section>
+    </aside>
 
-  <!-- Experimental Series (surfaced first, clean + minimal data) -->
-  <section class="series" id="experimental">
-    <header class="series-head">
-      <div>
-        <div class="kicker">Series</div>
-        <h2>Experimental Series</h2>
-        <p class="sub">{experimentalIntro}</p>
-      </div>
-      <a class="series-link" href="/models/eqx-m1/">View EQX-M1 →</a>
-    </header>
-
-    <div class="cards">
-      <a class="card" href="/models/eqx-m1/">
-        <div class="meta">Mk 1 · research</div>
-        <h3>EQX-M1</h3>
-        <p>First model in the EQ Experimental Series. Focused, professional, and evolving.</p>
-      </a>
-    </div>
-  </section>
-
-  <!-- Existing series rendered from content collection -->
-  {grouped.map(({ meta, items }) => (
-    <section class="series" id={meta.slug}>
-      <header class="series-head">
-        <div>
-          <div class="kicker">Series</div>
-          <h2>{meta.title}</h2>
-          {meta.subtitle && <p class="sub">{meta.subtitle}</p>}
-        </div>
-        <a class="series-link" href={`/models/series/${meta.slug}/`}>View series →</a>
+    <!-- CENTER COLUMN -->
+    <main class="center">
+      <header class="page-head">
+        <h1>Models</h1>
+        <p class="lead">
+          Model families (“Series”) and their Marks. Families give us clear intent; marks give us audited evolution.
+          We optimize for <strong>reliability first</strong>: calibrated predictions, regime-aware evaluation, and explicit
+          constraints so results survive frictions.
+        </p>
       </header>
 
-      {items.length > 0 ? (
-        <div class="cards">
-          {items.map(({ data }) => (
-            <a class="card" href={`/models/${data.slug}/`}>
-              <div class="meta">Mk {data.mark} · {data.version ?? "v1.0.0"} · {data.status ?? "research"}</div>
-              <h3>{data.title}</h3>
-              <p>{data.summary ?? "Model description coming soon."}</p>
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div class="empty">No marks published yet. Coming soon.</div>
-      )}
-    </section>
-  ))}
+      {grouped.map(({ meta, items }) => (
+        <section class="series-card" id={meta.slug}>
+          <header class="series-head">
+            <div>
+              <div class="kicker">Series</div>
+              <h2 class="series-title">{meta.title}</h2>
+              {meta.subtitle && <p class="series-sub">{meta.subtitle}</p>}
+            </div>
+            <a class="series-link" href={`/models/series/${meta.slug}/`}>View series →</a>
+          </header>
+
+          {items.length > 0 ? (
+            <div class="marks">
+              {items.map(({ data }) => (
+                <a class="mark-card" href={`/models/${data.slug}/`}>
+                  <div class="mark-meta">Mk {data.mark} · {data.version ?? "v1.0.0"} · {data.status ?? "research"}</div>
+                  <h3 class="mark-title">{data.title}</h3>
+                  <p class="mark-desc">{data.summary ?? "Concise model summary coming soon."}</p>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div class="empty-line">
+              <span class="tag">No published marks yet</span>
+              <span class="muted"> · Coming soon.</span>
+            </div>
+          )}
+        </section>
+      ))}
+    </main>
+
+    <!-- RIGHT RAIL -->
+    <aside class="rail rail-right">
+      <section class="panel">
+        <h3 class="hsmall">About this section</h3>
+        <p>
+          EireQuant groups models into <strong>families</strong>. Each family ships multiple “marks”—incremental versions
+          that keep the same intent but improve training data, calibration, or constraints.
+        </p>
+        <p>
+          You’ll find <strong>clear model cards</strong> for every mark: performance, calibration snapshots, by-regime
+          stability, constraints, and a short rationale. Everything aligns with the homepage and Compare.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h3 class="hsmall">Promotion path</h3>
+        <p>
+          <strong>Experimental → Core/Sentinel.</strong> New ideas start in Experimental under shadow trading. If calibration
+          holds and operational checks pass, they <strong>graduate</strong> to Core (stable signal) or Sentinel (risk overlay).
+          If a mark regresses, we <strong>pause or de-list</strong> it—results stay on the record.
+        </p>
+      </section>
+    </aside>
+  </div>
 
   <style>
-    .lead{ color:#555; margin-bottom:1rem;}
-    .series{ border-top:2px solid #d7d7d7; padding-top:1rem; margin-top:1rem;}
-    .series:first-of-type{ border-top:0; padding-top:0; margin-top:.5rem;}
-    .series-head{ display:flex; align-items:end; justify-content:space-between; gap:1rem; }
+    /* Layout */
+    .models-grid{
+      display:grid;
+      grid-template-columns: 260px 1fr 260px; /* left rail | center | right rail */
+      gap:1rem;
+      align-items:start;
+    }
+    @media(min-width:1025px){
+      .models-grid{ grid-template-columns: 260px minmax(520px,1fr) 260px; }
+    }
+    @media(max-width:1000px){
+      .models-grid{ grid-template-columns: 1fr; }
+      .rail-left,.rail-right{ max-width:none; width:auto; order:2; }
+      .center{ order:1; }
+    }
+
+    .rail{ display:grid; gap:1rem; }
+    .panel{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:1rem; box-shadow:0 6px 18px rgba(0,0,0,.05); }
+    .pill-link{ display:inline-block; border:1px solid var(--border); border-radius:999px; padding:.3rem .6rem; background:#fafafa; text-decoration:none; }
+
+    .page-head .lead{ color:#555; margin:.25rem 0 1rem; }
+
+    /* Series card (single-column, large) */
+    .series-card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:1rem;
+      box-shadow:0 6px 18px rgba(0,0,0,.05);
+      display:grid;
+      gap:.75rem;
+    }
+    .series-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; }
     .kicker{ font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; color:#666; }
-    .sub{ color:#444; margin:.25rem 0 0; }
-    .series-link{ white-space:nowrap; font-weight:600; color:#0645ad; text-decoration:none; }
+    .series-title{ margin:.15rem 0 .15rem; }
+    .series-sub{ color:#555; margin:.25rem 0 0; }
+    .series-link{ white-space:nowrap; font-weight:600; color:var(--brand,#0E3B2D); text-decoration:none; }
     .series-link:hover{ text-decoration:underline; }
 
-    .cards{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-top:.75rem; }
-    .card{
-      border:2px solid #d7d7d7; border-radius:6px; padding:1rem; background:#fff;
-      transition: box-shadow .12s ease;
+    /* Marks list: one big vertical stack */
+    .marks{ display:grid; grid-template-columns: 1fr; gap:.75rem; margin-top:.25rem; }
+    .mark-card{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      padding:1rem;
+      text-decoration:none;
+      color:inherit;
+      transition:border-color .15s ease, box-shadow .15s ease, transform .08s ease;
     }
-    .card:hover{ box-shadow:0 2px 12px rgba(0,0,0,.06); }
-    .card .meta{ font-size:.85rem; color:#555; margin-bottom:.25rem; text-transform:uppercase; letter-spacing:.03em;}
-    .empty{ color:#555; background:#fafafa; border:2px dashed #d7d7d7; border-radius:6px; padding:1rem; margin-top:.75rem;}
+    .mark-card:hover{ border-color:#ddd; box-shadow:0 8px 24px rgba(0,0,0,.06); transform: translateY(-1px); }
+    .mark-meta{ font-size:.85rem; color:#666; margin-bottom:.25rem; text-transform:uppercase; letter-spacing:.03em; }
+    .mark-title{ margin:.1rem 0 .2rem; }
+    .mark-desc{ color:#444; margin:0; }
+
+    /* Empty state (compact tag) */
+    .empty-line{ display:flex; align-items:center; gap:.35rem; margin-top:.25rem; }
+    .tag{
+      display:inline-block;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:.2rem .55rem;
+      background:#fafafa;
+      font-size:.9rem;
+    }
+
+    /* Helpers */
+    .hsmall{ font-size:1rem; margin:.1rem 0 .6rem; }
+    .small{ font-size:.92rem; }
+    .muted{ color:var(--muted); }
   </style>
 </BaseLayout>

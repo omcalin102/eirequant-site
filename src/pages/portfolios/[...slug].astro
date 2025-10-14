@@ -2,13 +2,20 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
+// 🔧 enumerate portfolio pages
+export async function getStaticPaths() {
+  const entries = await getCollection("portfolios");
+  return entries.map((p) => ({ params: { slug: p.slug } }));
+}
+
 const { slug = "" } = Astro.params;
 const entries = await getCollection("portfolios");
-const entry = entries.find(p => p.slug === slug);
+const entry = entries.find((p) => p.slug === slug);
 if (!entry) throw new Error(`Portfolio not found: ${slug}`);
 
 const { Content } = await entry.render();
 ---
+
 <BaseLayout title={`${entry.data.title} · Portfolio · EireQuant`} description={entry.data.summary ?? "Portfolio details"}>
   <section class="card">
     <h1 class="h1">{entry.data.title}</h1>

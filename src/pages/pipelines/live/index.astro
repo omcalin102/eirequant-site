@@ -1,194 +1,149 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-export const prerender = true;
+import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
 ---
-<BaseLayout title="Live Pipeline · EireQuant" description="Status, selections, greeks, sectors, and controls for the current day.">
-  <!-- HEADER STRIP -->
-  <section class="card">
-    <h1 class="h1">Live Pipeline</h1>
-    <p class="muted">Current live outputs for the latest run.</p>
-    <div class="strip">
-      <div class="kv"><span>Status</span><strong id="status">—</strong></div>
-      <div class="kv"><span>Last run</span><strong id="lastrun">—</strong></div>
-      <div class="kv"><span>Trading</span><strong id="trading">—</strong></div>
-      <div class="kv"><span>Current regime</span><strong id="regime">—</strong></div>
+<BaseLayout title="Live Pipeline · EireQuant">
+  <h1>Live Pipeline</h1>
+
+  <section class="panel">
+    <div class="grid4">
+      <div><div class="k">Status</div><div id="st" class="v">—</div></div>
+      <div><div class="k">Last run</div><div id="lr" class="v">—</div></div>
+      <div><div class="k">Trading</div><div id="tr" class="v">—</div></div>
+      <div><div class="k">Current model</div><div id="cm" class="v">—</div></div>
     </div>
   </section>
 
-  <!-- MODEL SELECTIONS -->
-  <section class="card">
-    <h2 class="h2">Model Selection</h2>
-    <table class="table" id="picks">
+  <section class="panel">
+    <div class="head"><h2>Model Selection</h2><div class="muted" id="ms-date">—</div></div>
+    <table class="table">
       <thead><tr><th>Ticker</th><th>Action</th><th>Confidence</th></tr></thead>
-      <tbody></tbody>
+      <tbody id="ms"><tr><td colspan="3" class="muted">No selections.</td></tr></tbody>
     </table>
-    <div id="picks-empty" class="muted">No selections.</div>
   </section>
 
-  <!-- GREEKS + SECTORS -->
-  <section class="card">
-    <div class="grid2">
-      <div>
-        <h2 class="h2">Portfolio Greeks</h2>
-        <div class="stats">
-          <div class="stat"><div class="k">Δ</div><div class="v" id="delta">—</div></div>
-          <div class="stat"><div class="k">Γ</div><div class="v" id="gamma">—</div></div>
-          <div class="stat"><div class="k">ν</div><div class="v" id="vega">—</div></div>
-        </div>
-      </div>
-      <div>
-        <h2 class="h2">Sector Health</h2>
-        <ul class="heat" id="sector-heat"></ul>
-        <div id="sector-empty" class="muted">No sector data.</div>
-      </div>
+  <section class="panel">
+    <h2>Portfolio Greeks</h2>
+    <div class="greeks">
+      <div class="chip"><div class="gk">Δ</div><div id="g-d" class="gval">—</div></div>
+      <div class="chip"><div class="gk">Γ</div><div id="g-g" class="gval">—</div></div>
+      <div class="chip"><div class="gk">ν</div><div id="g-v" class="gval">—</div></div>
     </div>
   </section>
 
-  <!-- CONTROL TRACE + OPS HEALTH -->
-  <section class="card">
-    <div class="grid2">
-      <div>
-        <h2 class="h2">Policy Control Trace</h2>
-        <canvas id="pid" height="160" style="width:100%; border:1px solid #d7d7d7;"></canvas>
-        <div class="muted small">Simple inline chart from <code>pid_policy_trace.json</code>.</div>
-      </div>
-      <div>
-        <h2 class="h2">Ops Health</h2>
-        <ul class="list" id="ops"></ul>
-        <div id="ops-empty" class="muted">No module status available.</div>
-      </div>
-    </div>
+  <section class="panel">
+    <h2>Sector Health</h2>
+    <ul id="sec" class="list"><li class="muted">No sector data.</li></ul>
   </section>
 
-  <style>
-    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
-    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 4px 0; }
-    .h2{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
-    .muted{ color:#6b6b6b; }
-    .small{ font-size:13px; }
+  <section class="panel">
+    <PolicyTrace client:load />
+  </section>
 
-    .strip{ display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-top:10px; }
-    .kv{ border:1px solid #d7d7d7; padding:10px; display:flex; justify-content:space-between; }
-    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    @media (max-width: 1100px){ .grid2{ grid-template-columns:1fr; } .strip{ grid-template-columns:1fr 1fr; } }
-
-    .table{ width:100%; border-collapse:collapse; font-size:16px; }
-    .table th, .table td{ padding:6px 8px; border-bottom:1px solid #eee; text-align:left; }
-
-    .stats{ display:flex; gap:12px; }
-    .stat{ flex:1; border:1px solid #d7d7d7; padding:10px; text-align:center; }
-    .stat .k{ font-weight:700; font-family: Georgia, 'Times New Roman', serif; }
-    .stat .v{ font-size:18px; }
-
-    .heat{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-    .heat li{ border-left:8px solid #ccc; padding-left:8px; display:flex; justify-content:space-between; }
-    .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-  </style>
+  <section class="panel">
+    <h2>Ops Health</h2>
+    <ul id="ops" class="list"><li class="muted">No ops data.</li></ul>
+  </section>
 
   <script type="module">
-    const $ = (s) => document.querySelector(s);
-    const fmtPct = (x) => (x==null?"—":(Math.round(x*1000)/10).toFixed(1)+"%");
-    const leftColor = (score) => {
-      if (score >= 0.5) return "#3b7f3b";
-      if (score >= 0.1) return "#93b593";
-      if (score <= -0.5) return "#a33a3a";
-      if (score <= -0.1) return "#d7a1a1";
-      return "#cfcfcf";
-    };
-    async function j(path){ try{ const r = await fetch(path); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
+    const baseHref = () => (document.querySelector("base")?.getAttribute("href") || "/").replace(/\/+$/, "/");
+    const url = (p) => (baseHref() + String(p).replace(/^\//,"")).replace(/([^:]\/)\/+/g,"$1");
+    const $ = (s)=>document.querySelector(s);
+    const list = (el, rows)=>{ el.innerHTML = rows.map(r=>`<li>${r}</li>`).join("") };
+    const fmt = (x)=> x==null ? "—" : (isFinite(+x) ? (+x).toFixed(3) : x);
+    const fmtPct = (x)=> (x==null||!isFinite(+x)) ? "—" : ((+x)*100).toFixed(2)+"%";
+    async function j(p){ const r = await fetch(url(p), {cache:"no-cache"}); if(!r.ok) throw new Error(p); return r.json(); }
 
-    // tiny line plotter for the PID canvas (no deps)
-    function drawLineCanvas(canvas, arr){
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width = canvas.clientWidth;
-      const h = canvas.height = canvas.clientHeight;
-      ctx.clearRect(0,0,w,h);
-      if (!arr || !arr.length) return;
-      const xs = arr.map((_,i)=>i);
-      const ys = arr.map(v => +v || 0);
-      const ymin = Math.min(...ys), ymax = Math.max(...ys);
-      const pad = 8;
-      const scaleX = (i) => pad + (w-2*pad) * (i/(xs.length-1 || 1));
-      const scaleY = (y) => h - pad - (h-2*pad) * ((y - ymin)/((ymax - ymin) || 1));
-      ctx.beginPath();
-      ctx.moveTo(scaleX(0), scaleY(ys[0]));
-      for (let i=1;i<ys.length;i++) ctx.lineTo(scaleX(i), scaleY(ys[i]));
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "#222";
-      ctx.stroke();
+    async function getLatestDate(){
+      const a = await j("/data/latest.json").catch(()=>null);
+      if (a?.date) return a.date;
+      const b = await j("/data/daily/latest.json").catch(()=>null);
+      return b?.date ?? null;
     }
 
-    (async () => {
-      // header strip
-      const status = await j("/data/pipeline/status.json");
-      if (status) $("#status").textContent = status.state ?? status.status ?? "—";
+    async function main(){
+      const st = await j("/data/pipeline/status.json").catch(()=>null);
+      if (st){
+        $("#st").textContent = (st.status ?? st.state ?? "—");
+        $("#lr").textContent = (st.last_run ?? st.last ?? st.date ?? "—");
+        $("#tr").textContent = (st.trading===true||st.trading==="true") ? "Yes" : (st.trading===false ? "No" : "—");
+        $("#cm").textContent = (st.current_model ?? st.model ?? "—");
+      }
 
-      const latest = await j("/data/daily/latest.json");
-      const date = latest?.date ?? "";
-      $("#lastrun").textContent = date || "—";
+      const date = await getLatestDate();
+      if (date) $("#ms-date").textContent = date;
 
-      const pom = await j("/data/models/eqx-m1/pause_o_meter.json");
-      if (pom) $("#trading").textContent = pom.state ?? pom.mode ?? "—";
+      const sel = date ? await j(`/data/daily/${date}/model_selection.json`).catch(()=>null) : null;
+      if (sel?.selections?.length){
+        $("#ms").innerHTML = sel.selections.map(s =>
+          `<tr><td>${s.ticker}</td><td>${s.action}</td><td>${fmtPct(s.conf ?? s.confidence)}</td></tr>`
+        ).join("");
+      }
 
-      const reg = await j("/data/models/eqx-m1/current_regime.json");
-      if (reg) $("#regime").textContent = reg.name ?? reg.regime ?? "—";
-
-      // core daily widgets
+      // Greeks: daily medians if present; else latest proxies
+      let dlt=null,gmm=null,vga=null;
       if (date){
-        const base = `/data/daily/${date}`;
-
-        const picks = await j(`${base}/model_selection.json`);
-        const tbody = $("#picks tbody");
-        if (picks?.items?.length){
-          $("#picks-empty").style.display = "none";
-          picks.items.forEach(row => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${row.ticker ?? "-"}</td><td>${row.action ?? "-"}</td><td>${fmtPct(row.confidence)}</td>`;
-            tbody.appendChild(tr);
-          });
-        }
-
-        const greeks = await j(`${base}/risk_greeks.json`);
-        if (greeks){
-          $("#delta").textContent = fmtPct(greeks.delta);
-          $("#gamma").textContent = fmtPct(greeks.gamma);
-          $("#vega").textContent  = fmtPct(greeks.vega);
-        }
-
-        const sectors = await j(`${base}/sector_health.json`);
-        const heat = $("#sector-heat");
-        if (sectors?.items?.length){
-          $("#sector-empty").style.display = "none";
-          sectors.items.forEach(s => {
-            const li = document.createElement("li");
-            li.style.borderLeftColor = leftColor(s.score ?? 0);
-            li.innerHTML = `<span>${s.sector ?? "—"}</span><span>${(s.score ?? 0).toFixed(2)}</span>`;
-            heat.appendChild(li);
-          });
+        const g = await j(`/data/daily/${date}/risk_greeks.json`).catch(()=>null);
+        if (g){
+          dlt = g.delta ?? g.Delta ?? g.stats?.beta_median ?? null;
+          gmm = g.gamma ?? g.Gamma ?? g.stats?.gamma_median ?? null;
+          vga = g.nu ?? g.Vega ?? g.v ?? g.stats?.vega_median ?? null;
         }
       }
+      if (dlt==null || gmm==null || vga==null){
+        const prox = await j("/data/models/eqx-m1/greek_proxies.json").catch(()=>null);
+        const last = prox?.proxies?.length ? prox.proxies[prox.proxies.length-1] : null;
+        if (last){
+          if (dlt==null) dlt = last.delta ?? null;
+          if (gmm==null) gmm = last.gamma ?? null;
+          if (vga==null) vga = last.vega ?? null;
+        }
+      }
+      if (dlt!=null) $("#g-d").textContent = fmt(dlt);
+      if (gmm!=null) $("#g-g").textContent = fmt(gmm);
+      if (vga!=null) $("#g-v").textContent = fmt(vga);
 
-      // PID trace
-      const pid = await j("/data/models/eqx-m1/pid_policy_trace.json");
-      const values = Array.isArray(pid) ? pid
-                   : Array.isArray(pid?.values) ? pid.values
-                   : Array.isArray(pid?.points) ? pid.points.map(p => p.value ?? p.y)
-                   : [];
-      drawLineCanvas($("#pid"), values);
-
-      // Ops health
-      const oh = await j("/data/models/eqx-m1/ops_health.json");
-      const list = $("#ops");
-      if (oh?.items?.length){
-        $("#ops-empty").style.display = "none";
-        oh.items.forEach(m => {
-          const li = document.createElement("li");
-          const s = m.state ?? m.status ?? "OK";
-          li.textContent = `${m.name ?? "module"} — ${s}`;
-          if (String(s).toUpperCase() !== "OK") li.style.color = "#a33a3a";
-          list.appendChild(li);
+      const sh = date ? await j(`/data/daily/${date}/sector_health.json`).catch(()=>null) : null;
+      if (Array.isArray(sh?.sectors) && sh.sectors.length){
+        const rows = sh.sectors.slice(0,10).map(s => {
+          const nm = s.sector ?? s.name ?? "Sector";
+          const val = s.score ?? s.value ?? s.median_beta ?? s.n_names ?? null;
+          return `<strong>${nm}</strong> — ${fmt(val)}`;
         });
+        list($("#sec"), rows);
+      } else if (Array.isArray(sh?.leaders) && sh.leaders.length){
+        const rows = sh.leaders.slice(0,10).map(s => `<strong>${s.name ?? s.sector}</strong> — ${fmt(s.score ?? s.value)}`);
+        list($("#sec"), rows);
       }
-    })();
+
+      const ops = await j("/data/models/eqx-m1/ops_health.json").catch(()=>null);
+      if (ops?.modules?.length){
+        list($("#ops"), ops.modules.map(m => `<strong>${m.name ?? "module"}</strong>: ${m.status ?? "ok"}${m.note ? ` — ${m.note}`:""}`));
+      } else if (ops && typeof ops === "object"){
+        const rows = Object.keys(ops).map(k => `<strong>${k}</strong>: ${ops[k]}`);
+        if (rows.length) list($("#ops"), rows);
+      }
+    }
+
+    main().catch(e=>console.warn("live pipeline:", e));
   </script>
+
+  <style>
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+    @media(max-width:900px){.grid4{grid-template-columns:repeat(2,1fr)}}
+    .k{font-size:.8rem;color:#666}
+    .v{font-weight:700}
+    .head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .muted{color:var(--muted)}
+    .table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .table th,.table td{padding:.55rem .7rem;border-bottom:1px solid var(--border)}
+    .table thead th{background:#fafafa;text-align:left}
+    .table tr:last-child td{border-bottom:0}
+    .greeks{display:flex;gap:.6rem;flex-wrap:wrap}
+    .chip{border:1px solid var(--border);border-radius:12px;padding:.55rem .75rem;display:grid;grid-template-columns:auto 1fr;gap:.5rem;align-items:center;background:#fff}
+    .gk{font-weight:700}
+    .gval{color:#333}
+    .list{list-style:none;margin:.25rem 0 0;padding:0;display:grid;gap:.35rem}
+  </style>
 </BaseLayout>

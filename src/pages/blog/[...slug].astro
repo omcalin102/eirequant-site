@@ -2,16 +2,20 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
+// 🔧 enumerate all blog pages at build time
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return posts.map((p) => ({ params: { slug: p.slug } }));
+}
+
 const { slug = "" } = Astro.params;
 const posts = await getCollection("posts");
-const entry = posts.find(p => p.slug === slug);
-
-if (!entry) {
-  throw new Error(`Post not found: ${slug}`);
-}
+const entry = posts.find((p) => p.slug === slug);
+if (!entry) throw new Error(`Post not found: ${slug}`);
 
 const { Content } = await entry.render();
 ---
+
 <BaseLayout title={`${entry.data.title} · Blog · EireQuant`} description={entry.data.summary ?? "EireQuant blog post"}>
   <!-- LEFT rail -->
   <Fragment slot="left">
@@ -32,7 +36,7 @@ const { Content } = await entry.render();
     <Content />
   </article>
 
-  <!-- RIGHT rail: digestibles -->
+  <!-- RIGHT rail -->
   <Fragment slot="right">
     <section class="card">
       <h3 class="card-title">Live snapshot</h3>

@@ -1,93 +1,280 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const updated = "2025-08-17";
+const title = "About — EireQuant";
+const description = "Who I am, what I build, and why EireQuant exists.";
 ---
-<BaseLayout
-  title="About · EireQuant"
-  description="EireQuant is an open quantitative research showcase—model families, portfolios, and live/sim pipelines."
->
-  <header class="hero">
-    <img src="/brand/logo-wordmark.svg" alt="EireQuant" />
-    <h1>About EireQuant</h1>
-    <p class="tagline">An open, living quant research lab—built in public.</p>
-    <p class="meta">Last updated: {updated}</p>
-  </header>
 
-  <section>
-    <h2>What we publish</h2>
-    <ul class="bullets">
-      <li><strong>Model families:</strong> grouped “series” of Marks (e.g., EQ Core Mk I–III, Sentinel).</li>
-      <li><strong>Portfolios:</strong> allocation rules with equity, drawdown, and turnover metrics.</li>
-      <li><strong>Compare:</strong> a “mega graph” to overlay benchmarks, models, and portfolios.</li>
-      <li><strong>Reports & notes:</strong> dev logs, research write-ups, and methodology summaries.</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>How the site works</h2>
-    <p>
-      To keep the site fast and predictable, data lands as static <code>JSON</code> files under
-      <code>/public/data/**</code>. Pages and charts read those files at runtime. That means new models or
-      portfolios are as simple as: add an MD file in <code>content/**</code>, drop the JSON time-series, and update
-      the registry—no servers required.
-    </p>
-  </section>
-
-  <section>
-    <h2>Model families</h2>
-    <div class="cards">
-      <div class="card">
-        <div class="kicker">Series</div>
-        <h3>EQ Core</h3>
-        <p>Daily classification on a small universe; the foundational baseline (Mk I–III).</p>
-        <a class="cta" href="/models/series/eq-core/">Explore EQ Core →</a>
+<BaseLayout title={title} description={description}>
+  <section class="hero card">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <h1 class="h1">Who is Oisin McAlinden</h1>
+        <p class="lede">
+          I am a young engineer with an appetite for building things that work in the real world.
+          EireQuant is my flagship project and the place where I learn, test, and publish ideas in
+          quantitative finance, macro economics and machine learning at my own pace. It is a long-running project
+          that lets me explore methods and turn them into something that
+          looks and behaves like a real investment stack.
+        </p>
       </div>
-      <div class="card">
-        <div class="kicker">Series</div>
-        <h3>EQ Sentinel</h3>
-        <p>Risk-averse, longer holding periods; low volatility by design.</p>
-        <a class="cta" href="/models/series/eq-sentinel/">Explore Sentinel →</a>
-      </div>
-      <div class="card muted">
-        <div class="kicker">Series</div>
-        <h3>Next Series</h3>
-        <p>Reserved for upcoming research directions.</p>
-        <a class="cta" href="/models/">See all models →</a>
-      </div>
+      <figure class="portrait">
+        <img
+          src="/brand/OisinProfile.jpeg"
+          alt="Oisín McAlinden"
+          loading="eager"
+          decoding="async"
+        />
+      </figure>
     </div>
   </section>
 
-  <section>
-    <h2>Roadmap (near-term)</h2>
-    <ol class="bullets">
-      <li>Wire Compare to the registry and compute CAGR/Sharpe client-side.</li>
-      <li>Publish portfolio hub + detail pages with drawdown charts.</li>
-      <li>Add data freshness/status panel sourced from the pipeline.</li>
+  <!-- CV Snapshot -->
+  <section class="card">
+    <header class="card-head">
+      <h2 class="card-title">CV snapshot</h2>
+      <div class="card-sub">Who I am</div>
+    </header>
+
+    <div class="cv-grid">
+      <div>
+        <h3 class="h3">Profile</h3>
+        <p>
+          I like hard problems, opportunities to grow and collaboration with like minded driven peers. Outside study and EireQuant I
+          keep a simple routine that balances reading, training, and time with friends and family. I enjoy
+          football, running, and travelling whenever I get the time. I read broadly across
+          markets, engineering, and history, and I keep notes that often turn into ideas for the
+          project. I work best when I own the outcome from idea to delivery and I love working with others, 
+          both in leadership and non leading roles.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="h3">Technical range</h3>
+        <p>
+          My mathematical grounding is solid in advanced calculus, linear algebra, probability, and
+          stochastic processes, with active practice through modelling work. On the engineering side
+          I have shipped end to end pieces across data ingestion, feature building, and model
+          training, and I have moved that work into live use through scheduling, testing, and careful
+          monitoring. University projects added breadth in control systems where PID thinking maps
+          well to risk pacing and drawdown control, embedded design where constraints force
+          discipline, and general coding where data structures and presentation matter as much as
+          the models. I have hands-on practice with classical machine learning and growing experience
+          in deep learning with my final year project being an investigation into "Short Term Electricity Forecasting". I put real effort into evaluation,
+          calibration, and clear reporting, when something fails I debug it methodically and I note
+          what I learned.
+        </p>
+      </div>
+    </div>
+
+    <div class="exp-grid">
+      <article class="exp">
+        <h4 class="exp-title">TP ICAP — Data Management Analyst (Intern)</h4>
+        <p class="muted">Direct work with brokers and senior managers</p>
+        <p>
+          I supported two projects that had to land cleanly. The first was test planning and
+          execution for transition from the legacy system to the new modern frontend. The second was controlled movement of
+          broker data to ensure all data was up to date. I built a set of Excel functions and checks
+          that teams could run themselves which cut hand-offs and made sign-off faster.
+        </p>
+      </article>
+
+      <article class="exp">
+        <h4 class="exp-title">EireQuant — Founder</h4>
+        <p class="muted">From data to daily publication</p>
+        <p>
+          I design and run a daily research stack that publishes model behaviour, equity curves,
+          sector views, and calibration checks. The work spans data pipelines, strategy research,
+          evaluation, and a public front end that explains the output clearly.
+        </p>
+      </article>
+
+      <article class="exp">
+        <h4 class="exp-title">Education</h4>
+        <p class="muted">Final year undergraduate</p>
+        <p>
+          Project work in control systems, engineering entrepreneurship, and deep learning feeds directly into
+          how I design and test the research stack.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Q&A -->
+  <section class="card">
+    <header class="card-head">
+      <h2 class="card-title">Q&amp;A</h2>
+      <div class="card-sub">A few direct answers</div>
+    </header>
+
+    <details class="qa" open>
+      <summary>Why did you create EireQuant?</summary>
+      <p>
+        The project began as a personal attempt to bring finance and engineering together in a
+        single place that I could own end to end.
+        I wanted something close to a small research shop where I could decide the focus,
+        build the tools, and carry the results through to publication. That structure lets me rotate
+        between model design, data engineering, reporting, and product decisions which is a better
+        way for me to learn and a better test of whether ideas hold up.
+      </p>
+    </details>
+
+    <details class="qa">
+      <summary>What are the near-term plans?</summary>
+      <p>
+        I am building the second Core model and tightening the production routines that support it.
+        I am also planning weekly articles that would link current events to concrete parts of the system.
+        The writing forces clarity and keeps me honest about what is working. Time is tight around
+        final year study so any time dedicated to the project must be specific and focused.
+      </p>
+    </details>
+
+    <details class="qa">
+      <summary>What has been the most difficult part so far?</summary>
+      <p>
+        Moving from static backtests to a live daily pipeline changed everything. Time zones,
+        missing ticks, delayed files, and external services all fail at some point and the code
+        has to handle that without drama. The other challenge is the simple fact that ideas are easy for me to outline
+        yet actual implementation takes time. I often knew what I wanted the system to do before I had the
+        skill to code it which meant I was limited most of the time by my coding ability. The answer has been steady practice, smaller steps, and better tests. As
+        the system grows the hard part is choosing focus so that progress compounds rather than
+        scattering effort.
+      </p>
+    </details>
+
+    <details class="qa">
+      <summary>Which industries and roles interest you most?</summary>
+      <p>
+        I am drawn to fixed income trading where decisions are grounded in data and discipline. The
+        mix of macro signals, micro structure, and risk control suits the way I think. I want to
+        work with people who like to build rather than talk about building, who care about clean
+        execution, and who are comfortable owning outcomes. This project matters to me and I would like to collaborate with like-minded driven individuals who hold a similar interest as myself.
+      </p>
+    </details>
+
+    <details class="qa">
+      <summary>How should someone explore the work?</summary>
+      <p>
+        The website is the front door. The model card shows performance and controls, the pipeline
+        pages show the daily state of the system, and the compare page lets you judge risk and
+        reward quickly. A whitepaper is on the way and will stitch the methods together so that
+        readers can deep-dive into all theoretical parts of the backend design.
+      </p>
+    </details>
+  </section>
+
+  <!-- Tenets -->
+  <section class="card">
+    <header class="card-head">
+      <h2 class="card-title">Project tenets</h2>
+    </header>
+    <ol class="tenets">
+      <li>
+        Design every layer with intention. Use modern methods where they truly add value and keep
+        the rest simple and reliable.
+      </li>
+      <li>
+        Test strategies with care and publish calibration so that readers can judge stability, not
+        just headline returns.
+      </li>
+      <li>
+        Favour clarity. If a non technical reader cannot follow the logic then I have more work to
+        do.
+      </li>
+      <li>
+        Keep code and data organised. Neat systems fail less and are easier to extend.
+      </li>
+      <li>
+        Be honest about results. Fix root causes, write down lessons, and only then move on.
+      </li>
     </ol>
   </section>
 
-  <section>
-    <h2>Contact</h2>
-    <p>Questions, ideas, or collaboration? <a href="/contact/">Get in touch</a>.</p>
+  <!-- Timeline -->
+  <section class="card">
+    <header class="card-head">
+      <h2 class="card-title">Timeline</h2>
+      <div class="card-sub">Milestones and direction of travel</div>
+    </header>
+    <ul class="timeline">
+      <li><span class="tdate">May 2025</span> <span class="sep">-</span> Project began.</li>
+      <li><span class="tdate">Late May 2025</span> <span class="sep">-</span> Basic static pipeline produced daily output.</li>
+      <li><span class="tdate">June 2025</span> <span class="sep">-</span> Live and Sim split designed and early versions shipped; whitepaper draft started.</li>
+      <li><span class="tdate">July 2025</span> <span class="sep">-</span> Live pipeline produced two reports each day.</li>
+      <li><span class="tdate">Early August 2025</span> <span class="sep">-</span> Pipelines upgraded for deeper analysis.</li>
+      <li><span class="tdate">August 2025</span> <span class="sep">-</span> Model series defined and first models built.</li>
+      <li><span class="tdate">September 2025</span> <span class="sep">-</span> Site started to receive model JSON; final year study began.</li>
+      <li><span class="tdate">Late September 2025</span> <span class="sep">-</span> First model card live; whitepaper reached first full draft.</li>
+      <li><span class="tdate">October 2025</span> <span class="sep">-</span> Public site launched; models and documentation improved.</li>
+      <li><span class="tdate">Winter 2025</span> <span class="sep">-</span> Round out initial set of models and publish weekly notes.</li>
+      <li><span class="tdate">Spring 2026</span> <span class="sep">-</span> Expand into other markets and model series.</li>
+      <li><span class="tdate">Summer 2026</span> <span class="sep">-</span> Move toward real capital.</li>
+    </ul>
   </section>
 
-  <aside class="notice">
-    <p><strong>Important:</strong> EireQuant is a research project. Nothing on this site is investment advice. See the <a href="/disclaimer/">Disclaimer</a>, <a href="/terms/">Terms</a>, and <a href="/privacy/">Privacy</a>.</p>
-  </aside>
-
-  <style>
-    .hero { text-align:center; margin-top:.5rem; margin-bottom:1.25rem; }
-    .hero img{ height:40px; margin-bottom:.5rem; opacity:.9; }
-    .tagline{ color:#555; margin:.25rem 0 .25rem; }
-    .meta{ font-size:.85rem; color:#777; }
-    .bullets{ margin:.5rem 0 0 1rem; }
-    .bullets li{ margin:.25rem 0; }
-    .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:.5rem; }
-    .card{ border:1px solid #eee; border-radius:12px; padding:1rem; background:#fff; }
-    .card.muted{ opacity:.85; }
-    .kicker{ font-size:.8rem; letter-spacing:.04em; text-transform:uppercase; color:#666; }
-    .cta{ display:inline-block; margin-top:.5rem; font-weight:600; color:var(--brand,#0E3B2D); }
-    .notice{ margin-top:1.25rem; border:1px solid #f0d9a8; background:#fffaf0; padding:.75rem 1rem; border-radius:12px; color:#553; }
-  </style>
+  <!-- Explore links (kept lightweight; uses your footer for full nav) -->
+  <section class="card">
+    <header class="card-head">
+      <h2 class="card-title">Explore the work</h2>
+    </header>
+    <ul class="links">
+      <li><a href="/pipelines/live/">Live pipeline</a></li>
+      <li><a href="/models/eqx-m1/">EQX-M1 model card</a></li>
+      <li><a href="/compare/">Compare</a></li>
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/contact/">Contact</a></li>
+    </ul>
+  </section>
 </BaseLayout>
+
+<style>
+  .h1{font-size:2rem;margin:0 0 .5rem}
+  .h3{font-size:1.05rem;margin:.25rem 0 .35rem}
+  .lede{font-size:1.05rem;color:#333}
+  .muted{color:#666}
+
+  .card{background:#fff;border:1px solid var(--border, #e7e7e7);border-radius:12px;padding:1rem;margin:1rem 0}
+  .card-head{display:flex;justify-content:space-between;align-items:baseline;gap:.75rem;margin-bottom:.5rem}
+  .card-title{font-weight:600}
+  .card-sub{color:#666;font-size:.9rem}
+
+  .hero .hero-grid{
+    display:grid;grid-template-columns:1.1fr .9fr;gap:1rem;align-items:center
+  }
+  .portrait{margin:0;display:flex;justify-content:flex-end}
+  .portrait img{
+    width:280px;height:auto;object-fit:cover;border-radius:14px;border:1px solid var(--border, #e7e7e7);
+    box-shadow:0 8px 22px rgba(0,0,0,.06)
+  }
+  @media (max-width:900px){
+    .hero .hero-grid{grid-template-columns:1fr}
+    .portrait{justify-content:flex-start}
+    .portrait img{width:220px}
+  }
+
+  .cv-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.5rem 0 1rem}
+  @media (max-width:900px){ .cv-grid{grid-template-columns:1fr} }
+
+  .exp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:.5rem}
+  @media (max-width:1000px){ .exp-grid{grid-template-columns:1fr 1fr} }
+  @media (max-width:700px){ .exp-grid{grid-template-columns:1fr} }
+  .exp{border:1px dashed var(--border, #e7e7e7);border-radius:10px;padding:.8rem}
+  .exp-title{margin:0 0 .15rem;font-weight:600}
+
+  .qa{border:1px dashed var(--border, #e7e7e7);border-radius:10px;padding:.65rem .8rem;margin:.5rem 0}
+  .qa > summary{cursor:pointer;font-weight:600;margin:.1rem 0}
+  .qa[open] > summary{margin-bottom:.25rem}
+
+  .tenets{margin:.25rem 1rem .25rem 1.25rem;display:grid;gap:.35rem}
+  .tenets li{line-height:1.45}
+
+  .timeline{list-style:none;margin:.25rem 0 0;padding:0}
+  .timeline li{display:flex;gap:.5rem;padding:.45rem .4rem;border-bottom:1px solid var(--border, #eee)}
+  .timeline li:last-child{border-bottom:0}
+  .timeline .tdate{min-width:180px;font-weight:600}
+  .timeline .sep{color:#bbb;margin:0 .15rem}
+  .links{display:flex;flex-wrap:wrap;gap:.6rem;padding-left:0;margin:0}
+  .links li{list-style:none}
+  .links a{display:inline-block;padding:.5rem .7rem;border:1px solid var(--border, #e7e7e7);border-radius:10px;background:#fafafa}
+  .links a:hover{text-decoration:underline}
+</style>

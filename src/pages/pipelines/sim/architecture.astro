@@ -1,0 +1,128 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Pipeline, explained · EireQuant">
+  <h1>Pipeline, explained</h1>
+
+  <section class="panel">
+    <p class="lead">High-level view of how data moves through the system—ingest, label, feature, train/select, and publish.</p>
+    <div class="flow">
+      <div class="node"><strong>Ingest</strong><span>Prices, fundamentals, calendars</span></div>
+      <div class="arrow">?</div>
+      <div class="node"><strong>Clean</strong><span>Gaps, splits, outliers</span></div>
+      <div class="arrow">?</div>
+      <div class="node"><strong>Label</strong><span>Targets, regimes</span></div>
+      <div class="arrow">?</div>
+      <div class="node"><strong>Features</strong><span>Signals, risk proxies</span></div>
+      <div class="arrow">?</div>
+      <div class="node"><strong>Train & Select</strong><span>Fit, CV, calibration</span></div>
+      <div class="arrow">?</div>
+      <div class="node"><strong>Policy</strong><span>PID, constraints</span></div>
+      <div class="arrow">?</div>
+      <div class="node"><strong>Publish</strong><span>Curves, tables, status</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Stages</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Ingest & Clean</h3>
+        <ul>
+          <li>Consolidate vendor feeds</li>
+          <li>Normalize splits/dividends</li>
+          <li>QC on gaps and anomalies</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Label & Regimes</h3>
+        <ul>
+          <li>Forward returns & horizons</li>
+          <li>Regime timeline and transitions</li>
+          <li>Sane defaults for ties/missing</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Features</h3>
+        <ul>
+          <li>Price/volume transforms</li>
+          <li>Sector & market context</li>
+          <li>Risk greek proxies</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Model & Selection</h3>
+        <ul>
+          <li>Cross-validation by regime</li>
+          <li>ECE calibration</li>
+          <li>Consistency checks</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Policy</h3>
+        <ul>
+          <li>PID trace & clamps</li>
+          <li>Position sizing rules</li>
+          <li>Trade eligibility filters</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Publish</h3>
+        <ul>
+          <li>Equity windows</li>
+          <li>Rollups and leaders</li>
+          <li>Status JSON for live</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Data I/O</h2>
+    <table class="io">
+      <thead><tr><th>Artifact</th><th>Where</th><th>Used by</th></tr></thead>
+      <tbody>
+        <tr><td>Equity windows</td><td><code>/data/models/eqx-m1/equity/*</code></td><td>Model Card, Compare, Pipelines</td></tr>
+        <tr><td>Calibration</td><td><code>/data/models/eqx-m1/calibration.json</code></td><td>Model Card, Workstation</td></tr>
+        <tr><td>Drivers/Sectors</td><td><code>/data/models/eqx-m1/top_drivers.json</code></td><td>Home, Workstation</td></tr>
+        <tr><td>Daily picks</td><td><code>/data/daily/&lt;date&gt;/model_selection.json</code></td><td>Home, Live</td></tr>
+        <tr><td>Pipeline status</td><td><code>/data/pipeline/status.json</code></td><td>Pipelines, Live</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>Scheduling & Ops</h2>
+    <ul class="bullets">
+      <li>Deterministic runs; write once, read many</li>
+      <li>Health JSON per module; simple green/amber/red</li>
+      <li>Idempotent publishers for window updates</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>Evaluation</h2>
+    <ul class="bullets">
+      <li>Windowed comparisons vs baselines</li>
+      <li>ECE and drift monitors</li>
+      <li>Stability checks across regimes</li>
+    </ul>
+  </section>
+
+  <style>
+    .lead{color:#444;margin:.1rem 0 .6rem}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .flow{display:grid;grid-template-columns:repeat(13,auto);gap:.4rem;align-items:center;overflow:auto;padding:.25rem 0}
+    .node{border:1px solid var(--border);border-radius:10px;padding:.45rem .65rem;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+    .node span{display:block;color:#555;font-size:.9rem}
+    .arrow{color:#888;padding:0 .1rem}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    @media(max-width:1000px){.grid{grid-template-columns:1fr}}
+    .card{border:1px solid var(--border);border-radius:12px;background:#fff;padding:1rem}
+    .io{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+    .io th,.io td{padding:.55rem .7rem;border-bottom:1px solid var(--border)}
+    .io thead th{background:#fafafa;text-align:left}
+    .io tr:last-child td{border-bottom:0}
+    .bullets{list-style:disc;margin:.25rem 0 0 1.2rem;display:grid;gap:.35rem}
+  </style>
+</BaseLayout>

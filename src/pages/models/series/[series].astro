@@ -3,40 +3,177 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import modelSeries from "../../../lib/modelSeries";
 
-const { series = "" } = Astro.params;
-const meta = modelSeries.find(s => s.slug === series) ?? { title: series, subtitle:"" };
-const all = await getCollection("models");
-const items = all.filter(m => m.data.series === series).sort((a,b)=>(a.data.mark ?? 0) - (b.data.mark ?? 0));
-export const prerender = true;
----
-<BaseLayout title={`${meta.title} · Models · EireQuant`} description={meta.subtitle ?? "Model family"}>
-  <section class="card">
-    <h1 class="h1">{meta.title}</h1>
-    {meta.subtitle && <p class="muted">{meta.subtitle}</p>}
-  </section>
+/** Generate static paths for each series slug (keeps build fully static). */
+export async function getStaticPaths() {
+  return modelSeries.map((s) => ({ params: { series: s.slug } }));
+}
 
-  {items.length ? (
-    <section class="grid">
-      {items.map(({ data }) => (
-        <a class="tile" href={`/models/${data.slug}/`}>
-          <div class="tile-h">Mk {data.mark} · {data.version ?? "v1.0.0"} · {data.status ?? "research"}</div>
-          <div class="tile-sub">{data.title}</div>
-          <div class="tile-cta">Open →</div>
-        </a>
-      ))}
-    </section>
-  ) : (
-    <section class="card"><p class="muted">No marks published yet.</p></section>
-  )}
+interface Params { series: string }
+const { series } = Astro.params as Params;
+
+// All models registered in the content collection
+const all = await getCollection("models");
+
+// Series meta + display overrides
+const sMeta = modelSeries.find(s => s.slug === series);
+
+const titleOverride: Record<string,string> = {
+  "eq-tbd": "EQ Experimental Series",
+};
+const subtitleOverride: Record<string,string> = {
+  "eq-core": "Daily tilts designed to be held, not chased. Core aims for interpretable, low-churn edges that survive across regimes. Rolling-window training, budgeted turnover, sector & symbol caps, and reliability checks (ECE) keep behavior honest.",
+  "eq-sentinel": "Risk sentries and overlays. Sentinel watches for volatility spikes, liquidity stress, and structural breaks. Outputs are hedges, halts, and confidence dials rather than raw bets. The goal is to cut left-tail and time-to-recover, not maximize headline return.",
+  "eq-tbd": "Incubator for new ideas. Experimental hosts research marks under live shadowing. We monitor calibration drift, operational health, and regime stability. Candidates that pass promote to Core or become Sentinel modules; the rest are documented and retired—no curve-fitting by omission.",
+};
+const meta = sMeta ? {
+  ...sMeta,
+  title: titleOverride[sMeta.slug] ?? sMeta.title,
+  subtitle: subtitleOverride[sMeta.slug] ?? sMeta.subtitle
+} : { slug: series, title: series, subtitle: "" };
+
+// Content-backed marks (newest first)
+const contentMarks = all
+  .filter(m => m.data.series === series)
+  .sort((a,b) => (b.data.mark ?? 0) - (a.data.mark ?? 0));
+
+// Extra marks to surface even if not in the content collection
+const extraMarks: Record<string, Array<{slug:string; title:string; summary?:string; mark?:string|number; version?:string; status?:string;}>> = {
+  "eq-tbd": [
+    {
+      slug: "eqx-m1",
+      title: "EQX-M1 (Experimental)",
+      summary:
+        "First experimental equity model under live shadowing. See calibration, sector/regime panels and ops notes in the model card.",
+      mark: "M1",
+      version: "v1",
+      status: "experimental",
+    },
+  ],
+};
+
+// Build extras then merge (content marks first, then extras not already present)
+const existingSlugs = new Set(contentMarks.map(m => m.data.slug));
+const extras = (extraMarks[series] ?? [])
+  .filter(x => !existingSlugs.has(x.slug))
+  .map((x) => ({
+    data: {
+      slug: x.slug,
+      title: x.title,
+      summary: x.summary,
+      mark: x.mark,
+      version: x.version,
+      status: x.status,
+    }
+  }));
+
+const merged = [...contentMarks, ...extras];
+---
+<BaseLayout title={`${meta.title} · EireQuant`} description={meta.subtitle ?? "Model series and their marks."}>
+
+  <div class="series-grid">
+    <!-- LEFT rail intentionally blank for now -->
+    <aside class="rail rail-left"></aside>
+
+    <!-- CENTER -->
+    <main class="center">
+      <header class="hero panel">
+        <div class="kicker">Series</div>
+        <h1 class="title">{meta.title}</h1>
+        {meta.subtitle && <p class="intro">{meta.subtitle}</p>}
+      </header>
+
+      <section class="panel">
+        <h2 class="hsmall">Marks in this series</h2>
+
+        {merged.length ? (
+          <div class="marks">
+            {merged.map(({ data }) => (
+              <article class="mark-card">
+                <div class="mark-meta">
+                  {data.mark && <span>Mk {data.mark} · </span>}
+                  {data.version ?? "v1.0.0"} · {data.status ?? "research"}
+                </div>
+                <h3 class="mark-title">{data.title}</h3>
+                <p class="mark-desc">{data.summary ?? "Concise model summary coming soon."}</p>
+                <div class="mark-cta">
+                  <a class="btn ghost" href={`/models/${data.slug}/`}>View model card →</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="empty-line">
+            <span class="tag">No published marks yet</span>
+            <span class="muted"> · Coming soon.</span>
+          </div>
+        )}
+      </section>
+    </main>
+
+    <!-- RIGHT -->
+    <aside class="rail rail-right">
+      <section class="panel">
+        <h3 class="hsmall">Resources</h3>
+        <ul class="list">
+          <li><a class="pill-link" href="/pipelines/sim/">Sim / Workstation pipeline →</a></li>
+          <li><a class="pill-link" href="/compare/">Compare models & benchmarks →</a></li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h3 class="hsmall">What’s in a model card?</h3>
+        <ul class="bullets">
+          <li>Performance snapshot (with costs) & regimes</li>
+          <li>Calibration (ECE), uncertainty & consistency</li>
+          <li>Constraints (gross/net, caps, turnover)</li>
+          <li>Rationale & ops health notes</li>
+        </ul>
+      </section>
+    </aside>
+  </div>
 
   <style>
-    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
-    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
-    .muted{ color:#6b6b6b; }
-    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:16px; }
-    .tile{ display:block; text-decoration:none; color:inherit; border:2px solid #d7d7d7; border-radius:6px; background:#fff; padding:16px; min-height:120px; }
-    .tile-h{ font-weight:700; margin-bottom:6px; }
-    .tile-sub{ color:#333; }
-    .tile-cta{ margin-top:12px; font-weight:600; color:#0645ad; }
+    .series-grid{
+      display:grid;
+      grid-template-columns: 260px 1fr 260px;
+      gap:1rem;
+      align-items:start;
+    }
+    @media(min-width:1025px){
+      .series-grid{ grid-template-columns: 260px minmax(520px,1fr) 260px; }
+    }
+    @media(max-width:1000px){
+      .series-grid{ grid-template-columns: 1fr; }
+      .rail-left,.rail-right{ order:2; }
+      .center{ order:1; }
+    }
+
+    .rail{ display:grid; gap:1rem; }
+    .panel{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:1rem; box-shadow:0 6px 18px rgba(0,0,0,.05); }
+
+    .kicker{ font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; color:#666; }
+    .title{ margin:.1rem 0 .2rem; }
+    .intro{ color:#555; margin:.15rem 0 0; }
+
+    .hsmall{ font-size:1rem; margin:.1rem 0 .6rem; }
+    .list{ list-style:none; padding:0; margin:0; display:grid; gap:.4rem; }
+    .bullets{ list-style:disc; margin:.25rem 0 0 1.2rem; display:grid; gap:.25rem; }
+
+    .pill-link{ display:inline-block; border:1px solid var(--border); border-radius:999px; padding:.3rem .6rem; background:#fafafa; text-decoration:none; }
+
+    .marks{ display:grid; grid-template-columns: 1fr; gap:.75rem; }
+    .mark-card{
+      border:1px solid var(--border); border-radius:12px; background:#fff; padding:1rem;
+      transition:border-color .15s ease, box-shadow .15s ease, transform .08s ease;
+    }
+    .mark-card:hover{ border-color:#ddd; box-shadow:0 8px 24px rgba(0,0,0,.06); transform: translateY(-1px); }
+    .mark-meta{ font-size:.85rem; color:#666; margin-bottom:.25rem; text-transform:uppercase; letter-spacing:.03em; }
+    .mark-title{ margin:.1rem 0 .2rem; }
+    .mark-desc{ color:#444; margin:0; }
+    .mark-cta{ margin-top:.6rem; }
+
+    .empty-line{ display:flex; align-items:center; gap:.35rem; }
+    .tag{ display:inline-block; border:1px solid var(--border); border-radius:999px; padding:.2rem .55rem; background:#fafafa; font-size:.9rem; }
+    .muted{ color:var(--muted); }
   </style>
 </BaseLayout>

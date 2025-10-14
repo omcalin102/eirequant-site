@@ -1,0 +1,76 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Mathematics · Workstation · EireQuant">
+  <h1>Mathematics</h1>
+
+  <section class="panel">
+    <p class="lead">Notes that back the pipeline: targets, regimes, calibration, risk, and policy.</p>
+    <div class="quick">
+      <a class="q" href="/pipelines/sim/architecture/">Pipeline, explained</a>
+      <a class="q" href="/pipelines/sim/code/">Code & experiments</a>
+      <a class="q" href="/compare/">Compare</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Targets</h2>
+    <p>Forward returns r<sub>t?t+h</sub> on a fixed horizon h. Classification uses sign(r) or quantiles; regression uses r directly with robust loss.</p>
+    <pre><code>r_&#123;t?t+h&#125; = (P_&#123;t+h&#125; - P_t) / P_t</code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Regimes</h2>
+    <p>Binary timeline with transition penalties. Regime labels can be market-implied (trend filter) or state-implied (hidden Markov). We validate stability across windows.</p>
+    <pre><code>R_t ? &#123;bull, bear&#125;,   cost = ?_t 1[R_t ? R_&#123;t-1&#125;]·?_trans</code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Calibration (ECE)</h2>
+    <p>Reliability via Expected Calibration Error on binned probabilities.</p>
+    <pre><code>ECE = ?_k (|B_k|/N) · | acc(B_k) - conf(B_k) |</code></pre>
+    <ul class="bullets">
+      <li>Monotone isotonic or temperature scaling as needed</li>
+      <li>Drift monitor on rolling windows</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>Risk model (Greek proxies)</h2>
+    <p>Delta/Gamma/Vega-like proxies from price curvature and variance surfaces; used for sanity bounds and portfolio mix.</p>
+    <pre><code>? ? ?V/?S,  ? ? ?²V/?S²,  ? ? ?V/??
+Proxies: finite diffs over smoothed returns / vol</code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Selection & aggregation</h2>
+    <p>Cross-regime selection, regularized weighting, turnover-aware constraints.</p>
+    <pre><code>argmax_w  E[r]  s.t.  risk(w) ? ?,  turnover(w) ? ?</code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Policy control</h2>
+    <p>PID-style clamp around target exposure with leak and ceiling limits.</p>
+    <pre><code>e_t = target - signal_t
+u_t = Kp·e_t + Ki·?e + Kd·(e_t - e_&#123;t-1&#125;)</code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Evaluation</h2>
+    <ul class="bullets">
+      <li>Windowed CAGR/Vol/Sharpe vs CB baseline</li>
+      <li>Regime stratified stability</li>
+      <li>ECE drift and OOS holdouts</li>
+    </ul>
+  </section>
+
+  <style>
+    .lead{color:#444;margin:.1rem 0 .6rem}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .quick{display:flex;gap:.6rem;flex-wrap:wrap}
+    .q{display:inline-block;border:1px solid var(--border);border-radius:12px;background:#fff;padding:.5rem .75rem;text-decoration:none;color:inherit}
+    pre{background:#fafafa;border:1px solid var(--border);border-radius:10px;padding:.75rem;overflow:auto;white-space:pre-wrap}
+    code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .bullets{list-style:disc;margin:.25rem 0 0 1.2rem;display:grid;gap:.35rem}
+  </style>
+</BaseLayout>

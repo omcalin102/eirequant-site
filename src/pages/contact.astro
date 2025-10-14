@@ -1,7 +1,90 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Contact — EIREQuant">
-  <h1 class="text-2xl font-semibold mb-6">Contact</h1>
-  <p>Email: <a class="underline" href="mailto:hello@eirequant.com">hello@eirequant.com</a></p>
+<BaseLayout title="Contact · EireQuant" description="Get in touch about EireQuant — research, models, pipelines, and collaboration.">
+  <h1>Contact</h1>
+
+  <section class="panel">
+    <p class="lead">
+      I’m building EireQuant while juggling final year at uni, I would love to hear feedback based on the work so far and any advice is greatly appreciated.
+      For discussions regarding roles, collaborations, or just want to swap notes on markets, models, or infrastructure,
+      please contact me either on email or Linkedin.
+    </p>
+
+    <div class="grid two-col">
+      <div class="card">
+        <h2 class="card-title">Primary</h2>
+        <ul class="list">
+          <li>
+            <strong>Email:</strong>
+            <a href="mailto:oisinmcalinden2@gmail.com">oisinmcalinden2@gmail.com</a>
+          </li>
+          <li>
+            <strong>LinkedIn:</strong>
+            <a href="https://www.linkedin.com/in/oisin-mcalinden-3b6a8a2a4/" target="_blank" rel="noopener">
+              Connect / DM on LinkedIn
+            </a>
+          </li>
+        </ul>
+        <p class="hint">Fastest way to reach me is email. I typically reply within 24–48 hours.</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Also find me</h2>
+        <ul class="list">
+          <li>
+            <strong>GitHub:</strong>
+            <a href="https://github.com/omcalin102" target="_blank" rel="noopener">omcalin102</a>
+          </li>
+        </ul>
+        <p class="hint">Front end code, for backend please email.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Why reach out?</h2>
+    <div class="grid two-col">
+
+      <div class="card">
+        <h3 class="hsmall">Partnerships & collaboration</h3>
+        <p>
+          Interested in integrating models, benchmarking, or pipelines? I’m happy to collaborate
+          on research, infra, or content — from feature engineering ideas to evaluation harnesses
+          and reporting.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3 class="hsmall">Model questions</h3>
+        <p>
+          Questions about the current models, calibration, regimes, or the policy trace?
+          I’m glad to walk through the card, the live pipeline, or the workstation (Sim) notes.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3 class="hsmall">General feedback</h3>
+        <p>
+          See something that could be clearer, faster, or more useful? Feedback on the website,
+          docs, or visualizations is very welcome.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>What to include</h2>
+    <ul class="list">
+      <li>Your name and how to reach you.</li>
+      <li>Topic (e.g., role, collaboration, model card question, site feedback).</li>
+      <li>Any links or context that would help me prep before replying.</li>
+    </ul>
+    <p class="hint">Short is great — I’ll follow up with specifics if needed.</p>
+  </section>
 </BaseLayout>
+
+<style>
+  .lead{color:#444;margin:.2rem 0 .8rem}
+  .hsmall{font-size:1rem;margin:.1rem 0 .4rem}
+</style>

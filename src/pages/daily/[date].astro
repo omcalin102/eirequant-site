@@ -1,27 +1,122 @@
 ---
-const { date } = Astro.params;
-const base = `/data/daily/${date}`;
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { readdirSync } from "node:fs";
 
-const load = async (p) => (await fetch(p)).ok ? fetch(p).then(r=>r.json()) : null;
-const ms = await load(`${base}/model_selection.json`);
-const rg = await load(`${base}/risk_greeks.json`);
-const sh = await load(`${base}/sector_health.json`);
+// 🔧 Enumerate all YYYY-MM-DD folders in /public/data/daily so we can prerender them
+export async function getStaticPaths() {
+  let dates = [];
+  try {
+    const base = new URL("../../../../public/data/daily/", import.meta.url);
+    dates = readdirSync(base, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name)
+      .sort(); // ascending; newest will be last
+  } catch {}
+  // Fallback (in case CI can't read dir for some reason)
+  if (!dates.length) dates = ["2025-09-19"];
+  return dates.map((date) => ({ params: { date } }));
+}
+
+const { date = "" } = Astro.params;
+const title = `Daily · ${date} · EireQuant`;
+export const prerender = true;
 ---
-<html lang="en">
-  <head><title>Daily — {date}</title></head>
-  <body class="max-w-6xl mx-auto px-4 py-10">
-    <h1 class="text-3xl font-bold mb-6">Daily Snapshot — {date}</h1>
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-3">Model Selection</h2>
-      <pre class="bg-gray-50 p-4 rounded-2xl overflow-auto text-sm">{JSON.stringify(ms, null, 2)}</pre>
-    </section>
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-3">Risk Greeks</h2>
-      <pre class="bg-gray-50 p-4 rounded-2xl overflow-auto text-sm">{JSON.stringify(rg, null, 2)}</pre>
-    </section>
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-3">Sector Health</h2>
-      <pre class="bg-gray-50 p-4 rounded-2xl overflow-auto text-sm">{JSON.stringify(sh, null, 2)}</pre>
-    </section>
-  </body>
-</html>
+
+<BaseLayout title={title} description="Daily pipeline snapshot.">
+  <section class="card">
+    <h1 class="h1">Daily Snapshot</h1>
+    <p class="muted">Pipeline results for <strong>{date}</strong>.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Model Selection</h2>
+    <div id="model-sel" class="kvlist muted">Loading…</div>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Risk Greeks</h2>
+    <div id="greeks" class="kvlist muted">Loading…</div>
+  </section>
+
+  <section class="card">
+    <h2 class="h2">Sector Health</h2>
+    <div id="sectors" class="table-wrap">
+      <table class="tbl">
+        <thead><tr><th>Sector</th><th>Health</th><th>Note</th></tr></thead>
+        <tbody id="sectors-body"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <style>
+    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
+    .h1,.h2{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
+    .muted{ color:#6b6b6b; }
+    .kvlist{ display:grid; grid-template-columns: max(140px) 1fr; gap:8px 12px; }
+    .kvlist .k{ font-weight:700; color:#222; }
+    .kvlist .v{ color:#111; }
+    .table-wrap{ overflow:auto; }
+    table.tbl{ width:100%; border-collapse:collapse; }
+    .tbl th,.tbl td{ border:1px solid #d7d7d7; padding:8px; text-align:left; }
+    .tbl thead th{ background:#f5f5f5; }
+  </style>
+
+  <script type="module">
+    const date = {date: `${date}`}.date; // bake param
+    const base = `/data/daily/${date}`;
+
+    const $ = (s)=>document.querySelector(s);
+    const fmt = (x)=> (x==null? "—" : x);
+    const fmtPct = (x)=> x==null? "—" : (Math.round(x*1000)/10).toFixed(1)+"%";
+
+    async function j(p){ try{ const r = await fetch(p); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
+
+    (async () => {
+      // Model selection
+      const ms = await j(`${base}/model_selection.json`);
+      const msel = $("#model-sel");
+      if (ms){
+        msel.classList.remove("muted");
+        msel.innerHTML = "";
+        const rows = [
+          ["Date", ms.date ?? date],
+          ["Chosen Model", ms.model ?? ms.current_model ?? "—"],
+          ["Confidence", fmtPct(ms.confidence ?? ms.score)],
+          ["Reason", ms.reason ?? "—"],
+        ];
+        rows.forEach(([k,v]) => {
+          const kEl = document.createElement("div"); kEl.className="k"; kEl.textContent=k;
+          const vEl = document.createElement("div"); vEl.className="v"; vEl.textContent=fmt(v);
+          msel.append(kEl,vEl);
+        });
+      }
+
+      // Risk greeks
+      const g = await j(`${base}/risk_greeks.json`);
+      const gEl = $("#greeks");
+      if (g){
+        gEl.classList.remove("muted");
+        gEl.innerHTML = "";
+        Object.entries(g).forEach(([k,v]) => {
+          const kEl = document.createElement("div"); kEl.className="k"; kEl.textContent=k;
+          const vEl = document.createElement("div"); vEl.className="v"; vEl.textContent=fmt(v);
+          gEl.append(kEl,vEl);
+        });
+      }
+
+      // Sector health (array of {sector, score, note})
+      const s = await j(`${base}/sector_health.json`);
+      const body = $("#sectors-body");
+      if (s?.items?.length){
+        body.innerHTML = "";
+        s.items.forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${fmt(row.sector)}</td><td>${fmt(row.health ?? row.score)}</td><td>${fmt(row.note)}</td>`;
+          body.appendChild(tr);
+        });
+      } else {
+        body.innerHTML = `<tr><td colspan="3" class="muted">No sector data.</td></tr>`;
+      }
+    })();
+  </script>
+</BaseLayout>

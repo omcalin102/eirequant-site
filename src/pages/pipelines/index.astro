@@ -1,65 +1,116 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-export const prerender = true;
 ---
-<BaseLayout title="Pipelines · EireQuant" description="Choose a pipeline to explore.">
-  <section class="hero">
-    <h1 class="h1">Pipelines</h1>
-    <p class="lead">Select a pipeline. Live shows current outputs; Workstation covers theory and experiments.</p>
+
+<BaseLayout title="Pipelines — EireQuant" description="Entry point for live and simulation pipelines.">
+  <h1 class="title">Pipelines</h1>
+
+  <section class="cards">
+    <!-- Live -->
+    <article class="card">
+      <div class="meta">PIPELINE</div>
+      <h2 class="heading">Live Pipeline</h2>
+      <p class="desc">
+        Production path for the day-to-day investment workflow. Runs the current model set,
+        generates real selections, computes risk greeks and sector health, and tracks PID policy
+        controls. As the model library grows, this becomes the operating backbone where modules,
+        constraints, and governance come together to drive a live book with auditability.
+      </p>
+
+      <div class="rows">
+        <div class="row"><span>Status</span><strong>Offline (Reactivation planned 29/10)</strong></div>
+        <div class="row"><span>Current Model</span><strong>EQX-M1 (PID)</strong></div>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="/pipelines/live/">Open live pipeline</a>
+      </div>
+    </article>
+
+    <!-- Workstation -->
+    <article class="card">
+      <div class="meta">PIPELINE</div>
+      <h2 class="heading">Workstation (Sim)</h2>
+      <p class="desc">
+        Research & validation sandbox for windows, parameter sweeps, ablations, and stress tests.
+        Use it to study regimes, assess calibration and uncertainty, and harden ideas before promotion
+        to the live path.
+      </p>
+
+      <div class="rows">
+        <div class="row"><span>Status</span><strong>Currently crafting EQC-M2</strong></div>
+        <div class="row"><span>Focus</span><strong>Features · Validation · Engineering</strong></div>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="/pipelines/sim/">Open workstation</a>
+      </div>
+    </article>
   </section>
 
-  <div class="tiles">
-    <!-- Live Pipeline tile -->
-    <a class="tile" href="/pipelines/live/">
-      <div class="tile-h">Live Pipeline</div>
-      <div class="tile-kv"><span>Status</span><strong id="status">—</strong></div>
-      <div class="tile-kv"><span>Last run</span><strong id="lastrun">—</strong></div>
-      <div class="tile-kv"><span>Trading</span><strong id="trading">—</strong></div>
-      <div class="tile-kv"><span>Current regime</span><strong id="regime">—</strong></div>
-      <div class="tile-cta">Open →</div>
-    </a>
-
-    <!-- Workstation (Sim) tile -->
-    <a class="tile" href="/pipelines/sim/">
-      <div class="tile-h">Workstation (Sim)</div>
-      <p class="muted">Where new models are created and tested. Methods, code notes, and roadmap.</p>
-      <div class="tile-cta">Open →</div>
-    </a>
-  </div>
+  <!-- Wide subtext card -->
+  <section class="subcard">
+    <h3>How to use these</h3>
+    <p>
+      Validate in the <strong>Workstation</strong>, then promote to <strong>Live</strong>.
+      The workstation is where the engineering and theoretical ideas are brought together to improve a section of the existing framework.
+      The live path implements our project into an everyday working investment team where analysis is driven from real time data.
+    </p>
+    <ul>
+      <li><strong>Live:</strong> daily selections, greeks, sector health, PID control trace, governance hooks.</li>
+      <li><strong>Workstation:</strong> windows & comparisons, calibration and ECE checks, scenario & stress testing.</li>
+    </ul>
+    <p>
+      Over time, the live pipeline becomes a full shop surface where multiple model families,
+      sector-specific routing, and portfolio rules layered on top of reliable process.
+    </p>
+  </section>
 
   <style>
-    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
-    .lead{ color:#555; }
-    .tiles{ display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-top:16px; }
-    .tile{
-      display:block; border:2px solid #d7d7d7; border-radius:6px; background:#fff; padding:16px;
-      text-decoration:none; color:inherit; transition: box-shadow .12s ease;
-      min-height: 180px;
+    .title{
+      text-align:center;
+      margin:.25rem 0 1rem;
+      letter-spacing:.01em;
     }
-    .tile:hover{ box-shadow:0 2px 12px rgba(0,0,0,.06); }
-    .tile-h{ font-weight:700; margin-bottom:8px; }
-    .tile-kv{ display:flex; justify-content:space-between; border-bottom:1px dashed #eee; padding:6px 0; }
-    .tile-kv:last-of-type{ border-bottom:0; }
-    .tile-cta{ margin-top:12px; font-weight:600; color:#0645ad; }
-    .muted{ color:#6b6b6b; }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(280px,1fr));
+      gap:1rem;
+      margin:0 auto 1rem;
+      max-width:1100px;
+    }
+    @media (max-width:900px){ .cards{grid-template-columns:1fr} }
+
+    .card{
+      background:#fff;border:1px solid var(--border);border-radius:14px;
+      padding:1rem;box-shadow:0 6px 18px rgba(0,0,0,.05);
+      display:flex;flex-direction:column;gap:.6rem
+    }
+    .meta{font-size:.75rem;color:#6b7280;letter-spacing:.06em}
+    .heading{margin:.1rem 0 .2rem;font-size:1.35rem}
+    .desc{color:#333;margin:0;max-width:70ch}
+
+    .rows{display:grid;gap:.35rem;margin-top:.25rem}
+    .row{display:flex;justify-content:space-between;gap:.75rem;color:#555}
+    .row span{color:#6b7280}
+    .row strong{color:#111;font-weight:600}
+
+    .actions{margin-top:.4rem}
+    .btn{
+      display:inline-block;background:#0e3b2d;color:#fff;border-radius:10px;
+      padding:.55rem .9rem;font-weight:600;border:1px solid #0e3b2d
+    }
+    .btn:hover{filter:brightness(.95)}
+
+    .subcard{
+      background:#fff;border:1px solid var(--border);border-radius:14px;
+      padding:1rem;box-shadow:0 6px 18px rgba(0,0,0,.05);
+      max-width:1100px;margin:0 auto;
+    }
+    .subcard h3{margin:.1rem 0 .4rem}
+    .subcard p{max-width:80ch;color:#333}
+    .subcard ul{margin:.25rem 0 .5rem 1.1rem}
+    .subcard li{margin:.15rem 0}
   </style>
-
-  <script type="module">
-    const $ = (s) => document.querySelector(s);
-    async function j(path){ try{ const r = await fetch(path); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
-
-    (async () => {
-      const status = await j("/data/pipeline/status.json");
-      if (status) $("#status").textContent = status.state ?? status.status ?? "—";
-
-      const latest = await j("/data/daily/latest.json");
-      if (latest) $("#lastrun").textContent = latest.date ?? "—";
-
-      const pom = await j("/data/models/eqx-m1/pause_o_meter.json");
-      if (pom) $("#trading").textContent = pom.state ?? pom.mode ?? "—";
-
-      const reg = await j("/data/models/eqx-m1/current_regime.json");
-      if (reg) $("#regime").textContent = reg.name ?? reg.regime ?? "—";
-    })();
-  </script>
 </BaseLayout>

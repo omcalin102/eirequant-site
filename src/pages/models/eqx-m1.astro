@@ -1,283 +1,302 @@
 ---
-/* EQX-M1 model card — central column focus, neat, early-2000s crisp */
 import BaseLayout from "../../layouts/BaseLayout.astro";
-export const prerender = true;
+import PerformanceViewer from "../../components/viewers/PerformanceViewer.tsx";
+import PolicyTrace from "../../components/charts/PolicyTrace.tsx";
 
-const title = "EQX-M1 · Model Card";
-const description = "EQ Experimental Series — Model M1. Performance, key metrics, and methodology.";
+/**
+ * Hard-coded snapshot values pulled from the model card / whitepaper.
+ * These ensure the page is fully populated even if client-side fetches are blocked.
+ * Sources:
+ * - model_card_eqx_m1.json (sectors, PID ranges, regime table)
+ * - whitepaper EQX–M1 section (headline metrics)
+ */
+
+// Headline (post-costs), 2000-01-03 — 2025-09-19
+const HEADLINE = {
+  cagr: 0.0710,            // 7.10%
+  vol: 0.1454,             // 14.54%
+  sortino: 0.670,
+  omega: 1.123,
+  maxDD: -0.351,           // -35.1%
+  recoveryDays: 107,
+  pausePct: 0.0785,        // 7.85%
+  env: "dev",
+  version: "v1.0.0-eqx-m1",
+  window: { start: "2000-01-03", end: "2025-09-19" }
+};
+
+// PID guardrails (observed ranges)
+const PID = {
+  riskOffDays: 55,
+  threshold: { min: 0.576, med: 0.599, max: 0.629 },
+  maxGross:  { min: 0.200, med: 0.598, max: 0.702 }
+};
+
+// By-regime performance (days, hit-rate, omega, sortino)
+const REGIME = [
+  { name: "Bull",    days: 1467, hit: 0.4806, omega: 3.3810, sortino: 7.7425 },
+  { name: "Neutral", days:  790, hit: 0.4468, omega: 1.2765, sortino: 1.6744 },
+  { name: "Bear",    days: 1118, hit: 0.1959, omega: 0.2722, sortino: -6.1964 },
+];
+
+// Sector texture (Ω ≈ odds-like; higher is better). Picked top/worst by Ω.
+const SECTORS_TOP = [
+  { sector: "Basic Materials",  omega: 1.0607 },
+  { sector: "Energy",           omega: 1.0271 },
+  { sector: "Consumer Cyclical",omega: 1.0038 },
+];
+const SECTORS_BOTTOM = [
+  { sector: "Utilities",        omega: 0.8194 },
+  { sector: "Technology",       omega: 0.8691 },
+  { sector: "Real Estate",      omega: 0.8774 },
+];
+
+// Consistency / streaks (portfolio & top ticker)
+const CONSISTENCY = {
+  portfolioMaxWin: 138,
+  portfolioMaxLoss: 121,
+  topTickerWin: { ticker: "VTR", days: 35 }
+};
+
+// Utility formatters
+const pct  = (x, d=1)=> `${(x*100).toFixed(d)}%`;
+const num  = (x, d=2)=> (x==null||!isFinite(+x)) ? "—" : (+x).toFixed(d);
+const dash = (v)=> v==null ? "—" : String(v);
 ---
-<BaseLayout {title} {description}>
-  <!-- CENTER COLUMN CONTENT -->
-  <section class="card">
-    <h1 class="h1">EQX-M1 · Model Card</h1>
-    <div class="meta-row">
-      <div><span class="k">Generated</span> <span id="gen">—</span></div>
-      <div><span class="k">Schema</span> <span id="schema">—</span></div>
-      <div><span class="k">Env</span> <span id="env">—</span></div>
-      <div class="badge" id="regime">Regime: —</div>
-      <div class="badge" id="trading">Trading: —</div>
+
+<BaseLayout title="EQX-M1 · Model Card" description="EQX-M1 model card with performance, regimes, sectors, and policy controls.">
+  <h1>EQX-M1 — Model Card</h1>
+
+  <p class="intro">
+    EQX-M1 is an Experimental-series research mark built to test a lightweight, regime-aware equity policy.
+    It blends price action with flow and simple macro proxies, decouples decisions by regime, and keeps risk honest
+    via tight calibration and a “pause-o-meter” that can down-shift when signal quality degrades.
+  </p>
+
+  <!-- Meta row -->
+  <section class="panel meta">
+    <div class="row">
+      <div><div class="k">Version</div><div class="v">{HEADLINE.version}</div></div>
+      <div><div class="k">Data</div><div class="v">{HEADLINE.window.start} — {HEADLINE.window.end}</div></div>
+      <div><div class="k">Objective</div><div class="v">Book</div></div>
+      <div><div class="k">Env</div><div class="v">{HEADLINE.env}</div></div>
     </div>
   </section>
 
-  <section class="card">
-    <h2 class="h2">Key Metrics</h2>
-    <div class="grid2">
-      <div>
-        <h3 class="h3">By Regime Performance</h3>
-        <table class="table" id="perf-table">
-          <thead><tr><th>Regime</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>Win%</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div>
-        <h3 class="h3">Calibration</h3>
-        <div class="stat">
-          <div class="k">ECE</div>
-          <div class="v" id="ece">—</div>
+  <!-- Key metrics -->
+  <section class="panel">
+    <h2 class="h">Key Metrics</h2>
+    <div class="metrics">
+      <div class="m"><div class="label">CAGR</div><div class="val">{pct(HEADLINE.cagr,1)}</div><div class="subl">MAR ≈ {num(HEADLINE.cagr/Math.abs(HEADLINE.maxDD),3)}</div></div>
+      <div class="m"><div class="label">Vol (ann.)</div><div class="val">{pct(HEADLINE.vol,1)}</div><div class="subl">Sortino {num(HEADLINE.sortino,2)}</div></div>
+      <div class="m"><div class="label">Omega</div><div class="val">{num(HEADLINE.omega,3)}</div><div class="subl">Odds-like ratio</div></div>
+      <div class="m"><div class="label">Max DD</div><div class="val">{pct(HEADLINE.maxDD,1)}</div><div class="subl">Recovery {HEADLINE.recoveryDays} d</div></div>
+      <div class="m"><div class="label">Current Regime</div><div id="current-reg" class="val">—</div><div id="current-reg-sub" class="subl">prob —</div></div>
+    </div>
+  </section>
+
+  <!-- Mosaic -->
+  <div class="mosaic">
+    <!-- Equity (large) -->
+    <section class="panel wide">
+      <div class="head"><h2 class="h">Performance Viewer</h2></div>
+      <PerformanceViewer client:load />
+      <p class="note">
+        Series normalised to start = 1.0; includes costs. Equities: model, SPX, PID-governed book.
+      </p>
+    </section>
+
+    <!-- PID trace + summary -->
+    <section class="panel">
+      <h2 class="h">Policy Control Trace</h2>
+      <PolicyTrace client:load />
+      <ul class="kv">
+        <li><span>Risk-off days</span><b>{PID.riskOffDays}</b></li>
+        <li><span>Pause share</span><b>{pct(HEADLINE.pausePct,1)}</b></li>
+        <li><span>Threshold</span><b>{num(PID.threshold.min,3)} / {num(PID.threshold.med,3)} / {num(PID.threshold.max,3)}</b></li>
+        <li><span>Max gross</span><b>{num(PID.maxGross.min,3)} / {num(PID.maxGross.med,3)} / {num(PID.maxGross.max,3)}</b></li>
+      </ul>
+      <p class="hint">Shared axis; raw PID/control magnitudes. Caps tighten in stress and relax as conditions normalise.</p>
+    </section>
+
+    <!-- By-regime -->
+    <section class="panel">
+      <h2 class="h">By-Regime Performance</h2>
+      <table class="table slim">
+        <thead><tr><th>Regime</th><th>Ω</th><th>Hit rate</th><th>Days</th></tr></thead>
+        <tbody>
+          {REGIME.map(r => (
+            <tr>
+              <td>{r.name}</td>
+              <td>{num(r.omega,2)}</td>
+              <td>{pct(r.hit,1)}</td>
+              <td>{r.days}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p class="mini">
+        Long-only profile is pro-cyclical: strong in Bulls, steady in Neutral, destructive if unconstrained in Bears.
+        The controller down-shifts exposure in stress to preserve capital and shorten recovery arcs.
+      </p>
+    </section>
+
+    <!-- Risk & Pauses -->
+    <section class="panel">
+      <h2 class="h">Risk & Pauses</h2>
+      <div class="grid2">
+        <div class="stat"><div class="big">{pct(HEADLINE.pausePct,1)}</div><div class="cap">Paused share (all days)</div></div>
+        <div>
+          <ul class="kv tight">
+            <li><span>Gross caps (min/med/max)</span><b>{num(PID.maxGross.min,2)} / {num(PID.maxGross.med,2)} / {num(PID.maxGross.max,2)}</b></li>
+            <li><span>Thresholds (min/med/max)</span><b>{num(PID.threshold.min,3)} / {num(PID.threshold.med,3)} / {num(PID.threshold.max,3)}</b></li>
+          </ul>
         </div>
-        <div id="calib-extra" class="muted"></div>
       </div>
-    </div>
-  </section>
+      <p class="mini">
+        Pauses and tighter caps are the “seatbelt.” They reduce tail-risk during volatile or drawdown phases,
+        trading a bit of upside for a cleaner equity path.
+      </p>
+    </section>
 
-  <section class="card">
-    <h2 class="h2">What the Model Does</h2>
-    <div id="prose">
-      <!-- Populated from model_card_eqx_m1.json: objective, inputs, validation, caveats -->
-    </div>
-  </section>
+    <!-- Calibration -->
+    <section class="panel">
+      <h2 class="h">Calibration</h2>
+      <ul class="kv tight">
+        <li><span>ECE</span><b>0.1607</b></li>
+        <li><span>Bins</span><b>10</b></li>
+      </ul>
+      <p class="mini">
+        Bins around 0.60–0.85 are over-confident. Treat thresholds as dials; a dedicated calibration
+        pass (e.g., isotonic) is planned for the next iteration.
+      </p>
+    </section>
 
-  <section class="card">
-    <h2 class="h2">Performance Gallery</h2>
-    <div id="gallery" class="gallery"></div>
-    <div class="muted small">Static PNGs for speed. Use Compare to view interactive windows.</div>
-  </section>
-
-  <section class="card">
-    <h2 class="h2">Regime Context</h2>
-    <div class="timeline" id="timeline"></div>
-    <div class="spacer8"></div>
-    <h3 class="h3">Transitions</h3>
-    <table class="table" id="transitions">
-      <thead><tr><th>From</th><th>To</th><th>Count</th><th>Prob.</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <section class="card">
-    <h2 class="h2">Drivers & Sensitivities</h2>
-    <div class="grid2">
-      <div>
-        <h3 class="h3">Top Drivers</h3>
-        <ul class="list" id="drivers"></ul>
+    <!-- Sector impact -->
+    <section class="panel">
+      <h2 class="h">Sector Impact</h2>
+      <div class="chips">
+        {SECTORS_TOP.map(s => <span class="chip good">{s.sector} · Ω {num(s.omega,2)}</span>)}
       </div>
-      <div>
-        <h3 class="h3">Greek Proxies</h3>
-        <table class="table" id="greek-proxies">
-          <thead><tr><th>Feature</th><th>Sign</th><th>Note</th></tr></thead>
-          <tbody></tbody>
-        </table>
+      <div class="chips">
+        {SECTORS_BOTTOM.map(s => <span class="chip bad">{s.sector} · Ω {num(s.omega,2)}</span>)}
       </div>
-    </div>
+      <p class="mini">
+        Green chips show sectors where odds (Ω) lean positive; red chips highlight headwinds.
+        The PID router can use this texture to tilt or to route toward safer policies in fragile groups.
+      </p>
+    </section>
+
+    <!-- Ticker consistency -->
+    <section class="panel">
+      <h2 class="h">Ticker Consistency</h2>
+      <ul class="kv">
+        <li><span>Portfolio max win streak</span><b>{CONSISTENCY.portfolioMaxWin} d</b></li>
+        <li><span>Portfolio max loss streak</span><b>{CONSISTENCY.portfolioMaxLoss} d</b></li>
+        <li><span>Top ticker win streak</span><b>{CONSISTENCY.topTickerWin.ticker} · {CONSISTENCY.topTickerWin.days} d</b></li>
+      </ul>
+      <p class="mini">
+        Streaks contextualise variability. Long win runs cluster in calm regimes; long loss runs often overlap bear stress.
+        Controller caps and abstention dampen the worst streaks without muting resilience.
+      </p>
+    </section>
+
+    <!-- Ops -->
+    <section class="panel">
+      <h2 class="h">Operations</h2>
+      <table class="table slim">
+        <tbody>
+          <tr><td>Stage</td><td>dev</td></tr>
+          <tr><td>Active</td><td>Yes</td></tr>
+          <tr><td>Last update (UTC)</td><td>2025-09-19</td></tr>
+          <tr><td>Artifacts</td><td>equity_25y.json, pid_policy_trace.json</td></tr>
+          <tr><td>Hashes</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <p class="mini">Ops health looks normal; policy traces and equities render from local artifacts for reproducibility.</p>
+    </section>
+
+    <!-- Limits -->
+    <section class="panel">
+      <h2 class="h">Limitations</h2>
+      <p class="mini">
+        Research model; parameters subject to change. Backtest assumes fixed costs and a long-only book.
+        Regime labeling uses simple hysteresis rules and may differ from alternative taxonomies.
+      </p>
+    </section>
+  </div>
+
+  <!-- Methodology / deep dives -->
+  <section class="panel">
+    <h2 class="h">Methodology (summary)</h2>
+    <p class="mini">
+      Selection via probability thresholding; sizes scale with surplus-over-threshold to a regime-aware gross cap.
+      For deep dives, see the <a href="/pipelines/sim/">Workstation (Sim)</a> pages.
+    </p>
   </section>
 
-  <section class="card">
-    <h2 class="h2">Sectors & Tickers</h2>
-    <div class="grid2">
-      <div>
-        <h3 class="h3">Sector Performance</h3>
-        <table class="table" id="sector-perf">
-          <thead><tr><th>Sector</th><th>Score</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div>
-        <h3 class="h3">Ticker Leaderboard</h3>
-        <ol class="list" id="leaderboard"></ol>
-      </div>
-    </div>
-  </section>
-</BaseLayout>
-
-<style>
-  .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
-  .h1{ font-family: Georgia, 'Times New Roman', serif; font-size:32px; margin:0; }
-  .h2{ font-family: Georgia, 'Times New Roman', serif; font-size:24px; margin:0 0 8px 0; }
-  .h3{ font-size:18px; margin:0 0 6px 0; }
-  .muted{ color:#6b6b6b; }
-  .small{ font-size:13px; }
-  .spacer8{ height:8px; }
-
-  .meta-row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:8px; }
-  .meta-row .k{ font-weight:700; margin-right:6px; }
-  .badge{ border:1px solid #d7d7d7; padding:4px 8px; border-radius:6px; font-size:14px; }
-
-  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  @media (max-width: 1100px){ .grid2{ grid-template-columns:1fr; } }
-
-  .table{ width:100%; border-collapse:collapse; font-size:16px; }
-  .table th, .table td{ padding:6px 8px; border-bottom:1px solid #eee; text-align:left; }
-  .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-
-  .stat{ border:1px solid #d7d7d7; padding:12px; display:inline-flex; align-items:baseline; gap:8px; }
-  .stat .k{ font-weight:700; font-family: Georgia, 'Times New Roman', serif; }
-  .stat .v{ font-size:18px; }
-
-  /* Gallery */
-  .gallery{ display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
-  @media (min-width: 980px){ .gallery{ grid-template-columns:repeat(4, 1fr); } }
-  .gallery figure{ margin:0; border:2px solid #d7d7d7; border-radius:6px; overflow:hidden; background:#fff; }
-  .gallery img{ display:block; width:100%; height:auto; }
-  .gallery figcaption{ padding:6px 8px; font-size:14px; border-top:1px solid #eee; }
-  
-  /* Timeline (simple badges; can be upgraded later) */
-  .timeline{ display:flex; flex-wrap:wrap; gap:8px; }
-  .timeline .seg{ border:1px solid #d7d7d7; padding:4px 8px; border-radius:6px; font-size:14px; background:#fafafa; }
-</style>
-
-<script type="module">
-  const $ = (s) => document.querySelector(s);
-  const fmtPct = (x) => (x==null?"—":(Math.round(x*1000)/10).toFixed(1)+"%");
-  async function j(path){ try{ const r = await fetch(path); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
-
-  (async () => {
-    // Meta from catalog
-    const cat = await j("/data/models/eqx-m1/catalog.json");
-    if (cat){
-      $("#gen").textContent    = cat.generated_at ?? "—";
-      $("#schema").textContent = cat.schema_version ?? "—";
-      $("#env").textContent    = cat.env ?? "—";
-    }
+  <!-- Light client fetch to enrich: current regime + latest PID/sector/tickers if available -->
+  <script type="module">
+    const baseHref = () => (document.querySelector("base")?.getAttribute("href") || "/").replace(/\/+$/, "/");
+    const url = (p) => (baseHref() + String(p).replace(/^\//,"")).replace(/([^:]\/)\/+/g,"$1");
+    async function j(p){ try{ const r = await fetch(url(p), {cache:"no-cache"}); if(!r.ok) return null; return r.json(); }catch{ return null; } }
+    const $ = (s)=>document.querySelector(s);
 
     // Current regime
-    const regime = await j("/data/models/eqx-m1/current_regime.json");
-    if (regime){ $("#regime").textContent = `Regime: ${regime.name ?? regime.regime ?? "—"}`; }
-
-    // Trading / pause-o-meter
-    const pom = await j("/data/models/eqx-m1/pause_o_meter.json");
-    if (pom){ $("#trading").textContent = `Trading: ${pom.state ?? pom.mode ?? "—"}`; }
-
-    // Key metrics: by-regime perf
-    const perf = await j("/data/models/eqx-m1/by_regime_perf.json");
-    const tbody = $("#perf-table tbody");
-    if (perf?.items?.length){
-      perf.items.forEach(r => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${r.regime ?? r.name ?? "—"}</td>
-                        <td>${fmtPct(r.cagr ?? r.CAGR)}</td>
-                        <td>${fmtPct(r.vol ?? r.Vol)}</td>
-                        <td>${(r.sharpe ?? r.Sharpe ?? "—")}</td>
-                        <td>${fmtPct(r.win ?? r.win_rate ?? r.Win)}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // Calibration
-    const calib = await j("/data/models/eqx-m1/calibration.json");
-    if (calib){
-      $("#ece").textContent = calib.ece!=null ? (Math.round(calib.ece*1000)/1000).toString() : "—";
-      if (Array.isArray(calib.bins)){
-        $("#calib-extra").textContent = `Bins: ${calib.bins.length}`;
+    (async ()=>{
+      const cur = await j("/data/models/eqx-m1/current_regime.json");
+      if (cur){
+        const label = cur.label ?? cur.regime ?? cur.name ?? "—";
+        const p = cur.prob ?? cur.score ?? cur.confidence;
+        const prob = (typeof p === "number") ? `${(p*100).toFixed(1)}%` : "—";
+        const el = $("#current-reg"), sub = $("#current-reg-sub");
+        if (el) el.textContent = label;
+        if (sub) sub.textContent = `prob ${prob}`;
       }
-    }
+    })();
+  </script>
 
-    // Model card prose
-    const prose = await j("/data/models/eqx-m1/model_card_eqx_m1.json");
-    const proseEl = $("#prose");
-    const add = (title, text) => {
-      if (!text) return;
-      const h = document.createElement("h3"); h.className = "h3"; h.textContent = title;
-      const p = document.createElement("p"); p.textContent = text;
-      proseEl.appendChild(h); proseEl.appendChild(p);
-    };
-    if (prose){
-      add("Objective", prose.objective ?? prose.summary);
-      add("Inputs", prose.inputs ?? prose.features);
-      add("Validation", prose.validation ?? prose.methodology);
-      add("Caveats", prose.caveats ?? prose.limitations);
-    }
+  <style>
+    .intro{color:#444;margin:.35rem 0 1rem;max-width:78ch}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .h{margin:.1rem 0 .6rem}
+    .meta .row{display:flex;gap:1rem;flex-wrap:wrap}
+    .meta .k{font-size:.8rem;color:#666}
+    .meta .v{font-weight:700}
+    .metrics{display:flex;gap:.75rem;flex-wrap:wrap}
+    .m{border:1px solid var(--border);border-radius:12px;padding:.7rem .9rem;min-width:150px}
+    .label{font-size:.8rem;color:#666;margin-bottom:.1rem}
+    .val{font-weight:700}
+    .subl{font-size:.8rem;color:#6b7280;margin-top:.15rem}
 
-    // Gallery from catalog
-    const gal = $("#gallery");
-    if (cat?.items?.length){
-      cat.items.forEach(it => {
-        const fig = document.createElement("figure");
-        fig.innerHTML = `
-          <img src="/img/models/eqx-m1/charts/${it.key}.png" alt="${it.label ?? it.key}">
-          <figcaption>${it.label ?? it.key}</figcaption>
-        `;
-        gal.appendChild(fig);
-      });
-    }
+    .mosaic{display:grid;grid-template-columns:2fr 1fr;gap:1rem}
+    @media(max-width:1100px){.mosaic{grid-template-columns:1fr}}
+    .wide{grid-column:1 / span 2}
+    .head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .note{color:#6b7280;font-size:.85rem;margin-top:.5rem}
 
-    // Regime timeline
-    const tl = await j("/data/models/eqx-m1/regime_timeline.json");
-    const tlel = $("#timeline");
-    if (tl?.segments?.length){
-      tl.segments.forEach(s => {
-        const d = document.createElement("div");
-        d.className = "seg";
-        const a = s.start ?? s.from ?? "…", b = s.end ?? s.to ?? "…";
-        d.textContent = `${s.name ?? s.regime ?? "—"} (${a} → ${b})`;
-        tlel.appendChild(d);
-      });
-    }
+    .table{width:100%;border-collapse:separate;border-spacing:0 .4rem}
+    .table th,.table td{padding:.35rem .5rem;border:1px solid var(--border)}
+    .table.slim td,.table.slim th{font-size:.92rem}
+    .table th{background:#fafafa;color:#374151;text-align:left}
+    .table td:first-child,.table th:first-child{border-top-left-radius:8px;border-bottom-left-radius:8px}
+    .table td:last-child,.table th:last-child{border-top-right-radius:8px;border-bottom-right-radius:8px}
 
-    // Transitions
-    const trans = await j("/data/models/eqx-m1/regime_transitions.json");
-    const tBody = $("#transitions tbody");
-    if (trans?.items?.length){
-      trans.items.forEach(x => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${x.from ?? "—"}</td><td>${x.to ?? "—"}</td><td>${x.count ?? "—"}</td><td>${(x.prob!=null)?(Math.round(x.prob*1000)/10).toFixed(1)+"%":"—"}</td>`;
-        tBody.appendChild(tr);
-      });
-    }
+    .kv{list-style:none;padding:0;margin:.25rem 0;display:grid;gap:.4rem}
+    .kv li{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:10px;padding:.4rem .6rem}
+    .kv.tight li{padding:.3rem .5rem}
+    .hint{color:#6b7280;font-size:.8rem;margin-top:.5rem}
 
-    // Drivers
-    const drv = await j("/data/models/eqx-m1/top_drivers.json");
-    const drvEl = $("#drivers");
-    if (drv?.items?.length){
-      drv.items.slice(0,10).forEach(d => {
-        const li = document.createElement("li");
-        li.textContent = `${d.sign ? (d.sign>0 ? "▲" : "▼") + " " : ""}${d.name ?? d.driver ?? "feature"}` + (d.note ? ` — ${d.note}` : "");
-        drvEl.appendChild(li);
-      });
-    }
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+    @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+    .stat .big{font-weight:800;font-size:1.75rem;line-height:1}
+    .stat .cap{color:#6b7280;margin-top:.15rem}
 
-    // Greek proxies
-    const gp = await j("/data/models/eqx-m1/greek_proxies.json");
-    const gpBody = $("#greek-proxies tbody");
-    if (gp?.items?.length){
-      gp.items.forEach(g => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${g.name ?? g.feature ?? "—"}</td>
-                        <td>${g.sign!=null ? (g.sign>0?"Positive":"Negative") : "—"}</td>
-                        <td>${g.note ?? ""}</td>`;
-        gpBody.appendChild(tr);
-      });
-    }
+    .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.25rem 0 .5rem}
+    .chip{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:.25rem .6rem;font-size:.92rem}
+    .chip.good{background:#f0fdf4;border-color:#86efac}
+    .chip.bad{background:#fef2f2;border-color:#fecaca}
 
-    // Sector perf
-    const sp = await j("/data/models/eqx-m1/sector_perf.json");
-    const spBody = $("#sector-perf tbody");
-    if (sp?.items?.length){
-      sp.items.forEach(s => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${s.sector ?? "—"}</td><td>${(s.score ?? 0).toFixed(2)}</td>`;
-        spBody.appendChild(tr);
-      });
-    }
-
-    // Ticker leaderboard
-    const lb = await j("/data/models/eqx-m1/ticker_leaderboard.json");
-    const lbEl = $("#leaderboard");
-    if (lb?.items?.length){
-      lb.items.slice(0,10).forEach((t,i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${i+1}.</strong> ${t.ticker ?? "-"} <span class="muted">(${fmtPct(t.score ?? t.confidence ?? 0)})</span>`;
-        lbEl.appendChild(li);
-      });
-    }
-  })();
-</script>
+    .mini{color:#4b5563;margin:.5rem 0 0}
+  </style>
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+import HelpModal from "./HelpModal.tsx";
+
+const {
+  id = `help-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`,
+  title = "What is this?",
+  align = "corner", // "corner" or "inline"
+} = Astro.props;
+---
+<div class={`help-tip ${align}`}>
+  <button type="button" class="help-btn" data-target={id} aria-haspopup="dialog" aria-controls={id} aria-label="Help">?</button>
+  <HelpModal client:load id={id} title={title}>
+    <slot />
+  </HelpModal>
+</div>
+
+<style>
+  .help-tip.corner{position:absolute;top:.5rem;right:.5rem}
+  .help-tip.inline{display:inline-block;margin-left:.5rem;vertical-align:middle}
+  .help-btn{
+    width:24px;height:24px;line-height:24px;text-align:center;
+    border:1px solid var(--border);border-radius:50%;background:#fff;color:#111;
+    font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .help-btn:hover{background:#f8f8f8}
+  .help-btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+</style>

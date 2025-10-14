@@ -1,268 +1,220 @@
 ---
-export const prerender = true;
 import BaseLayout from "../layouts/BaseLayout.astro";
-const title = "EireQuant";
-const description = "A next-generation quantitative research platform — blending model families, portfolios, and real-time pipelines into one open showcase.";
+import { getCollection } from "astro:content";
+
+import ModelPicks from "../components/cards/ModelPicks.tsx";
+import GreeksMini from "../components/cards/GreeksMini.tsx";
+import SectorHeatMini from "../components/cards/SectorHeatMini.tsx";
+import TickerLeadersMini from "../components/cards/TickerLeadersMini.tsx";
+import TopDriversMini from "../components/cards/TopDriversMini.tsx";
+
+const posts = (await getCollection("posts"))
+  .sort((a,b)=>a.data.date<b.data.date?1:-1)
+  .slice(0,3);
 ---
-<BaseLayout {title} {description}>
-  <!-- LEFT RAIL: split bubble (Headlines + Recent Blog) -->
-  <Fragment slot="left">
-    <section class="card">
-      <h3 class="card-title">Today · <span id="lr-date">—</span></h3>
-      <div class="split">
-        <div>
-          <div class="subhead">Headlines</div>
-          <ul id="news-list" class="list"></ul>
-          <div id="news-empty" class="muted" hidden>No headlines.</div>
-        </div>
-        <div>
-          <div class="subhead">Recent Blog</div>
-          <ul class="list" id="recent-blog">
-            <!-- If you don’t have a blog feed yet, keep a simple link -->
-            <li><a href="/blog/">See all posts →</a></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-  </Fragment>
+<BaseLayout
+  title="EireQuant"
+  description="A next-generation quantitative research platform — blending model families, portfolios, and real-time pipelines into one open showcase.">
 
-  <!-- CENTER: Intro hero + Today widgets -->
-  <section class="hero card">
-    <h1 class="hero-title">EireQuant</h1>
-    <p class="hero-sub">
-      A next-generation quantitative research platform — blending model families,
-      portfolios, and real-time pipelines into one open showcase.
-    </p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="/models/">Explore Models</a>
-      <a class="btn" href="/blog/">Read Blog</a>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2 class="card-title">Today · <span id="today-date">—</span></h2>
-
-    <div class="grid3">
-      <!-- Model Picks -->
+  <!-- PAGE GRID -->
+  <div class="home-grid">
+    <!-- Left rail -->
+    <aside class="rail rail-left">
       <div class="panel">
-        <h3>Model Picks</h3>
-        <table class="table" id="picks-table">
-          <thead><tr><th>Ticker</th><th>Action</th><th>Conf.</th></tr></thead>
-          <tbody></tbody>
-        </table>
-        <div id="picks-empty" class="muted" hidden>No selections.</div>
-      </div>
+        <div class="card-head">
+          <div class="card-title muted">Today</div>
+          <div id="today-date" class="date">—</div>
+        </div>
 
-      <!-- Portfolio Greeks -->
-      <div class="panel">
-        <h3>Portfolio Greeks</h3>
-        <div class="stats" id="greeks-stats">
-          <div class="stat"><div class="k">Δ</div><div class="v" id="delta">—</div></div>
-          <div class="stat"><div class="k">Γ</div><div class="v" id="gamma">—</div></div>
-          <div class="stat"><div class="k">ν</div><div class="v" id="vega">—</div></div>
+        <div class="kicker">Headlines</div>
+        <ul id="headlines" class="list pill-grid" aria-live="polite">
+          <li class="muted">No headlines.</li>
+        </ul>
+
+        <div class="kicker">Recent blog</div>
+        <ul class="list">
+          {posts.map(p => (
+            <li><a class="pill" href={`/blog/${p.slug}/`}>{p.data.title}</a></li>
+          ))}
+          <li><a class="pill" href="/blog/">See all posts →</a></li>
+        </ul>
+
+        <ul class="list small">
+          <li><a class="pill" href="/pipelines/live/">Pipeline Notes</a></li>
+          <li><a class="pill" href="/models/eqx-m1/">Model Update</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Center column -->
+    <section class="center">
+      <div class="hero panel">
+        <h1 class="brandtitle">EireQuant</h1>
+        <p class="lede">
+          EireQuant is an end-to-end quantitative research system that turns raw market information into
+          <strong>audited, risk-aware decisions</strong>. It ingests prices, options flow, news/sentiment, and a few fundamentals; builds
+          <strong>calibrated</strong> models that can admit uncertainty; and converts those views into portfolios with explicit constraints—then
+          stress-tests them under realistic frictions.
+        </p>
+        <p class="hint">
+          On this site you’ll see <strong>daily model picks</strong>, a <strong>portfolio Greeks</strong> snapshot, <strong>sector heat</strong>, and live
+          <strong>leaders & drivers</strong> from the pipeline. Explore <strong>model families</strong> (Core, Sentinel, Experimental), read
+          <strong>model cards</strong> like EQX-M1, and use <strong>Compare</strong> to benchmark models across regimes.
+        </p>
+        <div class="cta">
+          <a href="/models/" class="btn primary">Explore Models</a>
+          <a href="/blog/" class="btn">Read Blog</a>
         </div>
       </div>
 
-      <!-- Sector Heat -->
+      <!-- Split into three vertical panels -->
       <div class="panel">
-        <h3>Sector Heat</h3>
-        <ul class="heat" id="sector-heat"></ul>
-        <div id="sector-empty" class="muted" hidden>No sector data.</div>
+        <div class="muted">Today · <span id="today-date-2">—</span></div>
+        <h3 class="card-title">Model Picks</h3>
+        <ModelPicks client:load />
       </div>
-    </div>
-  </section>
 
-  <!-- RIGHT RAIL: digestibles -->
-  <Fragment slot="right">
-    <section class="card">
-      <h3 class="card-title">Top Tickers</h3>
-      <ol class="list" id="leaderboard"></ol>
-      <div id="leaders-empty" class="muted" hidden>No leaders.</div>
+      <div class="panel">
+        <h3 class="card-title">Portfolio Greeks</h3>
+        <GreeksMini client:load />
+      </div>
+
+      <div class="panel">
+        <h3 class="card-title">Sector Heat</h3>
+        <SectorHeatMini client:load />
+      </div>
     </section>
 
-    <section class="card">
-      <h3 class="card-title">Top Drivers</h3>
-      <ul class="list" id="drivers"></ul>
-      <div id="drivers-empty" class="muted" hidden>No drivers.</div>
-    </section>
+    <!-- Right rail -->
+    <aside class="rail rail-right">
+      <div class="panel">
+        <h3 class="hsmall card-title">Top Tickers</h3>
+        <TickerLeadersMini client:load />
+      </div>
 
-    <section class="card">
-      <h3 class="card-title">Spotlight Sector</h3>
-      <div id="spotlight" class="muted">—</div>
-    </section>
+      <div class="panel">
+        <h3 class="hsmall card-title">Top Drivers</h3>
+        <TopDriversMini client:load />
+      </div>
 
-    <section class="card">
-      <h3 class="card-title">Go Deeper</h3>
-      <ul class="list">
-        <li><a href="/pipelines/live/">Live Pipeline →</a></li>
-        <li><a href="/models/eqx-m1/">EQX-M1 Model Card →</a></li>
-        <li><a href="/compare/">Compare Benchmarks &amp; Models →</a></li>
-      </ul>
-    </section>
-  </Fragment>
+      <div class="panel">
+        <h3 class="hsmall card-title">Spotlight Sector</h3>
+        <div id="spot-sector" class="muted">— —</div>
+      </div>
+
+      <div class="panel">
+        <h3 class="hsmall card-title">Go Deeper</h3>
+        <ul class="list small">
+          <li><a class="pill" href="/pipelines/live/">Live Pipeline →</a></li>
+          <li><a class="pill" href="/models/eqx-m1/">EQX-M1 Model Card →</a></li>
+          <li><a class="pill" href="/compare/">Compare Benchmarks & Models →</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module">
+    const baseHref = () => (document.querySelector("base")?.getAttribute("href") || "/").replace(/\/+$/, "/");
+    const url = (p) => (baseHref() + String(p).replace(/^\//,"")).replace(/([^:]\/)\/+/g,"$1");
+    const $ = (s)=>document.querySelector(s);
+    const list = (el, rows)=>{ el.innerHTML = rows.map(r=>`<li>${r}</li>`).join("") };
+    const fmt = (x)=> x==null || !isFinite(Number(x)) ? "—" : Number(x).toFixed(2);
+
+    async function j(p){ const r=await fetch(url(p),{cache:"no-cache"}); if(!r.ok) throw new Error(p); return r.json(); }
+
+    function score(s){
+      if (typeof s?.contribution === "number") return s.contribution;
+      if (typeof s?.omega === "number") return Math.log(Math.max(1e-9, s.omega));
+      if (typeof s?.median_beta === "number") return -s.median_beta;
+      if (typeof s?.ret === "number") return s.ret;
+      if (typeof s?.score === "number") return s.score;
+      if (typeof s?.value === "number") return s.value;
+      return 0;
+    }
+
+    try {
+      const latest = (await j("/data/daily/latest.json").catch(()=>null)) ?? (await j("/data/latest.json").catch(()=>null));
+      const date = latest?.date ?? "—";
+      $("#today-date").textContent = date;
+      $("#today-date-2").textContent = date;
+
+      // Headlines
+      j(`/data/news/${date}.json`).then(n=>{
+        const arr = Array.isArray(n?.headlines) ? n.headlines : (Array.isArray(n) ? n : []);
+        if (arr.length) list($("#headlines"), arr.slice(0,6).map(h=>{
+          const t = h?.title ?? String(h); const u = h?.url ?? "#";
+          return `<a class="pill" href="${u}">${t}</a>`;
+        }));
+      }).catch(()=>{});
+
+      // Spotlight (primary)
+      j("/data/models/eqx-m1/sector_of_month.json").then(s=>{
+        if (s?.sector) $("#spot-sector").textContent = `${s.sector} — ${fmt(s.score ?? s.value ?? s.strength)}`;
+      }).catch(()=>{});
+
+      // Fallback: derive from daily sector health
+      setTimeout(async ()=>{
+        const el = $("#spot-sector");
+        if (el && el.textContent.trim() === "— —" && date && date !== "—") {
+          try {
+            const d = await j(`/data/daily/${date}/sector_health.json`);
+            const sectors = Array.isArray(d?.sectors) ? d.sectors : [];
+            const leaders = Array.isArray(d?.leaders) ? d.leaders : [];
+            const combined = [
+              ...sectors.map(s => ({ name: s.sector ?? s.name, _score: score(s) })),
+              ...leaders.map(s => ({ name: s.sector ?? s.name, _score: score(s) })),
+            ].filter(x => x && x.name && x.name !== "Unknown" && isFinite(x._score) && x._score !== 0);
+            combined.sort((a,b)=>b._score - a._score);
+            if (combined.length) el.textContent = `${combined[0].name} — ${fmt(combined[0]._score)}`;
+          } catch {}
+        }
+      }, 0);
+
+    } catch(e){ console.warn(e); }
+  </script>
 </BaseLayout>
 
 <style>
-  /* Cards + early-2000s-ish feel */
-  .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
-  .card + .card{ margin-top:16px; }
-  .card-title{ margin:0 0 8px 0; font-family: Georgia, 'Times New Roman', serif; }
-
-  /* Hero */
-  .hero-title{ font-family: Georgia, 'Times New Roman', serif; font-size: 40px; margin: 0; }
-  .hero-sub{ margin:8px 0 16px 0; color:#444; }
-  .hero-actions{ display:flex; gap:10px; }
-  .btn{ display:inline-block; padding:10px 14px; border:1px solid #1b1b1b; text-decoration:none; }
-  .btn-primary{ background:#1b1b1b; color:#fff; }
-
-  /* Three panels grid */
-  .grid3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
-  @media (max-width: 1100px){ .grid3{ grid-template-columns:1fr; } }
-
-  /* Tables + lists */
-  .panel h3{ margin:0 0 8px 0; font-size:18px; }
-  .table{ width:100%; border-collapse:collapse; font-size:16px; }
-  .table th, .table td{ padding:6px 8px; border-bottom:1px solid #eee; }
-  .table th{ text-align:left; font-weight:600; }
-  .muted{ color:#6b6b6b; font-size:14px; }
-
-  .stats{ display:flex; gap:12px; }
-  .stat{ flex:1; border:1px solid #d7d7d7; padding:10px; text-align:center; }
-  .stat .k{ font-weight:700; font-family: Georgia, 'Times New Roman', serif; }
-  .stat .v{ font-size:18px; }
-
-  .heat{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-  .heat li{ border-left:8px solid #ccc; padding-left:8px; display:flex; justify-content:space-between; }
-  .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-
-  /* Left-rail split card */
-  .split{ display:grid; grid-template-columns: 1fr; gap:10px; }
-  .subhead{ font-size:13px; color:#333; margin-bottom:6px; text-transform:uppercase; letter-spacing:.02em; }
-</style>
-
-<!-- Client script: fetch JSONs from /public/data and populate -->
-<script type="module">
-  const $ = (sel) => document.querySelector(sel);
-  const fmtPct = (x) => (x === null || x === undefined) ? "—" : (Math.round(x*1000)/10).toFixed(1) + "%";
-  const leftColor = (score) => {
-    if (score >= 0.5) return "#3b7f3b";
-    if (score >= 0.1) return "#93b593";
-    if (score <= -0.5) return "#a33a3a";
-    if (score <= -0.1) return "#d7a1a1";
-    return "#cfcfcf";
-  };
-  async function safeJson(path){
-    try { const r = await fetch(path); if (!r.ok) return null; return await r.json(); }
-    catch { return null; }
+  /* page-scoped layout: fits within .page (1120px max) */
+  .home-grid{
+    display:grid;
+    grid-template-columns: 260px 1fr 260px; /* left rail | center | right rail */
+    gap:1rem;
+    align-items:start;
+  }
+  @media(min-width:1025px){
+    .home-grid{ grid-template-columns: 260px minmax(520px,1fr) 260px; }
+  }
+  @media(max-width:1000px){
+    .home-grid{ grid-template-columns: 1fr; }
+    .rail-left,.rail-right{ max-width:none; width:auto; }
   }
 
-  (async () => {
-    // Resolve current date
-    const latest = await safeJson("/data/daily/latest.json");
-    const date = latest?.date ?? "";
-    $("#today-date").textContent = date || "—";
-    $("#lr-date").textContent = date || "—";
+  .rail{ display:grid; gap:1rem; }
+  .rail-left{ width:100%; max-width:260px; }
+  .rail-right{ width:100%; max-width:260px; }
 
-    // Headlines (first 3)
-    const news = date ? await safeJson(`/data/news/${date}.json`) : null;
-    const newsList = $("#news-list");
-    if (news?.items?.length){
-      news.items.slice(0,3).forEach(n => {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.href = n.url || "/blog/";
-        a.textContent = n.title || "Headline";
-        li.appendChild(a);
-        newsList.appendChild(li);
-      });
-    } else {
-      $("#news-empty")?.removeAttribute("hidden");
-    }
+  .panel{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:1rem; box-shadow:0 6px 18px rgba(0,0,0,.05); }
 
-    // Recent blog (placeholder – replace when you wire a feed)
-    const blogList = $("#recent-blog");
-    ["Monthly Review", "Pipeline Notes", "Model Update"].forEach((t,i) => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = "/blog/";
-      a.textContent = t;
-      li.appendChild(a);
-      if (i === 0 && blogList.firstElementChild?.textContent?.includes("See all posts")) {
-        blogList.prepend(li);
-      } else {
-        blogList.appendChild(li);
-      }
-    });
+  .center{ display:grid; gap:1rem; }
+  .brandtitle{ font-size:clamp(1.8rem,3.2vw,2.4rem); margin:0; }
+  .lede{ color:#444; margin:.5rem 0 .25rem; }
 
-    if (date){
-      const base = `/data/daily/${date}`;
+  /* Fix buttons: no stretch, centered content, consistent sizing */
+  .cta{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; }
+  .cta > .btn{
+    display:inline-flex !important;
+    align-items:center; justify-content:center;
+    width:auto !important;
+    flex:0 0 auto !important;
+    min-width:140px; padding:.7rem 1rem;
+    white-space:nowrap; text-align:center;
+  }
 
-      // Model selections (top 8)
-      const picks = await safeJson(`${base}/model_selection.json`);
-      const tbody = document.querySelector("#picks-table tbody");
-      if (picks?.items?.length){
-        picks.items.slice(0,8).forEach(row => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${row.ticker ?? "-"}</td>
-                          <td>${row.action ?? "-"}</td>
-                          <td>${row.confidence != null ? fmtPct(row.confidence) : "—"}</td>`;
-          tbody.appendChild(tr);
-        });
-      } else {
-        $("#picks-empty")?.removeAttribute("hidden");
-      }
-
-      // Greeks
-      const greeks = await safeJson(`${base}/risk_greeks.json`);
-      if (greeks){
-        $("#delta").textContent = greeks.delta != null ? fmtPct(greeks.delta) : "—";
-        $("#gamma").textContent = greeks.gamma != null ? fmtPct(greeks.gamma) : "—";
-        $("#vega").textContent  = greeks.vega  != null ? fmtPct(greeks.vega)  : "—";
-      }
-
-      // Sector heat
-      const sectors = await safeJson(`${base}/sector_health.json`);
-      const heat = $("#sector-heat");
-      if (sectors?.items?.length){
-        sectors.items.forEach(s => {
-          const li = document.createElement("li");
-          li.style.borderLeftColor = leftColor(s.score ?? 0);
-          li.innerHTML = `<span>${s.sector ?? "—"}</span><span>${(s.score ?? 0).toFixed(2)}</span>`;
-          heat.appendChild(li);
-        });
-      } else {
-        $("#sector-empty")?.removeAttribute("hidden");
-      }
-    }
-
-    // Right rail — model digestibles
-    const leaders = await safeJson("/data/models/eqx-m1/ticker_leaderboard.json");
-    const lb = $("#leaderboard");
-    if (leaders?.items?.length){
-      leaders.items.slice(0,5).forEach((t,i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${i+1}.</strong> ${t.ticker ?? "-"} <span class="muted">(${fmtPct(t.score ?? t.confidence ?? 0)})</span>`;
-        lb.appendChild(li);
-      });
-    } else {
-      $("#leaders-empty")?.removeAttribute("hidden");
-    }
-
-    const drivers = await safeJson("/data/models/eqx-m1/top_drivers.json");
-    const drv = $("#drivers");
-    if (drivers?.items?.length){
-      drivers.items.slice(0,6).forEach(d => {
-        const li = document.createElement("li");
-        li.textContent = (d.sign ? (d.sign > 0 ? "▲ " : "▼ ") : "") + (d.name || d.driver || "feature");
-        drv.appendChild(li);
-      });
-    } else {
-      $("#drivers-empty")?.removeAttribute("hidden");
-    }
-
-    const spotlight = await safeJson("/data/models/eqx-m1/sector_of_month.json");
-    if (spotlight){
-      $("#spotlight").textContent = `${spotlight.sector ?? "—"} — ${(spotlight.note || spotlight.summary || "").trim()}`;
-    }
-  })();
-</script>
+  .muted{ color:var(--muted); }
+  .kicker{ margin:.75rem 0 .25rem; font-size:.85rem; font-weight:700; color:#333; text-transform:uppercase; letter-spacing:.04em; }
+  .date{ font-weight:600; margin:.15rem 0 .5rem; }
+  .list{ list-style:none; margin:.25rem 0 0; padding:0; display:grid; gap:.35rem; }
+  .list.small li{ font-size:.95rem; }
+  .hsmall{ font-size:1rem; margin:.1rem 0 .6rem; }
+</style>

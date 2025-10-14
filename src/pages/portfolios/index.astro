@@ -1,33 +1,47 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-const portfolios = (await getCollection("portfolios")).sort((a,b)=>a.data.title.localeCompare(b.data.title));
-export const prerender = true;
+
+// Robust sort: always compare strings (fallback to slug)
+const entries = (await getCollection("portfolios")).sort((a, b) => {
+  const aKey = String(a?.data?.title ?? a?.slug ?? "");
+  const bKey = String(b?.data?.title ?? b?.slug ?? "");
+  return aKey.localeCompare(bKey);
+});
 ---
-<BaseLayout title="Portfolios · EireQuant" description="Allocation rules with equity, drawdown, and turnover metrics.">
-  <section class="card">
-    <h1 class="h1">Portfolios</h1>
-    <p class="muted">Weighting rules built on top of models; more detail pages to follow.</p>
-  </section>
+
+<BaseLayout title="Portfolios · EireQuant" description="Allocation rules and research portfolios.">
+  <h1>Portfolios</h1>
+  <p class="lead">Explore EireQuant portfolio templates and allocation rules.</p>
 
   <section class="grid">
-    {portfolios.map(p => (
+    {entries.map((p) => (
       <a class="tile" href={`/portfolios/${p.slug}/`}>
-        <div class="tile-h">{p.data.title}</div>
-        <div class="tile-sub">{p.data.summary ?? "Coming soon."}</div>
-        <div class="tile-cta">Open →</div>
+        <div class="kicker">Portfolio</div>
+        <div class="title">{p.data.title ?? p.slug}</div>
+        {p.data.summary && <div class="sub">{p.data.summary}</div>}
+        <div class="cta">Open →</div>
       </a>
     ))}
   </section>
 
   <style>
-    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
-    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
-    .muted{ color:#6b6b6b; }
-    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:16px; }
-    .tile{ display:block; text-decoration:none; color:inherit; border:2px solid #d7d7d7; border-radius:6px; background:#fff; padding:16px; min-height:140px; }
-    .tile-h{ font-weight:700; margin-bottom:6px; }
-    .tile-sub{ color:#333; }
-    .tile-cta{ margin-top:12px; font-weight:600; color:#0645ad; }
+    .lead{ color:#555; margin:.25rem 0 1rem; }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(320px,1fr));
+      gap:16px;
+    }
+    .tile{
+      display:block; text-decoration:none; color:inherit;
+      border:2px solid #d7d7d7; background:#fff; border-radius:6px;
+      padding:16px; min-height:140px;
+    }
+    .tile:hover{ outline:2px solid #222; outline-offset:-2px; }
+    .kicker{ font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:#6b6b6b; }
+    .title{ font-family: Georgia, "Times New Roman", serif; font-size:20px; margin-top:4px; }
+    .sub{ color:#222; margin-top:6px; }
+    .cta{ margin-top:12px; font-weight:700; color:#0645ad; }
   </style>
 </BaseLayout>

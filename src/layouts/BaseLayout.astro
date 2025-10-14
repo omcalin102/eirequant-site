@@ -1,91 +1,79 @@
 ---
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-
-// Keep global styles
 import "../styles/global.css";
-// Header/Nav + brand overlay styles
 import "../styles/header.css";
 
-const { title = "EireQuant", description = "Quant research platform." } = Astro.props;
+const {
+  title = "EireQuant",
+  description = "Quant research platform.",
+} = Astro.props;
+
+// Base href for GH Pages subpath if `site` is set in astro.config
+const baseHref = (() => {
+  try { return Astro.site ? new URL(Astro.site).pathname || "/" : "/"; }
+  catch { return "/"; }
+})();
+
+// Canonical URL
+const canonical = (() => {
+  try { return Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : Astro.url.toString(); }
+  catch { return undefined; }
+})();
+
+const hasLeft = Astro.slots.has?.("left") ?? false;
+const hasRight = Astro.slots.has?.("right") ?? false;
+const useRails = hasLeft || hasRight;
+
+// Current path for active nav highlighting
+const currentPath = Astro.url.pathname || "/";
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <base href={baseHref} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-
-    <!-- (ok to keep Inter if used elsewhere; body font is set in CSS below) -->
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#0E3B2D" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
     {Astro.head}
   </head>
-  <body class="eq-shell">
-    <!-- Floating brand; never captures pointer -->
-    <div class="brand-overlay" aria-hidden="true">
-      <img src="/brand/logo-wordmark.png" alt="" />
-    </div>
+  <body>
+    <a href="#main" class="sr-only">Skip to content</a>
 
-    <Nav />
+    <!-- Pass currentPath so Nav can highlight the active item -->
+    <Nav currentPath={currentPath} />
 
-    <!-- Three-column layout on every page -->
-    <main id="main" class="page three-col" tabindex="-1">
-      <!-- Left rail (optional) -->
-      <aside class="rail rail-left" aria-label="Side navigation and quick links">
-        <slot name="left" />
-      </aside>
-
-      <!-- Center column -->
-      <section class="center" aria-label="Main content">
+    <main id="main" class="page">
+      {useRails ? (
+        <div class="layout-3">
+          <aside class="rail left"><slot name="left" /></aside>
+          <section class="center"><slot /></section>
+          <aside class="rail right"><slot name="right" /></aside>
+        </div>
+      ) : (
         <slot />
-      </section>
-
-      <!-- Right rail (optional) -->
-      <aside class="rail rail-right" aria-label="Related content">
-        <slot name="right" />
-      </aside>
+      )}
     </main>
 
     <Footer />
-
-    <style>
-      /* Sticky footer + early-2000s base type */
-      .eq-shell {
-        position: relative;            /* anchor for brand overlay */
-        min-height: 100vh;
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        color: #161616;
-        background: #fff;
-        font-family: Verdana, Tahoma, Geneva, Segoe UI, sans-serif;
-        font-size: 18px;
-        line-height: 1.55;
-      }
-
-      /* Three-column grid shell */
-      .three-col {
-        max-width: 1460px;
-        margin-inline: auto;
-        padding: 2rem 1rem;
-        display: grid;
-        grid-template-columns: 220px minmax(720px, 980px) 220px;
-        gap: 24px;
-        min-height: 72vh; /* keeps footer from floating up on sparse pages */
-      }
-
-      .rail { display: flex; flex-direction: column; gap: 16px; }
-      .center { display: flex; flex-direction: column; gap: 32px; }
-
-      /* Responsive: collapse rails under 1100px */
-      @media (max-width: 1100px) {
-        .three-col { grid-template-columns: 1fr; }
-        .rail-left, .rail-right { order: 2; }
-        .center { order: 1; }
-      }
-    </style>
   </body>
 </html>
+
+<style>
+  .page{max-width:1120px;margin:1.25rem auto 2.5rem;padding:0 1rem}
+  .layout-3{
+    display:grid;grid-template-columns:280px 1fr 280px;gap:1rem;align-items:start
+  }
+  @media (max-width:1000px){ .layout-3{grid-template-columns:1fr} }
+</style>

@@ -1,79 +1,173 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-export const prerender = true;
 ---
-<BaseLayout title="Workstation (Sim) · EireQuant" description="Where new models are created and tested. Methods, notes, and roadmap.">
-  <section class="card">
-    <h1 class="h1">Workstation (Sim)</h1>
-    <p class="muted">Research sandbox for prototyping models, validating ideas, and documenting methodology.</p>
-  </section>
+<BaseLayout title="Workstation (Sim) · EireQuant">
+  <h1>Workstation (Sim)</h1>
 
-  <section class="card">
-    <h2 class="h2">What lives here</h2>
-    <ul class="list">
-      <li><strong>Model experiments:</strong> drafts and ablations prior to publishing.</li>
-      <li><strong>Data notes:</strong> feature engineering, cleaning, checks.</li>
-      <li><strong>Evaluation:</strong> windowed tests, regime slicing, calibration.</li>
-    </ul>
-  </section>
+  <!-- HERO -->
+  <section class="panel">
+    <p class="lead">
+      Theory and internal notes for the research stack. Use these to understand the pipeline at a glance, then dive deeper.
+      The Sim environment mirrors the live pipeline but runs under tighter control: reproducible data cuts, fixed seeds, and explicit
+      assumptions. It’s where we explain choices, track calibration, and sanity-check that results hold up outside a cherry-picked window.
+      When something looks off in Live, this is the bench where we take it apart.
+    </p>
 
-  <section class="card">
-    <h2 class="h2">Recent artifacts</h2>
-    <p class="muted small">Pulled from the same static store we publish to production.</p>
-    <div class="grid2">
-      <div>
-        <h3 class="h3">EQX-M1 windows</h3>
-        <ul class="list" id="windows"></ul>
-      </div>
-      <div>
-        <h3 class="h3">Calibration snapshot</h3>
-        <div id="ece" class="stat"><span class="k">ECE</span><span class="v">—</span></div>
-        <div id="calib-note" class="muted small"></div>
-      </div>
+    <!-- QUICK LINKS (2×2) -->
+    <div class="quick">
+      <a class="q" href="/pipelines/sim/architecture/">
+        <strong>Pipeline, explained</strong>
+        <span>Stages, data flow, scheduling</span>
+      </a>
+      <a class="q" href="/pipelines/sim/math/">
+        <strong>Mathematics</strong>
+        <span>Losses, regimes, risk model</span>
+      </a>
+      <a class="q" href="/pipelines/sim/code/">
+        <strong>Code & experiments</strong>
+        <span>Design, ablations, benchmarks</span>
+      </a>
+      <a class="q" href="/models/eqx-m1/">
+        <strong>Most recent model: <span id="recent-model">EQX-M1</span> →</strong>
+        <span>Open the current experimental model card</span>
+      </a>
     </div>
   </section>
 
-  <section class="card">
-    <h2 class="h2">Roadmap</h2>
-    <ul class="list">
-      <li>Publish EQX-M1 notes (features, loss, controls).</li>
-      <li>Prototype M2 variants; compare by regime.</li>
-      <li>Automate reproducible experiment manifests.</li>
+  <!-- PIPELINE OVERVIEW -->
+  <section class="panel">
+    <h2>Pipeline, at a glance</h2>
+    <ol class="steps">
+      <li>
+        <strong>Ingest — prices, options flow, news/sentiment, light fundamentals.</strong>
+        We assemble a clean daily tape: split-adjusted prices, basic fundamentals for context, option chains for implied-vol and skew,
+        and headline sentiment. Time is aligned and gaps are handled conservatively; anything ambiguous is dropped rather than “fixed.”
+      </li>
+      <li>
+        <strong>Features — cross-sectional & temporal; normalized with leakage guards.</strong>
+        We build signals that compare each stock to its peers and to itself through time. Normalization uses only information available
+        at the time (no peeking). Any feature that quietly reuses future data is flagged and removed.
+      </li>
+      <li>
+        <strong>Models — calibrated families (Core, Sentinel, Experimental).</strong>
+        Instead of one big hero model, we keep families with different roles: durable signals, risk sentries, and new ideas.
+        Models are trained on rolling windows and kept simple enough to explain—if we can’t describe why a view is changing, we treat it as noise.
+      </li>
+      <li>
+        <strong>Calibration — reliability via ECE; treat uncertainty explicitly.</strong>
+        A strong score still needs to be honest. We check that predicted confidence lines up with reality (reliability curves and ECE bins).
+        If a slice drifts out of spec, that view is down-weighted or paused until it proves itself again.
+      </li>
+      <li>
+        <strong>Selection — per-ticker signals with confidence and cutoffs.</strong>
+        Raw model output is converted to simple choices (tilt up, down, or stand aside) with a confidence score. We respect cutoffs
+        that avoid low-signal noise and cap how much any one name can influence the book.
+      </li>
+      <li>
+        <strong>Portfolio — gross/net bounds, per-symbol/sector caps, turnover control.</strong>
+        Signals become a position set under hard constraints. We monitor Greeks and concentration, budget turnover to keep costs tame,
+        and route execution through a realistic cost model so simulated gains don’t vanish in slippage.
+      </li>
+      <li>
+        <strong>Evaluation — walk-forward CV, regime slicing, ops health.</strong>
+        Results are scored the way you would actually trade them: roll the window forward, never see tomorrow’s data, and record the run.
+        We then slice by regime (volatility/credit/liquidity) and track operational health so a good backtest doesn’t hide a fragile process.
+      </li>
+    </ol>
+  </section>
+
+  <!-- MODEL FAMILIES -->
+  <section class="panel">
+    <h2>Model families</h2>
+    <ul class="bullets">
+      <li><strong>Core</strong> — Stable, interpretable signals designed for daily deployment.</li>
+      <li><strong>Sentinel</strong> — Risk-aware overlays (hedges/halts) that watch for regime breaks.</li>
+      <li><strong>Experimental</strong> — New ideas under live shadowing before promotion.</li>
     </ul>
   </section>
 
-  <style>
-    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
-    .h1,.h2,.h3{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
-    .muted{ color:#6b6b6b; } .small{ font-size:13px; }
-    .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    @media (max-width:1100px){ .grid2{ grid-template-columns:1fr; } }
-    .stat{ display:inline-flex; gap:8px; border:1px solid #d7d7d7; padding:8px 12px; }
-    .stat .k{ font-weight:700; }
-    .stat .v{ font-variant-numeric: tabular-nums; }
-  </style>
+  <!-- CALIBRATION -->
+  <section class="panel">
+    <h2>Calibration &amp; uncertainty</h2>
+    <p>
+      We don’t just predict; we <strong>prove</strong> how often we’re right. Reliability curves and ECE bins tell us whether confidence tracks
+      realized outcomes. When bins widen or drift, the system down-weights that slice or pauses it entirely. You’ll see the same story
+      reflected in the product: model cards include a calibration snapshot, the homepage shows when confidence is thin, and Compare lets you
+      check stability across different windows. The rule is simple—<strong>uncertainty is a first-class signal</strong>, not an afterthought.
+    </p>
+  </section>
+
+  <!-- PORTFOLIO & RISK -->
+  <section class="panel">
+    <h2>Portfolio &amp; risk</h2>
+    <p>
+      Decisions flow into a constraint graph: gross/net limits, per-symbol and per-sector caps, and turnover budgets. We watch portfolio-level
+      Greeks and exposures, simulate fees and slippage, and prefer <strong>de-risking early</strong> over squeezing the last basis point.
+      The homepage “Portfolio Greeks” tile mirrors the same controls you see here. If liquidity narrows or concentration creeps up, the system
+      tilts smaller or steps aside before the problem grows.
+    </p>
+  </section>
+
+  <!-- EVALUATION & REGIMES -->
+  <section class="panel">
+    <h2>Evaluation &amp; regimes</h2>
+    <p>
+      Every result is produced with walk-forward validation so the clock only ever moves one way. We then score by regime—combinations of
+      volatility, credit stress, and liquidity—and report consistency, drawdowns, and hit-rate alongside return. Model cards summarize this as
+      “by-regime performance,” while the Compare page lets you line up models and baselines over the same windows. A “pause-o-meter”
+      summarizes when the safest move is to trade less or not at all.
+    </p>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="panel">
+    <h2>Roadmap</h2>
+    <ul class="bullets">
+      <li>Stabilize regime labeling; cross-validate thresholds.</li>
+      <li>Broaden universe coverage; stress-test liquidity filters.</li>
+      <li>Tighten calibration; monitor ECE drift.</li>
+      <li>Ablate feature families; document wins and trade-offs.</li>
+      <li>Reconcile live vs. sim; extend paper-trading harness.</li>
+    </ul>
+  </section>
+
+  <!-- NOTES -->
+  <section class="panel">
+    <h2>Notes</h2>
+    <p>
+      Research summaries and next steps post here. The Live Pipeline page surfaces daily snapshots; this area stays theory-focused.
+    </p>
+  </section>
 
   <script type="module">
     const $ = (s)=>document.querySelector(s);
-    async function j(p){ try{ const r = await fetch(p); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
-    (async () => {
-      const windows = [
-        "equity_last_1w","equity_last_1m","equity_last_3m","equity_last_1y",
-        "equity_5y_1","equity_5y_3","equity_5y_4","equity_5y_5","equity_25y"
-      ];
-      const ul = $("#windows");
-      windows.forEach(w => {
-        const li = document.createElement("li");
-        li.innerHTML = `<a href="/compare/?m=${encodeURIComponent(w)}">EQX-M1 · ${w.replace(/^equity_/,'')}</a>`;
-        ul.appendChild(li);
-      });
-
-      const calib = await j("/data/models/eqx-m1/calibration.json");
-      if (calib){
-        document.querySelector("#ece .v").textContent = calib.ece!=null ? (Math.round(calib.ece*1000)/1000).toString() : "—";
-        if (Array.isArray(calib.bins)) document.querySelector("#calib-note").textContent = `Bins: ${calib.bins.length}`;
-      }
+    async function j(p){ try{ const r = await fetch(p,{cache:"no-cache"}); if(!r.ok) return null; return r.json(); }catch{ return null; } }
+    (async ()=>{
+      // Best-effort: show model id or name from the card/catalog if present.
+      const card = await j("/data/models/eqx-m1/model_card_eqx_m1.json");
+      const cat  = await j("/data/models/eqx-m1/catalog.json");
+      const name = card?.model_id ?? card?.model ?? cat?.name ?? "EQX-M1";
+      const span = $("#recent-model");
+      if (span && name) span.textContent = String(name);
     })();
   </script>
+
+  <style>
+    .lead{color:#444;margin:.1rem 0 .9rem;max-width:75ch}
+    .quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+    @media(max-width:900px){.quick{grid-template-columns:1fr}}
+    .q{display:block;border:1px solid var(--border);border-radius:12px;background:#fff;padding:.9rem 1rem;
+       text-decoration:none;color:inherit;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .q strong{display:block}
+    .q span{display:block;color:#555;margin-top:.15rem;font-size:.95rem}
+
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;
+           box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    h2{font-size:1.05rem;margin:0 0 .4rem}
+    .bullets{list-style:disc;margin:.25rem 0 0 1.2rem;display:grid;gap:.35rem}
+
+    .steps{counter-reset: step; display:grid; gap:.6rem; padding:0; margin:.5rem 0 0}
+    .steps>li{list-style:none; background:#fff; border:1px solid var(--border); border-radius:12px; padding:.75rem .85rem}
+    .steps>li strong{display:block; margin-bottom:.25rem}
+  </style>
 </BaseLayout>
