@@ -1,0 +1,22 @@
+{
+  "baseline": {
+    "cagr": 0.08261281289981715,
+    "max_drawdown": -0.36281457521697,
+    "omega": 1.1248810856332034,
+    "sortino": 0.7084563736654975
+  },
+  "env": "dev",
+  "generated_at": "2025-09-23T20:57:25.131003",
+  "pid": {
+    "cagr": 0.0710464411119589,
+    "large_loss_days": 69,
+    "loss_streak_max": 121,
+    "max_drawdown": -0.35051509919317014,
+    "omega": 1.1225271538392365,
+    "pause_pct": 0.07849526066350711,
+    "recovery_days": 107,
+    "sortino": 0.6699589338831584,
+    "win_streak_max": 138
+  },
+  "schema_version": "1.2"
+}

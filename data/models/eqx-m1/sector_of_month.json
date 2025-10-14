@@ -1,0 +1,35 @@
+{
+  "end_date": "2025-09-12",
+  "env": "dev",
+  "generated_at": "2025-09-23T20:58:04.550374",
+  "losers": [
+    {
+      "return_21d": -0.03073000301157447,
+      "sector": "Consumer Defensive"
+    },
+    {
+      "return_21d": -0.004007138353153805,
+      "sector": "Utilities"
+    },
+    {
+      "return_21d": 0.0027268330943004404,
+      "sector": "Industrials"
+    }
+  ],
+  "schema_version": "1.2",
+  "start_date": "2025-08-14",
+  "winners": [
+    {
+      "return_21d": 0.04641705721618461,
+      "sector": "Communication Services"
+    },
+    {
+      "return_21d": 0.037973188786961876,
+      "sector": "Real Estate"
+    },
+    {
+      "return_21d": 0.036789250195151224,
+      "sector": "Energy"
+    }
+  ]
+}
