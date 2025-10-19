@@ -1,0 +1,103 @@
+{
+  "env": "dev",
+  "generated_at": "2025-09-23T20:57:34.052400",
+  "items": [
+    {
+      "key": "equity_25y",
+      "label": "25 Years Equity Returns"
+    },
+    {
+      "key": "equity_5y_1",
+      "label": "Five-Year Window 1"
+    },
+    {
+      "key": "equity_5y_2",
+      "label": "Five-Year Window 2"
+    },
+    {
+      "key": "equity_5y_3",
+      "label": "Five-Year Window 3"
+    },
+    {
+      "key": "equity_5y_4",
+      "label": "Five-Year Window 4"
+    },
+    {
+      "key": "equity_5y_5",
+      "label": "Five-Year Window 5"
+    },
+    {
+      "key": "equity_1y_2000",
+      "label": "2000 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2013",
+      "label": "2013 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2014",
+      "label": "2014 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2015",
+      "label": "2015 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2016",
+      "label": "2016 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2017",
+      "label": "2017 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2018",
+      "label": "2018 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2019",
+      "label": "2019 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2020",
+      "label": "2020 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2021",
+      "label": "2021 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2022",
+      "label": "2022 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2023",
+      "label": "2023 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2024",
+      "label": "2024 Equity Returns"
+    },
+    {
+      "key": "equity_1y_2025",
+      "label": "2025 Equity Returns"
+    },
+    {
+      "key": "equity_last_1y",
+      "label": "Last 1 Year Equity Returns"
+    },
+    {
+      "key": "equity_last_3m",
+      "label": "Last 3 Months Equity Returns"
+    },
+    {
+      "key": "equity_last_1m",
+      "label": "Last 1 Month Equity Returns"
+    },
+    {
+      "key": "equity_last_1w",
+      "label": "Last 1 Week Equity Returns"
+    }
+  ],
+  "schema_version": "1.2"
+}
