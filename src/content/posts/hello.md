@@ -1,7 +1,7 @@
 ---
-title: "Hello, EIREQuant"
+title: "Website Design Progress"
 date: "2025-08-17"
-author: "oisin"
+author: "Oisin McAlinden"
 type: "think"
 summary: "Weekly progress: compare view live, model card sturdier, pipeline clarified, and reliability fixes in place."
 ---

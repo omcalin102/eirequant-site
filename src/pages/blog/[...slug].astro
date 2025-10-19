@@ -2,7 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
-// 🔧 enumerate all blog pages at build time
+// Build-time enumeration of blog pages
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
   return posts.map((p) => ({ params: { slug: p.slug } }));
@@ -14,66 +14,159 @@ const entry = posts.find((p) => p.slug === slug);
 if (!entry) throw new Error(`Post not found: ${slug}`);
 
 const { Content } = await entry.render();
+
+/* Meta */
+const author = entry.data.author ?? "oisin";
+const kind = (entry.data.type ?? "post").toUpperCase?.() ?? "POST";
+const dateStr = entry.data.date ?? "";
+
+/* Left-rail: other posts (exclude current) */
+const morePosts = posts
+  .filter(p => p.slug !== slug)
+  .sort((a,b)=> (a.data.date<b.data.date?1:-1))
+  .slice(0,6);
 ---
 
 <BaseLayout title={`${entry.data.title} · Blog · EireQuant`} description={entry.data.summary ?? "EireQuant blog post"}>
-  <!-- LEFT rail -->
+
+  <!-- LEFT rail: compact list of other posts -->
   <Fragment slot="left">
-    <section class="card">
-      <h3 class="card-title">Navigation</h3>
-      <ul class="list">
-        <li><a href="/blog/">All posts</a></li>
-        <li><a href="/pipelines/live/">Live Pipeline</a></li>
-        <li><a href="/models/eqx-m1/">EQX-M1 Card</a></li>
+    <aside class="panel tight left-rail">
+      <div class="card-head">
+        <div class="card-title muted">More posts</div>
+      </div>
+      <ul class="news-list">
+        {morePosts.map(p => (
+          <li class="news-item">
+            <a class="news-link" href={`/blog/${p.slug}/`}>{p.data.title}</a>
+            <div class="news-meta">By {p.data.author ?? "oisin"}</div>
+          </li>
+        ))}
       </ul>
-    </section>
+      <a class="pill subtle" href="/blog/">See all posts →</a>
+    </aside>
   </Fragment>
 
   <!-- CENTER article -->
   <article class="card article">
-    <h1 class="h1">{entry.data.title}</h1>
-    <p class="meta">{entry.data.date} · {(entry.data.type ?? "post").toUpperCase?.()}</p>
-    <Content />
+    <header class="post-hero">
+      <!-- Title FIRST in the header -->
+      <h1 class="post-title">{entry.data.title}</h1>
+
+      <!-- Meta rows -->
+      <div class="meta-rows">
+        <!-- Row 1: date + type (stacked) -->
+        <div class="meta-stack">
+          <div class="dateline">{dateStr}</div>
+          <div class="kind">{kind}</div>
+        </div>
+
+        <!-- Row 2: author + larger profile image -->
+        <div class="author-row">
+          <div class="author-text">By {author}</div>
+          <img class="author-img" src="/author/oisin.png" alt={`${author} profile`} />
+        </div>
+      </div>
+    </header>
+
+    <!-- Clear visual separation -->
+    <hr class="post-divider" />
+
+    <div class="post-body">
+      <Content />
+    </div>
   </article>
 
-  <!-- RIGHT rail -->
-  <Fragment slot="right">
-    <section class="card">
-      <h3 class="card-title">Live snapshot</h3>
-      <ul class="list" id="digest"></ul>
-      <div class="muted small"><a href="/pipelines/live/">Open Live Pipeline →</a></div>
-    </section>
-  </Fragment>
+  <!-- RIGHT rail intentionally blank -->
+  <Fragment slot="right"></Fragment>
 
   <style>
-    .card{ border:2px solid #d7d7d7; padding:16px; background:#fff; border-radius:6px; }
-    .article :where(h2,h3){ font-family: Georgia, 'Times New Roman', serif; margin-top:1rem; }
-    .article :where(p,li){ line-height:1.55; }
-    .h1{ font-family: Georgia, 'Times New Roman', serif; margin:0 0 6px 0; }
-    .meta{ color:#6b6b6b; margin:0 0 12px 0; }
-    .list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-    .card-title{ margin:0 0 6px 0; font-weight:700; }
-    .muted{ color:#6b6b6b; } .small{ font-size:13px; }
-  </style>
+    /* On single-post pages, use ~70% center and keep blank rails (~15% each) */
+    .page .layout-3{
+      grid-template-columns: 15% 70% 15%;
+      align-items: start;
+    }
+    @media (max-width: 1000px){
+      .page .layout-3{ grid-template-columns: 1fr; }
+    }
 
-  <script type="module">
-    const $ = (s)=>document.querySelector(s);
-    const fmtPct = (x)=> (x==null? "—" : (Math.round(x*1000)/10).toFixed(1)+"%");
-    async function j(p){ try{ const r = await fetch(p); if(!r.ok) return null; return await r.json(); }catch{ return null; } }
-    (async () => {
-      const digest = $("#digest");
-      const lb = await j("/data/models/eqx-m1/ticker_leaderboard.json");
-      if (lb?.items?.length){
-        const t = lb.items[0];
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>Top ticker:</strong> ${t.ticker ?? "-"} <span class="muted">(${fmtPct(t.score ?? t.confidence ?? 0)})</span>`;
-        digest.appendChild(li);
-      }
-      const status = await j("/data/pipeline/status.json");
-      if (status){
-        const li = document.createElement("li"); li.innerHTML = `<strong>Status:</strong> ${status.state ?? status.status ?? "—"}`;
-        digest.appendChild(li);
-      }
-    })();
-  </script>
+    /* Cards / panels */
+    .panel{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:1rem; box-shadow:0 6px 18px rgba(0,0,0,.05); }
+    .panel.tight{ padding:.75rem; }
+    .card{ border:2px solid #d7d7d7; padding:18px 18px 22px; background:#fff; border-radius:8px; }
+
+    /* Left rail list (mirrors home style lightly) */
+    .left-rail .card-title{ font-weight:700; }
+    .news-list{ list-style:none; margin:.5rem 0 0; padding:0; display:grid; gap:.6rem; }
+    .news-item{ border:1px solid var(--border); border-radius:10px; padding:.55rem .65rem; background:#fff; }
+    .news-link{ color:#0b0b0b; text-decoration:none; font-weight:600; line-height:1.25; display:block; }
+    .news-link:hover{ text-decoration:underline; }
+    .news-meta{ font-size:.85rem; color:#666; margin-top:.2rem; }
+    .pill.subtle{ margin-top:.6rem; display:inline-block; }
+
+    /* Article typography */
+    .article{
+      color:#0b0b0b; /* strong contrast */
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .post-body :where(p, li){ line-height:1.65; }
+    .post-body :where(h2,h3,h4){ margin-top:1.25rem; margin-bottom:.35rem; font-weight:700; }
+
+    /* Header layout */
+    .post-hero{
+      display:flex;
+      flex-direction: column;
+      gap: .9rem;
+      margin-bottom: .6rem;
+    }
+    .post-title{
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      line-height: 1.12;
+      font-weight: 800;
+    }
+
+    .meta-rows{
+      display:flex;
+      flex-direction: column;
+      gap: .75rem; /* space between the stacked block and the author row */
+    }
+    .meta-stack{
+      display:flex;
+      flex-direction: column;
+      gap: .15rem;
+      font-weight:700;
+    }
+    .dateline{ }
+    .kind{ letter-spacing:.02em; color:#111; }
+
+    .author-row{
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+    }
+    .author-text{
+      font-weight:700;
+      font-size:1.06rem;
+    }
+    .author-img{
+      height: 104px;           /* bigger profile photo */
+      width: auto;
+      display:block;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 0 rgba(0,0,0,.02));
+    }
+
+    /* Strong separation line */
+    .post-divider{
+      border:0;
+      border-top: 2px solid #e5e5e5;
+      margin: .8rem 0 1rem;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 720px){
+      .author-img{ height: 84px; }
+    }
+  </style>
 </BaseLayout>

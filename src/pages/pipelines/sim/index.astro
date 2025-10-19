@@ -9,7 +9,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     <p class="lead">
       Theory and internal notes for the research stack. Use these to understand the pipeline at a glance, then dive deeper.
       The Sim environment mirrors the live pipeline but runs under tighter control: reproducible data cuts, fixed seeds, and explicit
-      assumptions. It’s where we explain choices, track calibration, and sanity-check that results hold up outside a cherry-picked window.
+      assumptions. It’s where we explain choices, track calibration, and sanity-check that results hold up outside a specific window.
       When something looks off in Live, this is the bench where we take it apart.
     </p>
 
@@ -44,14 +44,14 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
         and headline sentiment. Time is aligned and gaps are handled conservatively; anything ambiguous is dropped rather than “fixed.”
       </li>
       <li>
-        <strong>Features — cross-sectional & temporal; normalized with leakage guards.</strong>
-        We build signals that compare each stock to its peers and to itself through time. Normalization uses only information available
+        <strong>Features — cross-sectional & temporal; normalised with leakage guards.</strong>
+        We build signals that compare each stock to its peers and to itself through time. Normalisation uses only information available
         at the time (no peeking). Any feature that quietly reuses future data is flagged and removed.
       </li>
       <li>
         <strong>Models — calibrated families (Core, Sentinel, Experimental).</strong>
-        Instead of one big hero model, we keep families with different roles: durable signals, risk sentries, and new ideas.
-        Models are trained on rolling windows and kept simple enough to explain—if we can’t describe why a view is changing, we treat it as noise.
+        Instead of one big hero model, I keep families with different roles: durable signals, risk sentries, and new ideas.
+        Models are trained on rolling windows and kept simple enough to explain, if I can’t describe why a view is changing, I treat it as noise.
       </li>
       <li>
         <strong>Calibration — reliability via ECE; treat uncertainty explicitly.</strong>
@@ -91,9 +91,9 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     <h2>Calibration &amp; uncertainty</h2>
     <p>
       We don’t just predict; we <strong>prove</strong> how often we’re right. Reliability curves and ECE bins tell us whether confidence tracks
-      realized outcomes. When bins widen or drift, the system down-weights that slice or pauses it entirely. You’ll see the same story
-      reflected in the product: model cards include a calibration snapshot, the homepage shows when confidence is thin, and Compare lets you
-      check stability across different windows. The rule is simple—<strong>uncertainty is a first-class signal</strong>, not an afterthought.
+      realised outcomes. When bins widen or drift, the system down-weights that slice or pauses it entirely. You’ll see the same story
+      reflected in the product: model cards include a calibration snapshot, the homepage shows when confidence is thin, and compare lets you
+      check stability across different windows. When predicting markets there is always error, however while the market remains unperfect there is edge to be exploited.
     </p>
   </section>
 
@@ -115,7 +115,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
       Every result is produced with walk-forward validation so the clock only ever moves one way. We then score by regime—combinations of
       volatility, credit stress, and liquidity—and report consistency, drawdowns, and hit-rate alongside return. Model cards summarize this as
       “by-regime performance,” while the Compare page lets you line up models and baselines over the same windows. A “pause-o-meter”
-      summarizes when the safest move is to trade less or not at all.
+      summarises when the safest move is to trade less or not at all.
     </p>
   </section>
 
@@ -123,10 +123,10 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   <section class="panel">
     <h2>Roadmap</h2>
     <ul class="bullets">
-      <li>Stabilize regime labeling; cross-validate thresholds.</li>
+      <li>Stabilise regime labeling; cross-validate thresholds.</li>
       <li>Broaden universe coverage; stress-test liquidity filters.</li>
       <li>Tighten calibration; monitor ECE drift.</li>
-      <li>Ablate feature families; document wins and trade-offs.</li>
+      <li>Streamline feature families; document wins and trade-offs.</li>
       <li>Reconcile live vs. sim; extend paper-trading harness.</li>
     </ul>
   </section>

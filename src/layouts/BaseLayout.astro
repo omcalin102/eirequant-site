@@ -1,4 +1,4 @@
----
+﻿---
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
@@ -25,8 +25,8 @@ const hasLeft = Astro.slots.has?.("left") ?? false;
 const hasRight = Astro.slots.has?.("right") ?? false;
 const useRails = hasLeft || hasRight;
 
-// Current path for active nav highlighting
-const currentPath = Astro.url.pathname || "/";
+// Current path for active nav highlighting (only passed to <Nav/>)
+const currentPath: string = Astro.url?.pathname || "/";
 ---
 <!doctype html>
 <html lang="en">
@@ -37,21 +37,24 @@ const currentPath = Astro.url.pathname || "/";
     <title>{title}</title>
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
+
     <meta name="theme-color" content="#0E3B2D" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:type" content="website" />
+
     <link rel="icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     {Astro.head}
   </head>
   <body>
     <a href="#main" class="sr-only">Skip to content</a>
 
-    <!-- Pass currentPath so Nav can highlight the active item -->
+    <!-- Navigation -->
     <Nav currentPath={currentPath} />
 
     <main id="main" class="page">
@@ -71,9 +74,33 @@ const currentPath = Astro.url.pathname || "/";
 </html>
 
 <style>
-  .page{max-width:1120px;margin:1.25rem auto 2.5rem;padding:0 1rem}
-  .layout-3{
-    display:grid;grid-template-columns:280px 1fr 280px;gap:1rem;align-items:start
+  /* Page width aligned with header */
+  .page{
+    max-width:1200px;
+    margin:1.25rem auto 2.5rem;
+    padding:0 1rem;
   }
-  @media (max-width:1000px){ .layout-3{grid-template-columns:1fr} }
+
+  /* 3-column grid with explicit areas so we can reorder on mobile */
+  .layout-3{
+    display:grid;
+    grid-template-columns: 280px minmax(520px,1fr) 280px;
+    grid-template-areas: "left center right";
+    gap:1rem;
+    align-items:start;
+  }
+  .layout-3 > .left  { grid-area: left;  }
+  .layout-3 > .center{ grid-area: center;}
+  .layout-3 > .right { grid-area: right; }
+
+  /* Mobile: stack CENTER → LEFT → RIGHT */
+  @media (max-width:1000px){
+    .layout-3{
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "center"
+        "left"
+        "right";
+    }
+  }
 </style>

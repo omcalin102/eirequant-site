@@ -1,24 +1,27 @@
----
+﻿---
 interface Props { currentPath?: string }
 const { currentPath = "/" } = Astro.props;
 
+// Centralized routes used by the menus (keep in sync with homepage logo links)
 const links = {
   models: {
     overview: "/models/",
     core: {
       label: "Core Series",
-      href: "/models/#core",
-      marks: [] as { label: string; href: string }[], // none yet
+      href: "/models/series/eq-core/",
+      marks: [] as { label: string; href: string }[],
     },
     sentinel: {
       label: "Sentinel Series",
-      href: "/models/#sentinel",
-      marks: [] as { label: string; href: string }[], // none yet
+      href: "/models/series/eq-sentinel/",
+      marks: [] as { label: string; href: string }[],
     },
     experimental: {
       label: "Experimental Series",
-      href: "/models/series/experimental/",
-      marks: [{ label: "EQX-M1 (Model Card)", href: "/models/eqx-m1/" }],
+      href: "/models/series/eq-tbd/",
+      marks: [
+        { label: "EQX-M1 (Model Card)", href: "/models/eqx-m1/" },
+      ],
     },
   },
   pipelines: [
@@ -28,13 +31,16 @@ const links = {
   ],
 };
 
+// Local helper; keep active logic inside Nav only.
 const isActive = (path: string) =>
   currentPath === path || (path !== "/" && currentPath.startsWith(path));
 ---
+
 <nav class="site-header" aria-label="Primary">
   <div class="header-inner">
     <a class="brand" href="/" aria-label="EireQuant home">
-      <img src="/brand/logo-wordmark.png" alt="EireQuant" />
+      <!-- Swapped to the round EQ mark for readability in the navbar -->
+      <img class="brand-img" src="/brand/logo-mark.png" alt="EireQuant" />
     </a>
 
     <input id="nav-toggle" class="nav-toggle" type="checkbox" aria-label="Open menu" />
@@ -48,9 +54,7 @@ const isActive = (path: string) =>
           class={`toplink ${isActive("/") ? "active" : ""}`}
           href="/"
           aria-current={isActive("/") ? "page" : undefined}
-        >
-          Home
-        </a>
+        >Home</a>
       </li>
 
       <li class="dropdown">
@@ -58,14 +62,10 @@ const isActive = (path: string) =>
           class={`trigger ${isActive("/models/") ? "active" : ""}`}
           type="button"
           aria-haspopup="true"
-        >
-          Models
-        </button>
+        >Models</button>
         <div class="menu" role="menu" aria-label="Models">
           <ul class="menu-col">
-            <li>
-              <a class="menu-link" href={links.models.overview} role="menuitem">Overview</a>
-            </li>
+            <li><a class="menu-link" href={links.models.overview} role="menuitem">Overview</a></li>
 
             <li class="has-flyout">
               <a class="menu-section" href={links.models.core.href}>{links.models.core.label}</a>
@@ -91,11 +91,13 @@ const isActive = (path: string) =>
 
             <li class="has-flyout">
               <a class="menu-section" href={links.models.experimental.href}>{links.models.experimental.label}</a>
-              <div class="flyout" role="menu" aria-label="Experimental">
-                {links.models.experimental.marks.map(m => (
-                  <a class="flyout-link" href={m.href} role="menuitem">{m.label}</a>
-                ))}
-              </div>
+              {links.models.experimental.marks.length > 0 && (
+                <div class="flyout" role="menu" aria-label="Experimental">
+                  {links.models.experimental.marks.map(m => (
+                    <a class="flyout-link" href={m.href} role="menuitem">{m.label}</a>
+                  ))}
+                </div>
+              )}
             </li>
           </ul>
         </div>
@@ -106,51 +108,25 @@ const isActive = (path: string) =>
           class={`trigger ${isActive("/pipelines/") ? "active" : ""}`}
           type="button"
           aria-haspopup="true"
-        >
-          Pipelines
-        </button>
+        >Pipelines</button>
         <div class="menu" role="menu" aria-label="Pipelines">
           <ul class="menu-col">
-            <li>
-              <a class="menu-link" href="/pipelines/" role="menuitem" data-nav="pipelines-overview">
-                Overview
-              </a>
-            </li>
-            {links.pipelines
-              .filter(p => p.label !== "Overview")
-              .map(p => (
-                <li><a class="menu-link" href={p.href} role="menuitem">{p.label}</a></li>
-              ))}
+            <li><a class="menu-link" href="/pipelines/" role="menuitem" data-nav="pipelines-overview">Overview</a></li>
+            {links.pipelines.filter(p => p.label !== "Overview").map(p => (
+              <li><a class="menu-link" href={p.href} role="menuitem">{p.label}</a></li>
+            ))}
           </ul>
         </div>
       </li>
 
       <li>
-        <a
-          class={`toplink ${isActive("/compare/") ? "active" : ""}`}
-          href="/compare/"
-          aria-current={isActive("/compare/") ? "page" : undefined}
-        >
-          Compare
-        </a>
+        <a class={`toplink ${isActive("/compare/") ? "active" : ""}`} href="/compare/" aria-current={isActive("/compare/") ? "page" : undefined}>Compare</a>
       </li>
       <li>
-        <a
-          class={`toplink ${isActive("/about/") ? "active" : ""}`}
-          href="/about/"
-          aria-current={isActive("/about/") ? "page" : undefined}
-        >
-          About
-        </a>
+        <a class={`toplink ${isActive("/about/") ? "active" : ""}`} href="/about/" aria-current={isActive("/about/") ? "page" : undefined}>About</a>
       </li>
       <li>
-        <a
-          class={`toplink ${isActive("/blog/") ? "active" : ""}`}
-          href="/blog/"
-          aria-current={isActive("/blog/") ? "page" : undefined}
-        >
-          Blog
-        </a>
+        <a class={`toplink ${isActive("/blog/") ? "active" : ""}`} href="/blog/" aria-current={isActive("/blog/") ? "page" : undefined}>Blog</a>
       </li>
     </ul>
   </div>
@@ -164,4 +140,7 @@ const isActive = (path: string) =>
     text-decoration: underline;
     text-underline-offset: 3px;
   }
+  /* Navbar brand sizing for the EQ roundel */
+  .brand-img{ height:28px; width:auto; display:block; }
+  @media(min-width:1280px){ .brand-img{ height:30px; } }
 </style>

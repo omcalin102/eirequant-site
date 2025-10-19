@@ -5,7 +5,13 @@ import modelSeries from "../../lib/modelSeries";
 
 const all = await getCollection("models");
 
-// Display overrides & series copy (kept local so we don't need to edit modelSeries now)
+// Square logos in /public/brand
+const logoMap: Record<string, string> = {
+  "eq-core": "/brand/EQC-Square.png",
+  "eq-sentinel": "/brand/EQS-Square.png",
+  "eq-tbd": "/brand/EQX-Square.png",
+};
+
 const titleOverride: Record<string,string> = {
   "eq-tbd": "EQ Experimental Series",
 };
@@ -61,31 +67,40 @@ const grouped = modelSeries.map(s => {
 
       {grouped.map(({ meta, items }) => (
         <section class="series-card" id={meta.slug}>
-          <header class="series-head">
-            <div>
-              <div class="kicker">Series</div>
-              <h2 class="series-title">{meta.title}</h2>
-              {meta.subtitle && <p class="series-sub">{meta.subtitle}</p>}
-            </div>
-            <a class="series-link" href={`/models/series/${meta.slug}/`}>View series →</a>
-          </header>
+          <!-- LEFT: copy -->
+          <div class="series-copy">
+            <div class="kicker">Series</div>
+            <h2 class="series-title">{meta.title}</h2>
+            {meta.subtitle && <p class="series-sub">{meta.subtitle}</p>}
 
-          {items.length > 0 ? (
-            <div class="marks">
-              {items.map(({ data }) => (
-                <a class="mark-card" href={`/models/${data.slug}/`}>
-                  <div class="mark-meta">Mk {data.mark} · {data.version ?? "v1.0.0"} · {data.status ?? "research"}</div>
-                  <h3 class="mark-title">{data.title}</h3>
-                  <p class="mark-desc">{data.summary ?? "Concise model summary coming soon."}</p>
-                </a>
-              ))}
-            </div>
-          ) : (
-            <div class="empty-line">
-              <span class="tag">No published marks yet</span>
-              <span class="muted"> · Coming soon.</span>
-            </div>
-          )}
+            {items.length > 0 && (
+              <div class="marks">
+                {items.map(({ data }) => (
+                  <a class="mark-card" href={`/models/${data.slug}/`}>
+                    <div class="mark-meta">Mk {data.mark} · {data.version ?? "v1.0.0"} · {data.status ?? "research"}</div>
+                    <h3 class="mark-title">{data.title}</h3>
+                    <p class="mark-desc">{data.summary ?? "Concise model summary coming soon."}</p>
+                  </a>
+                ))}
+              </div>
+            )}
+            <!-- (Intentionally no empty state when there are no marks) -->
+          </div>
+
+          <!-- RIGHT: big square logo + button bottom-right -->
+          <div class="series-visual">
+            {logoMap[meta.slug] && (
+              <img
+                class="series-logo"
+                src={logoMap[meta.slug]}
+                alt={`${meta.title} logo`}
+                loading="lazy"
+                width="200"
+                height="200"
+              />
+            )}
+            <a class="series-link" href={`/models/series/${meta.slug}/`}>View series →</a>
+          </div>
         </section>
       ))}
     </main>
@@ -119,12 +134,12 @@ const grouped = modelSeries.map(s => {
     /* Layout */
     .models-grid{
       display:grid;
-      grid-template-columns: 260px 1fr 260px; /* left rail | center | right rail */
+      grid-template-columns: 260px 1fr 260px;
       gap:1rem;
       align-items:start;
     }
     @media(min-width:1025px){
-      .models-grid{ grid-template-columns: 260px minmax(520px,1fr) 260px; }
+      .models-grid{ grid-template-columns: 260px minmax(640px,1fr) 260px; }
     }
     @media(max-width:1000px){
       .models-grid{ grid-template-columns: 1fr; }
@@ -135,28 +150,57 @@ const grouped = modelSeries.map(s => {
     .rail{ display:grid; gap:1rem; }
     .panel{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:1rem; box-shadow:0 6px 18px rgba(0,0,0,.05); }
     .pill-link{ display:inline-block; border:1px solid var(--border); border-radius:999px; padding:.3rem .6rem; background:#fafafa; text-decoration:none; }
-
     .page-head .lead{ color:#555; margin:.25rem 0 1rem; }
 
-    /* Series card (single-column, large) */
+    /* Series card split layout */
     .series-card{
       background:#fff;
       border:1px solid var(--border);
       border-radius:12px;
-      padding:1rem;
+      padding:1.25rem;
       box-shadow:0 6px 18px rgba(0,0,0,.05);
       display:grid;
-      gap:.75rem;
+      grid-template-columns: minmax(0,1fr) 320px; /* plenty of room so it’s not cramped */
+      gap:1.25rem;
+      align-items:stretch;
     }
-    .series-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; }
+    @media(max-width:820px){
+      .series-card{ grid-template-columns: 1fr; }
+    }
+
+    .series-copy{ display:block; }
     .kicker{ font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; color:#666; }
     .series-title{ margin:.15rem 0 .15rem; }
-    .series-sub{ color:#555; margin:.25rem 0 0; }
-    .series-link{ white-space:nowrap; font-weight:600; color:var(--brand,#0E3B2D); text-decoration:none; }
+    .series-sub{ color:#555; margin:.35rem 0 0; }
+
+    /* Right column: big logo with CTA pinned bottom-right */
+    .series-visual{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;   /* right-align the visual stack */
+      height:100%;
+      padding:.25rem 0;
+    }
+    .series-logo{
+      width:200px;            /* large, readable logo */
+      height:200px;
+      object-fit:contain;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#fff;
+    }
+    .series-link{
+      margin-top:auto;        /* push link to the bottom */
+      align-self:flex-end;    /* bottom-right */
+      white-space:nowrap;
+      font-weight:600;
+      color:var(--brand,#0E3B2D);
+      text-decoration:none;
+    }
     .series-link:hover{ text-decoration:underline; }
 
-    /* Marks list: one big vertical stack */
-    .marks{ display:grid; grid-template-columns: 1fr; gap:.75rem; margin-top:.25rem; }
+    /* Marks list (only shown when items exist) */
+    .marks{ display:grid; grid-template-columns: 1fr; gap:.75rem; margin-top:.85rem; }
     .mark-card{
       border:1px solid var(--border);
       border-radius:12px;
@@ -170,17 +214,6 @@ const grouped = modelSeries.map(s => {
     .mark-meta{ font-size:.85rem; color:#666; margin-bottom:.25rem; text-transform:uppercase; letter-spacing:.03em; }
     .mark-title{ margin:.1rem 0 .2rem; }
     .mark-desc{ color:#444; margin:0; }
-
-    /* Empty state (compact tag) */
-    .empty-line{ display:flex; align-items:center; gap:.35rem; margin-top:.25rem; }
-    .tag{
-      display:inline-block;
-      border:1px solid var(--border);
-      border-radius:999px;
-      padding:.2rem .55rem;
-      background:#fafafa;
-      font-size:.9rem;
-    }
 
     /* Helpers */
     .hsmall{ font-size:1rem; margin:.1rem 0 .6rem; }

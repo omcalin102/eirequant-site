@@ -24,7 +24,8 @@ html, body {
 }
 
 .header-inner {
-    max-width: 1120px;
+    /* bump to match page width so the bar aligns with content */
+    max-width: 1200px;
     margin: 0 auto;
     padding: .6rem 1rem;
     display: flex;
@@ -35,7 +36,7 @@ html, body {
 .brand {
     display: flex;
     align-items: center;
-    margin-right: .25rem;
+    /* no special margin needed; buttons are pushed using auto margin on .primary */
 }
 
     .brand img {
@@ -58,7 +59,11 @@ html, body {
     display: flex;
     align-items: center;
     gap: .75rem;
-    flex: 1;
+    /* >>> move the buttons to the right on desktop */
+    margin-left: auto;
+    justify-content: flex-end;
+    /* IMPORTANT: remove flex:1 so they don't anchor left */
+    /* (was: flex: 1;) */
 }
 
 .toplink, .trigger {
@@ -111,7 +116,8 @@ html, body {
     pointer-events: none;
 }
 
-.dropdown:hover > .menu, .dropdown:focus-within > .menu {
+.dropdown:hover > .menu,
+.dropdown:focus-within > .menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -170,7 +176,8 @@ html, body {
     pointer-events: none;
 }
 
-.has-flyout:hover > .flyout, .has-flyout:focus-within > .flyout {
+.has-flyout:hover > .flyout,
+.has-flyout:focus-within > .flyout {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -194,7 +201,7 @@ html, body {
 }
 
 .hamburger {
-    margin-left: auto;
+    margin-left: auto; /* keep hamburger stuck to the far right on mobile */
     width: 40px;
     height: 34px;
     border-radius: 10px;
@@ -227,6 +234,9 @@ html, body {
         flex-direction: column;
         align-items: stretch;
         padding: .5rem;
+        /* reset the desktop right-alignment when in overlay mode */
+        margin-left: 0;
+        justify-content: flex-start;
     }
 
     .nav-toggle:checked ~ .hamburger {
