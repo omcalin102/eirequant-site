@@ -2,7 +2,7 @@
 title: "Website Design Progress"
 date: "2025-08-17"
 author: "Oisin McAlinden"
-type: "think"
+type: "Progress"
 summary: "Weekly progress: compare view live, model card sturdier, pipeline clarified, and reliability fixes in place."
 ---
 

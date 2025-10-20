@@ -2,7 +2,7 @@
 title: "EQX-M1: PID vs. Baseline, What Actually Changed"
 date: "2025-10-05"
 author: "Oisin McAlinden"
-type: "think"
+type: "Analysis"
 summary: "A diagnostic of stability, drawdowns, and where the controller earned its keep."
 ---
 

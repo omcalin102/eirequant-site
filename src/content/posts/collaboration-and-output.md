@@ -2,7 +2,7 @@
 title: "Collaboration Scales Signal"
 date: "2025-10-15"
 author: "Oisin McAlinden"
-type: "think"
+type: "Think"
 summary: "From a solo build to team-grade habits: how process, not heroics, unlocks speed and quality."
 ---
 

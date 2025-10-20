@@ -2,7 +2,7 @@
 title: "Rates, Dispersion, and Where Factor Risk Hides"
 date: "2025-10-01"
 author: "Oisin McAlinden"
-type: "think"
+type: "Macro"
 summary: "Why shifts in the rate path show up as factor dispersion, and what that means for allocation."
 ---
 

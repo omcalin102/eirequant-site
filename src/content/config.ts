@@ -7,7 +7,7 @@ export const collections = {
       title: z.string(),
       date: z.string(),               // ISO
       author: z.string(),
-      type: z.enum(["morning","eod","think"]).optional(),
+      type: z.enum(["morning","eod","Think","Analysis","Macro","Progress"]).optional(),
       summary: z.string().optional(),
       tags: z.array(z.string()).optional(),
     }),
