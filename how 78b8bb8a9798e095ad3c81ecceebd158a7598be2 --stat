@@ -1,0 +1,110 @@
+[33mcommit c51b61f20fd64897424b0ee7810f6c24e5e33e57[m
+Author: omcalin102 <omcalin102@users.noreply.github.com>
+Date:   Tue Sep 23 22:56:41 2025 +0000
+
+    deploy: c349b508d0cd0f64c66bc6b89d7745dc6b7863cc
+
+ .nojekyll                                          |     0
+ 404.html                                           |     9 [32m+[m
+ CNAME                                              |     1 [32m+[m
+ _astro/Chart.T4YIFNBj.js                           |    74 [32m+[m
+ _astro/CurveChart.S6Z0Ea2C.js                      |     4 [32m+[m
+ _astro/LineChart.Di7AruUN.js                       |    69 [32m+[m
+ _astro/MegaGraph.C4mxlwrE.js                       |    15 [32m+[m
+ _astro/MegaGraph.CkWJIM7z.js                       |     1 [32m+[m
+ _astro/about.DKskHhWU.css                          |     1 [32m+[m
+ _astro/client.B7_wsQ6z.js                          |    25 [32m+[m
+ _astro/index.BSy9ry4M.js                           |     9 [32m+[m
+ _astro/index.GzzYzsTh.js                           |     9 [32m+[m
+ _astro/jsx-runtime.D_zvdyIk.js                     |     9 [32m+[m
+ about/index.html                                   |     8 [32m+[m
+ blog/hello/index.html                              |     2 [32m+[m
+ blog/index.html                                    |     1 [32m+[m
+ brand/favicon.png                                  |   Bin [31m0[m -> [32m11664[m bytes
+ brand/logo-mark.png                                |   Bin [31m0[m -> [32m11664[m bytes
+ brand/logo-wordmark.png                            |   Bin [31m0[m -> [32m25040[m bytes
+ brand/og-default.png                               |   Bin [31m0[m -> [32m25040[m bytes
+ compare/index.html                                 |    15 [32m+[m
+ contact/index.html                                 |     1 [32m+[m
+ data/daily/2025-09-19/model_selection.json         |    31 [32m+[m
+ data/daily/2025-09-19/risk_greeks.json             |    48 [32m+[m
+ data/daily/2025-09-19/sector_health.json           |   393 [32m+[m
+ data/models/eqx-m1/by_regime_perf.json             |    37 [32m+[m
+ data/models/eqx-m1/calibration.json                |    79 [32m+[m
+ data/models/eqx-m1/catalog.json                    |   103 [32m+[m
+ data/regimes/equity_1y_2000.json                   |   819 [32m++[m
+ data/regimes/equity_1y_2000_cb.json                |   819 [32m++[m
+ data/regimes/equity_1y_2013.json                   |  1117 [32m++[m
+ data/regimes/equity_1y_2013_cb.json                |  1117 [32m++[m
+ data/regimes/equity_1y_2014.json                   |  1117 [32m++[m
+ data/regimes/equity_1y_2014_cb.json                |  1117 [32m++[m
+ data/regimes/equity_1y_2015.json                   |  1117 [32m++[m
+ data/regimes/equity_1y_2015_cb.json                |  1117 [32m++[m
+ data/regimes/equity_1y_2016.json                   |  1117 [32m++[m
+ data/regimes/equity_1y_2016_cb.json                |  1117 [32m++[m
+ data/regimes/equity_1y_2017.json                   |  1113 [32m++[m
+ data/regimes/equity_1y_2017_cb.json                |  1113 [32m++[m
+ data/regimes/equity_1y_2018.json                   |  1113 [32m++[m
+ data/regimes/equity_1y_2018_cb.json                |  1113 [32m++[m
+ data/regimes/equity_1y_2019.json                   |  1117 [32m++[m
+ data/regimes/equity_1y_2019_cb.json                |  1117 [32m++[m
+ data/regimes/equity_1y_2020.json                   |  1121 [32m++[m
+ data/regimes/equity_1y_2020_cb.json                |  1121 [32m++[m
+ data/regimes/equity_1y_2021.json                   |  1117 [32m++[m
+ data/regimes/equity_1y_2021_cb.json                |  1117 [32m++[m
+ data/regimes/equity_1y_2022.json                   |  1113 [32m++[m
+ data/regimes/equity_1y_2022_cb.json                |  1113 [32m++[m
+ data/regimes/equity_1y_2023.json                   |  1109 [32m++[m
+ data/regimes/equity_1y_2023_cb.json                |  1109 [32m++[m
+ data/regimes/equity_1y_2024.json                   |  1117 [32m++[m
+ data/regimes/equity_1y_2024_cb.json                |  1117 [32m++[m
+ data/regimes/equity_1y_2025.json                   |   787 [32m++[m
+ data/regimes/equity_1y_2025_cb.json                |   787 [32m++[m
+ data/regimes/equity_25y.json                       | 13697 [32m+++++++++++++++++++[m
+ data/regimes/equity_25y_cb.json                    | 13697 [32m+++++++++++++++++++[m
+ data/regimes/equity_5y_1.json                      |   783 [32m++[m
+ data/regimes/equity_5y_1_cb.json                   |   783 [32m++[m
+ data/regimes/equity_5y_3.json                      |  2525 [32m++++[m
+ data/regimes/equity_5y_3_cb.json                   |  2525 [32m++++[m
+ data/regimes/equity_5y_4.json                      |  5345 [32m++++++++[m
+ data/regimes/equity_5y_4_cb.json                   |  5345 [32m++++++++[m
+ data/regimes/equity_5y_5.json                      |  5343 [32m++++++++[m
+ data/regimes/equity_5y_5_cb.json                   |  5343 [32m++++++++[m
+ data/regimes/equity_last_1m.json                   |   155 [32m+[m
+ data/regimes/equity_last_1m_cb.json                |   155 [32m+[m
+ data/regimes/equity_last_1w.json                   |   109 [32m+[m
+ data/regimes/equity_last_1w_cb.json                |   109 [32m+[m
+ data/regimes/equity_last_1y.json                   |  1359 [32m++[m
+ data/regimes/equity_last_1y_cb.json                |  1359 [32m++[m
+ data/regimes/equity_last_3m.json                   |   369 [32m+[m
+ data/regimes/equity_last_3m_cb.json                |   369 [32m+[m
+ .../curves/baseline_confidence__fund_lump.json     |     1 [32m+[m
+ data/universe_v1/curves/sp500_total.json           |     1 [32m+[m
+ data/universe_v1/registry.json                     |     7 [32m+[m
+ disclaimer/index.html                              |     1 [32m+[m
+ eirequant/index.html                               |     1 [32m+[m
+ favicon.svg                                        |     9 [32m+[m
+ img/models/eqx-m1/charts/equity_1y_2000.png        |   Bin [31m0[m -> [32m147385[m bytes
+ img/models/eqx-m1/charts/equity_1y_2000_cb.png     |   Bin [31m0[m -> [32m136970[m bytes
+ img/models/eqx-m1/charts/equity_1y_2013.png        |   Bin [31m0[m -> [32m81615[m bytes
+ img/models/eqx-m1/charts/equity_1y_2013_cb.png     |   Bin [31m0[m -> [32m82709[m bytes
+ img/models/eqx-m1/charts/equity_1y_2014.png        |   Bin [31m0[m -> [32m72371[m bytes
+ img/models/eqx-m1/charts/equity_1y_2014_cb.png     |   Bin [31m0[m -> [32m71601[m bytes
+ img/models/eqx-m1/charts/equity_1y_2015.png        |   Bin [31m0[m -> [32m82334[m bytes
+ img/models/eqx-m1/charts/equity_1y_2015_cb.png     |   Bin [31m0[m -> [32m81826[m bytes
+ img/models/eqx-m1/charts/equity_1y_2016.png        |   Bin [31m0[m -> [32m126677[m bytes
+ img/models/eqx-m1/charts/equity_1y_2016_cb.png     |   Bin [31m0[m -> [32m124791[m bytes
+ img/models/eqx-m1/charts/equity_1y_2017.png        |   Bin [31m0[m -> [32m129282[m bytes
+ img/models/eqx-m1/charts/equity_1y_2017_cb.png     |   Bin [31m0[m -> [32m120055[m bytes
+ img/models/eqx-m1/charts/equity_1y_2018.png        |   Bin [31m0[m -> [32m147774[m bytes
+ img/models/eqx-m1/charts/equity_1y_2018_cb.png     |   Bin [31m0[m -> [32m134575[m bytes
+ img/models/eqx-m1/charts/equity_1y_2019.png        |   Bin [31m0[m -> [32m128527[m bytes
+ img/models/eqx-m1/charts/equity_1y_2019_cb.png     |   Bin [31m0[m -> [32m121064[m bytes
+ img/models/eqx-m1/charts/equity_1y_2020.png        |   Bin [31m0[m -> [32m129390[m bytes
+ img/models/eqx-m1/charts/equity_1y_2020_cb.png     |   Bin [31m0[m -> [32m123925[m bytes
+ img/models/eqx-m1/charts/equity_1y_2021.png        |   Bin [31m0[m -> [32m120418[m bytes
+ img/models/eqx-m1/charts/equity_1y_2021_cb.png     |   Bin [31m0[m -> [32m119058[m bytes
+ img/models/eqx-m1/charts/equity_1y_2022.png        |   Bin [31m0[m -> [32m139678[m bytes
+ img/models/eqx-m1/charts/equity_1y_2022_cb.png     |   Bin [31m0[m -> [32m144054[m bytes
+ img/models/eqx-m1/charts/equity_1y_2023.png        |   Bin [31m0[m -> [32m134041[m bytes
+ img/models/eqx-m1/charts/equity_1y_2023_cb.p
