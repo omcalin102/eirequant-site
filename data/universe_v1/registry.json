@@ -1,7 +1,0 @@
-{
-  "universe": "v1",
-  "curves": [
-    { "id": "sp500_total", "label": "S&P 500 (TR)", "path": "curves/sp500_total.json", "family": ["benchmark"] },
-    { "id": "baseline_confidence__fund_lump", "label": "Baseline (Confidence EW, lump-sum)", "path": "curves/baseline_confidence__fund_lump.json", "family": ["baseline"] }
-  ]
-}
