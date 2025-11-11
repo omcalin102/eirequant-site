@@ -1,0 +1,38 @@
+{
+  "date": "2025-09-19",
+  "env": "dev",
+  "generated_at": "2025-09-23T20:57:59.769656",
+  "macro": [
+    {
+      "desc": "<a href=\"https://news.google.com/rss/articles/CBMiswFBVV95cUxOa2V2OFo4WjFPclRZRGtjZXJvb3dsaDVUM3FjRnVCTkxfX184eHRyQjJ2NFlDc09TUlZrUDZGUzQzTjgyV1drNG9PSnc2Y0RELWZ5LVktLTlFcGFFa2s0Qm04RzRoYjNRSE9aSGw3aDljNFEyUEZJS1RNa203WlBLdmxxS2lWNmNXT0pRZGdDcGdqdEZ1YmMxN2lhci1RdVRMTEJtWE5wM3RJSFhGMXJjMjdqZw?oc=5\" target=\"_blank\">Federal Reserve Calibrates Interest Rate Policy Amid Softer Hiring and Lingering Inflation</a>&nbsp;&nbsp;<font color=\"#6f6f6f\">U.S. Bank</font>",
+      "published_at": "2025-09-19T07:00:00+00:00",
+      "sentiment": 0.7184,
+      "source": "rss/google-news",
+      "title": "Federal Reserve Calibrates Interest Rate Policy Amid Softer Hiring and Lingering Inflation - U.S. Bank",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOa2V2OFo4WjFPclRZRGtjZXJvb3dsaDVUM3FjRnVCTkxfX184eHRyQjJ2NFlDc09TUlZrUDZGUzQzTjgyV1drNG9PSnc2Y0RELWZ5LVktLTlFcGFFa2s0Qm04RzRoYjNRSE9aSGw3aDljNFEyUEZJS1RNa203WlBLdmxxS2lWNmNXT0pRZGdDcGdqdEZ1YmMxN2lhci1RdVRMTEJtWE5wM3RJSFhGMXJjMjdqZw?oc=5"
+    }
+  ],
+  "schema_version": "1.2",
+  "top_tickers": [
+    {
+      "headlines": [],
+      "ticker": "A"
+    },
+    {
+      "headlines": [],
+      "ticker": "AAPL"
+    },
+    {
+      "headlines": [],
+      "ticker": "ABBV"
+    },
+    {
+      "headlines": [],
+      "ticker": "ABNB"
+    },
+    {
+      "headlines": [],
+      "ticker": "ABT"
+    }
+  ]
+}
