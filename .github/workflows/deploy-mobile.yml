@@ -3,7 +3,7 @@
 on:
   push:
     branches:
-      - 'Mobile Friendly Website'   # exact branch name
+      - 'mobile-friendly-website'   # exact branch name
   workflow_dispatch:
 
 permissions:
