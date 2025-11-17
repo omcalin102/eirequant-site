@@ -1,0 +1,106 @@
+{
+  "env": "dev",
+  "generated_at": "2025-09-23T20:57:25.057100",
+  "schema_version": "1.2",
+  "sectors": [
+    {
+      "avg_abs_weight": 0.01766254406202331,
+      "avg_return": 0.0005769179580959086,
+      "contribution": -0.0700588966909896,
+      "hit_rate": 0.505552470849528,
+      "omega": 1.0606913063657806,
+      "sector": "Basic Materials",
+      "trades": 3602
+    },
+    {
+      "avg_abs_weight": 0.017670354078125557,
+      "avg_return": 0.0002790497113865365,
+      "contribution": 0.032506887670157684,
+      "hit_rate": 0.48872910998834046,
+      "omega": 1.0270618157226137,
+      "sector": "Energy",
+      "trades": 5146
+    },
+    {
+      "avg_abs_weight": 0.02037243405387252,
+      "avg_return": 3.739706224982474e-05,
+      "contribution": 0.09711480744789668,
+      "hit_rate": 0.4905679826821977,
+      "omega": 1.0037762795960823,
+      "sector": "Consumer Cyclical",
+      "trades": 9701
+    },
+    {
+      "avg_abs_weight": 0.014008088995993486,
+      "avg_return": -0.00019673746328928345,
+      "contribution": 0.20178714319041538,
+      "hit_rate": 0.511105969458584,
+      "omega": 0.9778378867039018,
+      "sector": "Industrials",
+      "trades": 8644
+    },
+    {
+      "avg_abs_weight": 0.023005355573800693,
+      "avg_return": -0.00046975193917257984,
+      "contribution": 0.022829783010279638,
+      "hit_rate": 0.498863349330639,
+      "omega": 0.9548488441330509,
+      "sector": "Communication Services",
+      "trades": 3959
+    },
+    {
+      "avg_abs_weight": 0.023706398600750682,
+      "avg_return": -0.0008184909575019852,
+      "contribution": 0.22780712413080123,
+      "hit_rate": 0.48672916941766803,
+      "omega": 0.9135039871053545,
+      "sector": "Healthcare",
+      "trades": 7573
+    },
+    {
+      "avg_abs_weight": 0.012019267860832211,
+      "avg_return": -0.0008927709177107298,
+      "contribution": 0.10536898448635144,
+      "hit_rate": 0.49413875598086127,
+      "omega": 0.908301147006134,
+      "sector": "Financial Services",
+      "trades": 8360
+    },
+    {
+      "avg_abs_weight": 0.009090249666808827,
+      "avg_return": -0.0011637993827891848,
+      "contribution": 0.027334893043488514,
+      "hit_rate": 0.5089496791624452,
+      "omega": 0.8774290777048878,
+      "sector": "Real Estate",
+      "trades": 2961
+    },
+    {
+      "avg_abs_weight": 0.022845202158241863,
+      "avg_return": -0.001513369869586062,
+      "contribution": 0.62783080409118,
+      "hit_rate": 0.48880597014925375,
+      "omega": 0.8690790918211923,
+      "sector": "Technology",
+      "trades": 15544
+    },
+    {
+      "avg_abs_weight": 0.025448213220788145,
+      "avg_return": -0.001311717074043411,
+      "contribution": 0.05563837024800844,
+      "hit_rate": 0.47708489857250186,
+      "omega": 0.8459271904775687,
+      "sector": "Consumer Defensive",
+      "trades": 2662
+    },
+    {
+      "avg_abs_weight": 0.020695458798394406,
+      "avg_return": -0.0018149890410711323,
+      "contribution": 0.1340696863686493,
+      "hit_rate": 0.47462406015037595,
+      "omega": 0.8194261746100551,
+      "sector": "Utilities",
+      "trades": 2128
+    }
+  ]
+}
