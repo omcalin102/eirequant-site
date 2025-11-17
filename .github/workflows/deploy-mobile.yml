@@ -1,0 +1,35 @@
+﻿name: Deploy (Astro ➜ gh-pages-mobile)
+
+on:
+  push:
+    branches:
+      - 'Mobile Friendly Website'   # exact branch name
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}     # build the pushed branch
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      # ensure the custom domain is in the artifact
+      - run: echo "www.eirequant.com" > dist/CNAME
+
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages-mobile   # <-- preview branch
+          force_orphan: true

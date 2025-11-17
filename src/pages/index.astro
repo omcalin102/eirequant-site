@@ -248,8 +248,11 @@ const posts = (await getCollection("posts"))
     width:clamp(260px, 46%, 440px);
     max-width:90%;
     font-size:1.06rem;
-    margin:0 auto;           /* <<< keep the CTA perfectly centered */
+    margin:0 auto;           /* keep the CTA perfectly centered */
   }
+
+  /* Hide floating About-CTA on small screens */
+  @media (max-width: 820px){ .hero-btn{ display:none; } }
 
   /* Mini cards (center column) */
   .mini-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }

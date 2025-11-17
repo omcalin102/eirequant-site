@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.github",
+    "\\.github\\workflows",
+    "\\public\\author",
+    "\\src",
+    "\\src\\components",
+    "\\src\\layouts",
+    "\\src\\pages",
+    "\\src\\styles"
+  ],
+  "SelectedNode": "\\.github\\workflows\\deploy-mobile.yml",
+  "PreviewInSolutionExplorer": false
+}

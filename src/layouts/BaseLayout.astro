@@ -93,14 +93,14 @@ const currentPath: string = Astro.url?.pathname || "/";
   .layout-3 > .center{ grid-area: center;}
   .layout-3 > .right { grid-area: right; }
 
-  /* Mobile: stack CENTER → LEFT → RIGHT */
+  /* Mobile: stack CENTER → RIGHT → LEFT (per your spec) */
   @media (max-width:1000px){
     .layout-3{
       grid-template-columns: 1fr;
       grid-template-areas:
         "center"
-        "left"
-        "right";
+        "right"
+        "left";
     }
   }
 </style>

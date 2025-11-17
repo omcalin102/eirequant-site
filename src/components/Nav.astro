@@ -19,9 +19,7 @@ const links = {
     experimental: {
       label: "Experimental Series",
       href: "/models/series/eq-tbd/",
-      marks: [
-        { label: "EQX-M1 (Model Card)", href: "/models/eqx-m1/" },
-      ],
+      marks: [{ label: "EQX-M1 (Model Card)", href: "/models/eqx-m1/" }],
     },
   },
   pipelines: [
@@ -39,16 +37,16 @@ const isActive = (path: string) =>
 <nav class="site-header" aria-label="Primary">
   <div class="header-inner">
     <a class="brand" href="/" aria-label="EireQuant home">
-      <!-- Swapped to the round EQ mark for readability in the navbar -->
       <img class="brand-img" src="/brand/logo-mark.png" alt="EireQuant" />
     </a>
 
-    <input id="nav-toggle" class="nav-toggle" type="checkbox" aria-label="Open menu" />
+    <input id="nav-toggle" class="nav-toggle" type="checkbox" aria-controls="primary-nav" aria-label="Open menu" />
     <label for="nav-toggle" class="hamburger" aria-hidden="true">
-      <span></span><span></span><span></span>
+      <span class="bars"><span></span><span></span><span></span></span>
+      <span class="menu-text">Menu</span>
     </label>
 
-    <ul class="primary">
+    <ul id="primary-nav" class="primary">
       <li>
         <a
           class={`toplink ${isActive("/") ? "active" : ""}`}
@@ -133,14 +131,15 @@ const isActive = (path: string) =>
 </nav>
 
 <style>
-  /* Minimal active styling that works with your existing header.css */
+  /* Minimal active styling (plays nice with header.css) */
   .toplink.active,
   .trigger.active {
     font-weight: 700;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
-  /* Navbar brand sizing for the EQ roundel */
+
+  /* Brand sizing */
   .brand-img{ height:28px; width:auto; display:block; }
   @media(min-width:1280px){ .brand-img{ height:30px; } }
 </style>

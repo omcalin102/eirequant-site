@@ -1,0 +1,138 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\.github\\workflows\\deploy-mobile.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.github\\workflows\\deploy-mobile.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\.github\\workflows\\deploy.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.github\\workflows\\deploy.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\styles\\header.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\styles\\header.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\components\\Nav.astro||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\Nav.astro||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\pages\\index.astro||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\pages\\index.astro||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\layouts\\BaseLayout.astro||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\layouts\\BaseLayout.astro||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\public\\author\\oisin.png||{58961B49-13E0-48C0-9258-13CBC4D40279}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:public\\author\\oisin.png||{58961B49-13E0-48C0-9258-13CBC4D40279}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "deploy-mobile.yml",
+              "DocumentMoniker": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\.github\\workflows\\deploy-mobile.yml",
+              "RelativeDocumentMoniker": ".github\\workflows\\deploy-mobile.yml",
+              "ToolTip": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\.github\\workflows\\deploy-mobile.yml",
+              "RelativeToolTip": ".github\\workflows\\deploy-mobile.yml",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAqwCMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2025-11-17T01:24:10.056Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "deploy.yml",
+              "DocumentMoniker": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\.github\\workflows\\deploy.yml",
+              "RelativeDocumentMoniker": ".github\\workflows\\deploy.yml",
+              "ToolTip": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\.github\\workflows\\deploy.yml",
+              "RelativeToolTip": ".github\\workflows\\deploy.yml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2025-11-17T01:20:04.824Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "header.css",
+              "DocumentMoniker": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\styles\\header.css",
+              "RelativeDocumentMoniker": "src\\styles\\header.css",
+              "ToolTip": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\styles\\header.css",
+              "RelativeToolTip": "src\\styles\\header.css",
+              "ViewState": "AgIAABABAAAAAAAAAAAiwCoBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-11-17T01:06:36.927Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Nav.astro",
+              "DocumentMoniker": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\components\\Nav.astro",
+              "RelativeDocumentMoniker": "src\\components\\Nav.astro",
+              "ToolTip": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\components\\Nav.astro",
+              "RelativeToolTip": "src\\components\\Nav.astro",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAiwJEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-17T01:06:15.294Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "index.astro",
+              "DocumentMoniker": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\pages\\index.astro",
+              "RelativeDocumentMoniker": "src\\pages\\index.astro",
+              "ToolTip": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\pages\\index.astro",
+              "RelativeToolTip": "src\\pages\\index.astro",
+              "ViewState": "AgIAAAkBAAAAAAAAAAAiwCMBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-17T01:00:37.016Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "BaseLayout.astro",
+              "DocumentMoniker": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\layouts\\BaseLayout.astro",
+              "RelativeDocumentMoniker": "src\\layouts\\BaseLayout.astro",
+              "ToolTip": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\src\\layouts\\BaseLayout.astro",
+              "RelativeToolTip": "src\\layouts\\BaseLayout.astro",
+              "ViewState": "AgIAAFAAAAAAAAAAAAAiwGoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-17T01:00:21.406Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "oisin.png",
+              "DocumentMoniker": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\public\\author\\oisin.png",
+              "RelativeDocumentMoniker": "public\\author\\oisin.png",
+              "ToolTip": "C:\\Users\\oisin\\Documents\\Projects\\live-project\\frontend\\eirequant-site\\public\\author\\oisin.png",
+              "RelativeToolTip": "public\\author\\oisin.png",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2025-11-17T00:59:41.858Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
