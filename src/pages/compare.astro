@@ -25,7 +25,12 @@ import MegaGraph from "../components/MegaGraph.tsx";
       <h1>Compare</h1>
       <p class="lead">Choose a window, a model, and optionally the S&amp;P 500 benchmark. Use the table and notes to judge risk/reward at a glance.</p>
 
-      <div class="panel">
+      <!--
+        NOTE: We don't control the internal markup of <MegaGraph/>.
+        The wrapper .compare-panel provides adaptive styles for any controls
+        (selects, radios, buttons) it renders so they are mobile friendly.
+      -->
+      <div class="panel compare-panel">
         <MegaGraph client:load />
       </div>
     </section>
@@ -37,5 +42,52 @@ import MegaGraph from "../components/MegaGraph.tsx";
     .lead{color:#444;margin:.35rem 0 1rem}
     .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;box-shadow:0 6px 18px rgba(0,0,0,.05)}
     .list{margin:.4rem 0 0 1.1rem;display:grid;gap:.2rem}
+
+    /* -------- Compare controls: mobile-first enhancements -------- */
+    .compare-panel{
+      --ctrl-gap: .6rem;
+    }
+
+    /* Make any control container inside become a tidy grid on mobile */
+    .compare-panel :where(form,.controls,.toolbar,.row,fieldset){
+      display:grid;
+      gap: var(--ctrl-gap);
+      align-items:center;
+    }
+
+    /* Inputs/selects/buttons: bigger tap targets */
+    .compare-panel :where(select,button,.btn){
+      min-height: 42px;
+      padding: .55rem .7rem;
+      border-radius: 10px;
+    }
+    .compare-panel :where(label){
+      font-weight:600;
+    }
+
+    /* Radios/checkboxes: enlarge without breaking layout */
+    @media (max-width: 900px){
+      .compare-panel :where(input[type="radio"],input[type="checkbox"]){
+        transform: scale(1.15);
+        transform-origin: left center;
+        margin-right: .35rem;
+      }
+      /* If MegaGraph groups small buttons, stack them vertically */
+      .compare-panel :where(.button-group,.segmented,.options){
+        display:grid;
+        gap:.45rem;
+        grid-auto-flow: row;
+      }
+    }
+
+    /* On wider screens, try a tidy two-column control grid if possible */
+    @media (min-width: 901px){
+      .compare-panel :where(.controls,.toolbar,.row){
+        grid-template-columns: repeat(2,minmax(220px,1fr));
+      }
+      .compare-panel :where(.button-group,.segmented){
+        display:flex; flex-wrap:wrap; gap:.45rem;
+      }
+    }
   </style>
 </BaseLayout>

@@ -3,23 +3,17 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PerformanceViewer from "../../components/viewers/PerformanceViewer.tsx";
 import PolicyTrace from "../../components/charts/PolicyTrace.tsx";
 
-/**
- * Hard-coded snapshot values pulled from the model card / whitepaper.
- * These ensure the page is fully populated even if client-side fetches are blocked.
- * Sources:
- * - model_card_eqx_m1.json (sectors, PID ranges, regime table)
- * - whitepaper EQX–M1 section (headline metrics)
- */
+/* ===== Static snapshot for SSR-first render ===== */
 
 // Headline (post-costs), 2000-01-03 — 2025-09-19
 const HEADLINE = {
-  cagr: 0.0710,            // 7.10%
-  vol: 0.1454,             // 14.54%
+  cagr: 0.0710,
+  vol: 0.1454,
   sortino: 0.670,
   omega: 1.123,
-  maxDD: -0.351,           // -35.1%
+  maxDD: -0.351,
   recoveryDays: 107,
-  pausePct: 0.0785,        // 7.85%
+  pausePct: 0.0785,
   env: "dev",
   version: "v1.0.0-eqx-m1",
   window: { start: "2000-01-03", end: "2025-09-19" }
@@ -32,14 +26,14 @@ const PID = {
   maxGross:  { min: 0.200, med: 0.598, max: 0.702 }
 };
 
-// By-regime performance (days, hit-rate, omega, sortino)
+// By-regime performance
 const REGIME = [
   { name: "Bull",    days: 1467, hit: 0.4806, omega: 3.3810, sortino: 7.7425 },
   { name: "Neutral", days:  790, hit: 0.4468, omega: 1.2765, sortino: 1.6744 },
   { name: "Bear",    days: 1118, hit: 0.1959, omega: 0.2722, sortino: -6.1964 },
 ];
 
-// Sector texture (Ω ≈ odds-like; higher is better). Picked top/worst by Ω.
+// Sector texture
 const SECTORS_TOP = [
   { sector: "Basic Materials",  omega: 1.0607 },
   { sector: "Energy",           omega: 1.0271 },
@@ -51,17 +45,16 @@ const SECTORS_BOTTOM = [
   { sector: "Real Estate",      omega: 0.8774 },
 ];
 
-// Consistency / streaks (portfolio & top ticker)
+// Consistency / streaks
 const CONSISTENCY = {
   portfolioMaxWin: 138,
   portfolioMaxLoss: 121,
   topTickerWin: { ticker: "VTR", days: 35 }
 };
 
-// Utility formatters
+// Utils
 const pct  = (x, d=1)=> `${(x*100).toFixed(d)}%`;
 const num  = (x, d=2)=> (x==null||!isFinite(+x)) ? "—" : (+x).toFixed(d);
-const dash = (v)=> v==null ? "—" : String(v);
 ---
 
 <BaseLayout title="EQX-M1 · Model Card" description="EQX-M1 model card with performance, regimes, sectors, and policy controls.">
@@ -70,11 +63,12 @@ const dash = (v)=> v==null ? "—" : String(v);
   <p class="intro">
     EQX-M1 is an Experimental-series research mark built to test a lightweight, regime-aware equity policy.
     It blends price action with flow and simple macro proxies, decouples decisions by regime, and keeps risk honest
-    via tight calibration and a “pause-o-meter” that can down-shift when signal quality degrades.
+    via tight calibration and a “pause-o-meter” that can downshift when signal quality degrades.
   </p>
 
   <!-- Meta row -->
-  <section class="panel meta">
+  <section class="panel meta" aria-labelledby="meta-h">
+    <h2 id="meta-h" class="sr-only">Meta</h2>
     <div class="row">
       <div><div class="k">Version</div><div class="v">{HEADLINE.version}</div></div>
       <div><div class="k">Data</div><div class="v">{HEADLINE.window.start} — {HEADLINE.window.end}</div></div>
@@ -84,8 +78,8 @@ const dash = (v)=> v==null ? "—" : String(v);
   </section>
 
   <!-- Key metrics -->
-  <section class="panel">
-    <h2 class="h">Key Metrics</h2>
+  <section class="panel" aria-labelledby="km-h">
+    <h2 id="km-h" class="h">Key Metrics</h2>
     <div class="metrics">
       <div class="m"><div class="label">CAGR</div><div class="val">{pct(HEADLINE.cagr,1)}</div><div class="subl">MAR ≈ {num(HEADLINE.cagr/Math.abs(HEADLINE.maxDD),3)}</div></div>
       <div class="m"><div class="label">Vol (ann.)</div><div class="val">{pct(HEADLINE.vol,1)}</div><div class="subl">Sortino {num(HEADLINE.sortino,2)}</div></div>
@@ -98,17 +92,15 @@ const dash = (v)=> v==null ? "—" : String(v);
   <!-- Mosaic -->
   <div class="mosaic">
     <!-- Equity (large) -->
-    <section class="panel wide">
-      <div class="head"><h2 class="h">Performance Viewer</h2></div>
+    <section class="panel wide" aria-labelledby="pv-h">
+      <div class="head"><h2 id="pv-h" class="h">Performance Viewer</h2></div>
       <PerformanceViewer client:load />
-      <p class="note">
-        Series normalised to start = 1.0; includes costs. Equities: model, SPX, PID-governed book.
-      </p>
+      <p class="note">Series normalised to start = 1.0; includes costs. Equities: model, SPX, PID-governed book.</p>
     </section>
 
     <!-- PID trace + summary -->
-    <section class="panel">
-      <h2 class="h">Policy Control Trace</h2>
+    <section class="panel" aria-labelledby="pid-h">
+      <h2 id="pid-h" class="h">Policy Control Trace</h2>
       <PolicyTrace client:load />
       <ul class="kv">
         <li><span>Risk-off days</span><b>{PID.riskOffDays}</b></li>
@@ -120,8 +112,8 @@ const dash = (v)=> v==null ? "—" : String(v);
     </section>
 
     <!-- By-regime -->
-    <section class="panel">
-      <h2 class="h">By-Regime Performance</h2>
+    <section class="panel" aria-labelledby="reg-h">
+      <h2 id="reg-h" class="h">By-Regime Performance</h2>
       <table class="table slim">
         <thead><tr><th>Regime</th><th>Ω</th><th>Hit rate</th><th>Days</th></tr></thead>
         <tbody>
@@ -137,13 +129,13 @@ const dash = (v)=> v==null ? "—" : String(v);
       </table>
       <p class="mini">
         Long-only profile is pro-cyclical: strong in Bulls, steady in Neutral, destructive if unconstrained in Bears.
-        The controller down-shifts exposure in stress to preserve capital and shorten recovery arcs.
+        The controller downshifts exposure in stress to preserve capital and shorten recovery arcs.
       </p>
     </section>
 
     <!-- Risk & Pauses -->
-    <section class="panel">
-      <h2 class="h">Risk & Pauses</h2>
+    <section class="panel" aria-labelledby="risk-h">
+      <h2 id="risk-h" class="h">Risk & Pauses</h2>
       <div class="grid2">
         <div class="stat"><div class="big">{pct(HEADLINE.pausePct,1)}</div><div class="cap">Paused share (all days)</div></div>
         <div>
@@ -160,8 +152,8 @@ const dash = (v)=> v==null ? "—" : String(v);
     </section>
 
     <!-- Calibration -->
-    <section class="panel">
-      <h2 class="h">Calibration</h2>
+    <section class="panel" aria-labelledby="cal-h">
+      <h2 id="cal-h" class="h">Calibration</h2>
       <ul class="kv tight">
         <li><span>ECE</span><b>0.1607</b></li>
         <li><span>Bins</span><b>10</b></li>
@@ -173,8 +165,8 @@ const dash = (v)=> v==null ? "—" : String(v);
     </section>
 
     <!-- Sector impact -->
-    <section class="panel">
-      <h2 class="h">Sector Impact</h2>
+    <section class="panel" aria-labelledby="sec-h">
+      <h2 id="sec-h" class="h">Sector Impact</h2>
       <div class="chips">
         {SECTORS_TOP.map(s => <span class="chip good">{s.sector} · Ω {num(s.omega,2)}</span>)}
       </div>
@@ -188,8 +180,8 @@ const dash = (v)=> v==null ? "—" : String(v);
     </section>
 
     <!-- Ticker consistency -->
-    <section class="panel">
-      <h2 class="h">Ticker Consistency</h2>
+    <section class="panel" aria-labelledby="cons-h">
+      <h2 id="cons-h" class="h">Ticker Consistency</h2>
       <ul class="kv">
         <li><span>Portfolio max win streak</span><b>{CONSISTENCY.portfolioMaxWin} d</b></li>
         <li><span>Portfolio max loss streak</span><b>{CONSISTENCY.portfolioMaxLoss} d</b></li>
@@ -202,8 +194,8 @@ const dash = (v)=> v==null ? "—" : String(v);
     </section>
 
     <!-- Ops -->
-    <section class="panel">
-      <h2 class="h">Operations</h2>
+    <section class="panel" aria-labelledby="ops-h">
+      <h2 id="ops-h" class="h">Operations</h2>
       <table class="table slim">
         <tbody>
           <tr><td>Stage</td><td>dev</td></tr>
@@ -217,8 +209,8 @@ const dash = (v)=> v==null ? "—" : String(v);
     </section>
 
     <!-- Limits -->
-    <section class="panel">
-      <h2 class="h">Limitations</h2>
+    <section class="panel" aria-labelledby="lim-h">
+      <h2 id="lim-h" class="h">Limitations</h2>
       <p class="mini">
         Research model; parameters subject to change. Backtest assumes fixed costs and a long-only book.
         Regime labeling uses simple hysteresis rules and may differ from alternative taxonomies.
@@ -226,30 +218,30 @@ const dash = (v)=> v==null ? "—" : String(v);
     </section>
   </div>
 
-  <!-- Methodology / deep dives -->
-  <section class="panel">
-    <h2 class="h">Methodology (summary)</h2>
+  <!-- Methodology -->
+  <section class="panel" aria-labelledby="meth-h">
+    <h2 id="meth-h" class="h">Methodology (summary)</h2>
     <p class="mini">
       Selection via probability thresholding; sizes scale with surplus-over-threshold to a regime-aware gross cap.
       For deep dives, see the <a href="/pipelines/sim/">Workstation (Sim)</a> pages.
     </p>
   </section>
 
-  <!-- Light client fetch to enrich: current regime + latest PID/sector/tickers if available -->
+  <!-- Enrich current regime client-side if available -->
   <script type="module">
     const baseHref = () => (document.querySelector("base")?.getAttribute("href") || "/").replace(/\/+$/, "/");
     const url = (p) => (baseHref() + String(p).replace(/^\//,"")).replace(/([^:]\/)\/+/g,"$1");
     async function j(p){ try{ const r = await fetch(url(p), {cache:"no-cache"}); if(!r.ok) return null; return r.json(); }catch{ return null; } }
     const $ = (s)=>document.querySelector(s);
 
-    // Current regime
     (async ()=>{
       const cur = await j("/data/models/eqx-m1/current_regime.json");
       if (cur){
         const label = cur.label ?? cur.regime ?? cur.name ?? "—";
         const p = cur.prob ?? cur.score ?? cur.confidence;
         const prob = (typeof p === "number") ? `${(p*100).toFixed(1)}%` : "—";
-        const el = $("#current-reg"), sub = $("#current-reg-sub");
+        const el = document.getElementById("current-reg");
+        const sub = document.getElementById("current-reg-sub");
         if (el) el.textContent = label;
         if (sub) sub.textContent = `prob ${prob}`;
       }
@@ -260,9 +252,12 @@ const dash = (v)=> v==null ? "—" : String(v);
     .intro{color:#444;margin:.35rem 0 1rem;max-width:78ch}
     .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
     .h{margin:.1rem 0 .6rem}
+    .sr-only{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
     .meta .row{display:flex;gap:1rem;flex-wrap:wrap}
     .meta .k{font-size:.8rem;color:#666}
     .meta .v{font-weight:700}
+
     .metrics{display:flex;gap:.75rem;flex-wrap:wrap}
     .m{border:1px solid var(--border);border-radius:12px;padding:.7rem .9rem;min-width:150px}
     .label{font-size:.8rem;color:#666;margin-bottom:.1rem}
@@ -272,6 +267,8 @@ const dash = (v)=> v==null ? "—" : String(v);
     .mosaic{display:grid;grid-template-columns:2fr 1fr;gap:1rem}
     @media(max-width:1100px){.mosaic{grid-template-columns:1fr}}
     .wide{grid-column:1 / span 2}
+    @media(max-width:1100px){.wide{grid-column:auto}}
+
     .head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
     .note{color:#6b7280;font-size:.85rem;margin-top:.5rem}
 

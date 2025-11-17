@@ -174,7 +174,7 @@ const posts = (await getCollection("posts"))
     }
   })();
 
-  /* Enforce Top Tickers 1×N layout (in case the component renders 2 columns internally) */
+  /* Enforce Top Tickers 1×N layout */
   function forceTopTickersSingleColumn(root) {
     if (!root) return;
     const nodes = root.querySelectorAll('*');
@@ -207,12 +207,10 @@ const posts = (await getCollection("posts"))
 </script>
 
 <style>
-  /* Panels & rails */
   .panel{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:1rem; box-shadow:0 6px 18px rgba(0,0,0,.05); }
   .panel.tight{ padding:.75rem; }
   .rail{ display:grid; gap:1rem; }
 
-  /* HERO — centered stack with clear spacing */
   .hero{ padding:1.6rem 1.4rem; }
   .hero-centered .hero-inner{
     max-width:900px;
@@ -225,36 +223,19 @@ const posts = (await getCollection("posts"))
     min-height:360px;
     justify-content:center;
   }
-  .hero-wordmark{
-    width:min(416px, 86%);
-    height:auto;
-    display:block;
-  }
+  .hero-wordmark{ width:min(416px, 86%); height:auto; display:block; }
   .hero-intro{
-    color:#2f2f2f;
-    line-height:1.62;
+    color:#2f2f2f; line-height:1.62;
     font-size:clamp(1.02rem, 1.1vw, 1.14rem);
-    max-width:72ch;
-    margin:0 auto; /* ensure text block stays centered */
+    max-width:72ch; margin:0 auto;
   }
-  .btn{
-    display:inline-flex; align-items:center; justify-content:center;
-    padding:.95rem 1.35rem;
-    border-radius:10px; border:1px solid var(--border);
+  .btn{ display:inline-flex; align-items:center; justify-content:center;
+    padding:.95rem 1.35rem; border-radius:10px; border:1px solid var(--border);
     background:#fafafa; font-weight:600;
   }
   .btn.primary{ background:#0E3B2D; color:#fff; border-color:#0E3B2D; }
-  .hero-btn{
-    width:clamp(260px, 46%, 440px);
-    max-width:90%;
-    font-size:1.06rem;
-    margin:0 auto;           /* keep the CTA perfectly centered */
-  }
+  .hero-btn{ width:clamp(260px, 46%, 440px); max-width:90%; font-size:1.06rem; margin:0 auto; }
 
-  /* Hide floating About-CTA on small screens */
-  @media (max-width: 820px){ .hero-btn{ display:none; } }
-
-  /* Mini cards (center column) */
   .mini-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
   @media(max-width:820px){ .mini-grid{ grid-template-columns: 1fr; } }
   .mini.card{ text-decoration:none; color:inherit; border:1px solid var(--border); border-radius:12px; padding:14px; background:#fff; }
@@ -262,7 +243,6 @@ const posts = (await getCollection("posts"))
   .mini-title{ margin:.1rem 0 .35rem; font-size:1.05rem; }
   .mini-copy{ margin:0; color:#555; }
 
-  /* Left-rail list */
   .news-list{ list-style:none; margin:.5rem 0 0; padding:0; display:grid; gap:.6rem; }
   .news-item{ border:1px solid var(--border); border-radius:10px; padding:.55rem .65rem; background:#fff; }
   .news-link{ color:#0b0b0b; text-decoration:none; font-weight:600; line-height:1.25; display:block; }
@@ -270,12 +250,10 @@ const posts = (await getCollection("posts"))
   .news-meta{ font-size:.85rem; color:#666; margin-top:.2rem; }
   .pill.subtle{ margin-top:.6rem; display:inline-block; }
 
-  /* Right-rail series */
   .series-grid{ display:grid; gap:.6rem; }
   .series img{ width:100%; height:auto; display:block; border-radius:10px; border:1px solid var(--border); background:#fff; }
   .series img:hover{ box-shadow:0 8px 18px rgba(0,0,0,.07); }
 
-  /* Optional: layout hint for tickers wrapper; JS enforces regardless */
   .top-tickers .tickers-vertical{ display:grid; grid-template-columns: 1fr; gap:.5rem; }
 
   .kicker{ margin:.35rem 0 .35rem; font-size:.85rem; font-weight:700; color:#333; text-transform:uppercase; letter-spacing:.04em; }
@@ -284,7 +262,6 @@ const posts = (await getCollection("posts"))
   .muted{ color:var(--muted); }
   .date{ font-weight:600; }
 
-  /* Explainer list */
   .explainer{ margin:0; }
   .explainer dt{ font-weight:700; margin-top:.35rem; }
   .explainer dd{ margin:.1rem 0 .25rem 0; color:#4b4b4b; }
