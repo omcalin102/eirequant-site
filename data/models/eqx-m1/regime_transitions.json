@@ -1,0 +1,52 @@
+{
+  "env": "dev",
+  "generated_at": "2025-09-23T20:57:25.131003",
+  "schema_version": "1.2",
+  "transitions": [
+    {
+      "count": 566,
+      "from": "bear",
+      "to": "bear"
+    },
+    {
+      "count": 155,
+      "from": "bear",
+      "to": "neutral"
+    },
+    {
+      "count": 397,
+      "from": "bear",
+      "to": "bull"
+    },
+    {
+      "count": 161,
+      "from": "neutral",
+      "to": "bear"
+    },
+    {
+      "count": 468,
+      "from": "neutral",
+      "to": "neutral"
+    },
+    {
+      "count": 162,
+      "from": "neutral",
+      "to": "bull"
+    },
+    {
+      "count": 391,
+      "from": "bull",
+      "to": "bear"
+    },
+    {
+      "count": 167,
+      "from": "bull",
+      "to": "neutral"
+    },
+    {
+      "count": 908,
+      "from": "bull",
+      "to": "bull"
+    }
+  ]
+}
