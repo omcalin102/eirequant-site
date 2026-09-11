@@ -1,7 +1,15 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Disclaimer — EIREQuant">
-  <h1 class="text-2xl font-semibold mb-6">Disclaimer</h1>
-  <p class="text-sm">Educational content; not investment advice. Backtests subject to limitations.</p>
+<BaseLayout title="Disclaimer — EireQuant" description="Important information about EireQuant research content and displayed data.">
+  <h1>Disclaimer</h1>
+  <section class="panel disclaimer-copy">
+    <p>EireQuant is an independent research and engineering project. Nothing on this website constitutes investment advice, a recommendation, or an offer of any financial product or service.</p>
+    <p>Values, signals, metrics, charts and other outputs may be historical, simulated, illustrative, representative, or temporarily static while systems are under development. Unless explicitly stated otherwise, displayed content should not be interpreted as real-time market data or live investment performance.</p>
+    <p>Backtests and simulations are subject to modelling assumptions, data limitations, transaction-cost estimates and hindsight effects. They do not guarantee future results.</p>
+  </section>
 </BaseLayout>
+
+<style>
+  .disclaimer-copy{max-width:82ch}
+</style>

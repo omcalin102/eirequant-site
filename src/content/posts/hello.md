@@ -1,5 +1,5 @@
 ---
-title: "Hello, EIREQuant"
+title: "Hello, EireQuant"
 date: "2025-08-17"
 author: "oisin"
 type: "think"
@@ -8,9 +8,9 @@ summary: "Weekly progress: compare view live, model card sturdier, pipeline clar
 
 ## Weekly update: steady progress and sharper edges
 
-This week was about turning the scaffolding into something you can actually use. The compare page is now doing real work. It loads the equity series for EQX M1 and the S&P500, lets viewers toggle between the PID and baseline paths, and shows concise statistics that match the selected window. The chart now carries proper axes and labels so it reads like a tool rather than a sketch. The goal is simple clarity. If the numbers do not help you decide, they do not belong on the page.
+This week was about turning the scaffolding into something you can actually use. The compare page is now doing real work. It loads the equity series for EQX-M1 and the S&P 500, lets viewers toggle between the PID and baseline paths, and shows concise statistics that match the selected window. The chart now carries proper axes and labels so it reads like a tool rather than a sketch. The goal is simple clarity. If the numbers do not help you decide, they do not belong on the page.
 
-On the model side the EQX M1 card moved closer to the layout I want. The performance viewer is stable and we have begun to hard code key tiles so the page stays informative while the final data hooks are finished. That balance matters. Visitors should see the current picture even if one upstream process is delayed. The same approach will carry into the remaining sections such as by regime performance, sector impact, and the policy control trace.
+On the model side the EQX-M1 card moved closer to the layout I want. The performance viewer is stable and we have begun to hard code key tiles so the page stays informative while the final data hooks are finished. That balance matters. Visitors should see the current picture even if one upstream process is delayed. The same approach will carry into the remaining sections such as by-regime performance, sector impact, and the policy control trace.
 
 The pipeline overview received a small redesign so it reads like a front door. Live pipeline sits on the left, workstation on the right, and a short explanation card underneath tells you what each path is for. The live run is meant to feel like an everyday desk and not a demo. The workstation is where we break things on purpose and learn from it. Keeping those identities distinct makes the navigation simple and sets the pace for future work.
 

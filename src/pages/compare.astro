@@ -14,28 +14,43 @@ import MegaGraph from "../components/MegaGraph.tsx";
           capital at risk lives in the left tail.
         </p>
         <ul class="list">
-          <li>Sanity-check risk vs reward (CAGR, vol, max drawdown).</li>
-          <li>Look for smoother paths in rough markets.</li>
-          <li>Favor robustness over lucky endpoints.</li>
+          <li>Compare volatility and drawdown, not only endpoints.</li>
+          <li>Inspect opportunity cost when exposure is reduced.</li>
+          <li>Prefer robustness across windows to a single favourable period.</li>
         </ul>
       </div>
     </aside>
 
     <section class="center">
       <h1>Compare</h1>
-      <p class="lead">Choose a window, a model, and optionally the S&amp;P 500 benchmark. Use the table and notes to judge risk/reward at a glance.</p>
+      <p class="lead">Choose a window and compare the published EQX-M1 paths with the S&amp;P 500 benchmark. The chart and statistics are most useful as a record of trade-offs, not as a forecast.</p>
 
       <div class="panel">
         <MegaGraph client:load />
       </div>
     </section>
 
-    <aside class="rail right"></aside>
+    <aside class="rail right">
+      <div class="panel">
+        <h3 class="card-title">Reading the comparison</h3>
+        <dl class="notes">
+          <div><dt>Drawdown</dt><dd>Depth and recovery time show how much capital disruption accompanied the path.</dd></div>
+          <div><dt>Volatility</dt><dd>Lower variability can improve usability, but may also reflect reduced participation.</dd></div>
+          <div><dt>Regime sensitivity</dt><dd>A result that depends on one market state deserves less confidence than one that is broadly stable.</dd></div>
+          <div><dt>Turnover and costs</dt><dd>Frequent changes can erode an apparent advantage once realistic frictions are applied.</dd></div>
+        </dl>
+      </div>
+    </aside>
   </div>
 
   <style>
     .lead{color:#444;margin:.35rem 0 1rem}
-    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:6px;padding:1rem;box-shadow:var(--shadow)}
     .list{margin:.4rem 0 0 1.1rem;display:grid;gap:.2rem}
+    .notes{margin:0;display:grid;gap:.75rem}
+    .notes div{border-top:1px solid var(--border);padding-top:.6rem}
+    .notes div:first-child{border-top:0;padding-top:0}
+    .notes dt{font-weight:700}
+    .notes dd{margin:.15rem 0 0;color:#555}
   </style>
 </BaseLayout>

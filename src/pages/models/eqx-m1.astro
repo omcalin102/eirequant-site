@@ -20,7 +20,6 @@ const HEADLINE = {
   maxDD: -0.351,           // -35.1%
   recoveryDays: 107,
   pausePct: 0.0785,        // 7.85%
-  env: "dev",
   version: "v1.0.0-eqx-m1",
   window: { start: "2000-01-03", end: "2025-09-19" }
 };
@@ -68,7 +67,7 @@ const dash = (v)=> v==null ? "—" : String(v);
   <h1>EQX-M1 — Model Card</h1>
 
   <p class="intro">
-    EQX-M1 is an Experimental-series research mark built to test a lightweight, regime-aware equity policy.
+    EQX-M1 is a published Experimental-series research artefact built to test a lightweight, regime-aware equity policy.
     It blends price action with flow and simple macro proxies, decouples decisions by regime, and keeps risk honest
     via tight calibration and a “pause-o-meter” that can down-shift when signal quality degrades.
   </p>
@@ -76,10 +75,11 @@ const dash = (v)=> v==null ? "—" : String(v);
   <!-- Meta row -->
   <section class="panel meta">
     <div class="row">
+      <div><div class="k">Model family</div><div class="v">Experimental</div></div>
       <div><div class="k">Version</div><div class="v">{HEADLINE.version}</div></div>
-      <div><div class="k">Data</div><div class="v">{HEADLINE.window.start} — {HEADLINE.window.end}</div></div>
-      <div><div class="k">Objective</div><div class="v">Book</div></div>
-      <div><div class="k">Env</div><div class="v">{HEADLINE.env}</div></div>
+      <div><div class="k">Research period</div><div class="v">{HEADLINE.window.start} — {HEADLINE.window.end}</div></div>
+      <div><div class="k">Last model run</div><div class="v">2025-09-19</div></div>
+      <div><div class="k">Published</div><div class="v">September 2025</div></div>
     </div>
   </section>
 
@@ -91,7 +91,7 @@ const dash = (v)=> v==null ? "—" : String(v);
       <div class="m"><div class="label">Vol (ann.)</div><div class="val">{pct(HEADLINE.vol,1)}</div><div class="subl">Sortino {num(HEADLINE.sortino,2)}</div></div>
       <div class="m"><div class="label">Omega</div><div class="val">{num(HEADLINE.omega,3)}</div><div class="subl">Odds-like ratio</div></div>
       <div class="m"><div class="label">Max DD</div><div class="val">{pct(HEADLINE.maxDD,1)}</div><div class="subl">Recovery {HEADLINE.recoveryDays} d</div></div>
-      <div class="m"><div class="label">Current Regime</div><div id="current-reg" class="val">—</div><div id="current-reg-sub" class="subl">prob —</div></div>
+      <div class="m"><div class="label">Last classified regime</div><div id="current-reg" class="val">Published snapshot</div><div id="current-reg-sub" class="subl">as at final model run</div></div>
     </div>
   </section>
 
@@ -99,7 +99,6 @@ const dash = (v)=> v==null ? "—" : String(v);
   <div class="mosaic">
     <!-- Equity (large) -->
     <section class="panel wide">
-      <div class="head"><h2 class="h">Performance Viewer</h2></div>
       <PerformanceViewer client:load />
       <p class="note">
         Series normalised to start = 1.0; includes costs. Equities: model, SPX, PID-governed book.
@@ -108,7 +107,6 @@ const dash = (v)=> v==null ? "—" : String(v);
 
     <!-- PID trace + summary -->
     <section class="panel">
-      <h2 class="h">Policy Control Trace</h2>
       <PolicyTrace client:load />
       <ul class="kv">
         <li><span>Risk-off days</span><b>{PID.riskOffDays}</b></li>
@@ -206,14 +204,13 @@ const dash = (v)=> v==null ? "—" : String(v);
       <h2 class="h">Operations</h2>
       <table class="table slim">
         <tbody>
-          <tr><td>Stage</td><td>dev</td></tr>
-          <tr><td>Active</td><td>Yes</td></tr>
-          <tr><td>Last update (UTC)</td><td>2025-09-19</td></tr>
+          <tr><td>Model family</td><td>Experimental</td></tr>
+          <tr><td>Record</td><td>Published research artefact</td></tr>
+          <tr><td>Last model run</td><td>2025-09-19</td></tr>
           <tr><td>Artifacts</td><td>equity_25y.json, pid_policy_trace.json</td></tr>
-          <tr><td>Hashes</td><td>—</td></tr>
         </tbody>
       </table>
-      <p class="mini">Ops health looks normal; policy traces and equities render from local artifacts for reproducibility.</p>
+      <p class="mini">Policy traces and equity series render from the published local artefacts for reproducibility.</p>
     </section>
 
     <!-- Limits -->
@@ -221,7 +218,7 @@ const dash = (v)=> v==null ? "—" : String(v);
       <h2 class="h">Limitations</h2>
       <p class="mini">
         Research model; parameters subject to change. Backtest assumes fixed costs and a long-only book.
-        Regime labeling uses simple hysteresis rules and may differ from alternative taxonomies.
+        Regime labelling uses simple hysteresis rules and may differ from alternative taxonomies.
       </p>
     </section>
   </div>
@@ -231,7 +228,7 @@ const dash = (v)=> v==null ? "—" : String(v);
     <h2 class="h">Methodology (summary)</h2>
     <p class="mini">
       Selection via probability thresholding; sizes scale with surplus-over-threshold to a regime-aware gross cap.
-      For deep dives, see the <a href="/pipelines/sim/">Workstation (Sim)</a> pages.
+      For deep dives, see the <a href="/pipelines/sim/">Workstation / Sim</a> pages.
     </p>
   </section>
 
@@ -251,20 +248,20 @@ const dash = (v)=> v==null ? "—" : String(v);
         const prob = (typeof p === "number") ? `${(p*100).toFixed(1)}%` : "—";
         const el = $("#current-reg"), sub = $("#current-reg-sub");
         if (el) el.textContent = label;
-        if (sub) sub.textContent = `prob ${prob}`;
+        if (sub) sub.textContent = `published probability ${prob}`;
       }
     })();
   </script>
 
   <style>
     .intro{color:#444;margin:.35rem 0 1rem;max-width:78ch}
-    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:6px;padding:1rem;margin:1rem 0;box-shadow:var(--shadow)}
     .h{margin:.1rem 0 .6rem}
     .meta .row{display:flex;gap:1rem;flex-wrap:wrap}
     .meta .k{font-size:.8rem;color:#666}
     .meta .v{font-weight:700}
     .metrics{display:flex;gap:.75rem;flex-wrap:wrap}
-    .m{border:1px solid var(--border);border-radius:12px;padding:.7rem .9rem;min-width:150px}
+    .m{border:1px solid var(--border);border-radius:4px;padding:.7rem .9rem;min-width:150px}
     .label{font-size:.8rem;color:#666;margin-bottom:.1rem}
     .val{font-weight:700}
     .subl{font-size:.8rem;color:#6b7280;margin-top:.15rem}
@@ -275,15 +272,13 @@ const dash = (v)=> v==null ? "—" : String(v);
     .head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
     .note{color:#6b7280;font-size:.85rem;margin-top:.5rem}
 
-    .table{width:100%;border-collapse:separate;border-spacing:0 .4rem}
+    .table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}
     .table th,.table td{padding:.35rem .5rem;border:1px solid var(--border)}
     .table.slim td,.table.slim th{font-size:.92rem}
     .table th{background:#fafafa;color:#374151;text-align:left}
-    .table td:first-child,.table th:first-child{border-top-left-radius:8px;border-bottom-left-radius:8px}
-    .table td:last-child,.table th:last-child{border-top-right-radius:8px;border-bottom-right-radius:8px}
 
     .kv{list-style:none;padding:0;margin:.25rem 0;display:grid;gap:.4rem}
-    .kv li{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:10px;padding:.4rem .6rem}
+    .kv li{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding:.4rem .2rem;gap:1rem}
     .kv.tight li{padding:.3rem .5rem}
     .hint{color:#6b7280;font-size:.8rem;margin-top:.5rem}
 
@@ -293,7 +288,7 @@ const dash = (v)=> v==null ? "—" : String(v);
     .stat .cap{color:#6b7280;margin-top:.15rem}
 
     .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.25rem 0 .5rem}
-    .chip{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:.25rem .6rem;font-size:.92rem}
+    .chip{display:inline-block;border:1px solid var(--border);border-radius:3px;padding:.25rem .6rem;font-size:.92rem}
     .chip.good{background:#f0fdf4;border-color:#86efac}
     .chip.bad{background:#fef2f2;border-color:#fecaca}
 

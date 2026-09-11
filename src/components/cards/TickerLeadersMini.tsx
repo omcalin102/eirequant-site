@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { TickerLeaderboard } from "../../lib/type";
+import type { TickerLeaderboard } from "../../lib/type";
 import { getLatestDate, safeTickerLeaders } from "../../lib/api";
 
 type Row = { ticker: string; omega?: number | null; hit_rate?: number | null };
 
 const fmtOmega = (n?: number | null) =>
-    typeof n === "number" && isFinite(n) ? n.toFixed(2) : "—";
+    typeof n === "number" && isFinite(n) ? n.toFixed(2) : "â€”";
 const fmtHit = (n?: number | null) =>
-    typeof n === "number" && isFinite(n) ? `${(n * 100).toFixed(0)}%` : "—";
+    typeof n === "number" && isFinite(n) ? `${(n * 100).toFixed(0)}%` : "â€”";
 
 // normalize either {top:[{ticker,omega,hit_rate}]} or {leaders:[{ticker,score}|[t,s]]}
 function normalize(doc: TickerLeaderboard | null | undefined): Row[] {
     if (!doc) return [];
     if (Array.isArray((doc as any).top) && (doc as any).top.length) {
         return (doc as any).top.map((t: any) => ({
-            ticker: t.ticker ?? String(t[0] ?? "—"),
+            ticker: t.ticker ?? String(t[0] ?? "â€”"),
             omega: typeof t.omega === "number" ? t.omega : null,
             hit_rate: typeof t.hit_rate === "number" ? t.hit_rate : null,
         }));
@@ -23,10 +23,10 @@ function normalize(doc: TickerLeaderboard | null | undefined): Row[] {
         const L: any[] = (doc as any).leaders;
         return L.map((x: any) => {
             if (Array.isArray(x)) {
-                return { ticker: String(x[0] ?? "—"), omega: +x[1] || null, hit_rate: null };
+                return { ticker: String(x[0] ?? "â€”"), omega: +x[1] || null, hit_rate: null };
             }
             return {
-                ticker: x.ticker ?? x.symbol ?? String(x.name ?? "—"),
+                ticker: x.ticker ?? x.symbol ?? String(x.name ?? "â€”"),
                 omega:
                     typeof x.omega === "number" ? x.omega :
                         typeof x.score === "number" ? x.score : null,
@@ -63,8 +63,7 @@ export default function TickerLeadersMini() {
                 <div key={i} className="pill pill-row">
                     <span className="pill-key">{t.ticker}</span>
                     <span className="muted pill-val">
-                        {/* ASCII-safe labels to avoid glyph fallbacks */}
-                        Om {fmtOmega(t.omega)} | HR {fmtHit(t.hit_rate)}
+                        Î© {fmtOmega(t.omega)} Â· HR {fmtHit(t.hit_rate)}
                     </span>
                     <button
                         type="button"

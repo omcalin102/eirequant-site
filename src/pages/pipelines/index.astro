@@ -11,15 +11,14 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <div class="meta">PIPELINE</div>
       <h2 class="heading">Live Pipeline</h2>
       <p class="desc">
-        Production path for the day-to-day investment workflow. Runs the current model set,
-        generates real selections, computes risk greeks and sector health, and tracks PID policy
-        controls. As the model library grows, this becomes the operating backbone where modules,
-        constraints, and governance come together to drive a live book with auditability.
+        Operational view for published pipeline output. It brings model selection, portfolio Greeks,
+        sector health and PID policy controls into one research surface while data services and
+        monitoring routines continue to evolve.
       </p>
 
       <div class="rows">
-        <div class="row"><span>Status</span><strong>Offline (Reactivation planned 29/10)</strong></div>
-        <div class="row"><span>Current Model</span><strong>EQX-M1 (PID)</strong></div>
+        <div class="row"><span>Mode</span><strong>Research monitoring</strong></div>
+        <div class="row"><span>Published model</span><strong>EQX-M1 (PID)</strong></div>
       </div>
 
       <div class="actions">
@@ -30,7 +29,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     <!-- Workstation -->
     <article class="card">
       <div class="meta">PIPELINE</div>
-      <h2 class="heading">Workstation (Sim)</h2>
+      <h2 class="heading">Workstation / Sim</h2>
       <p class="desc">
         Research & validation sandbox for windows, parameter sweeps, ablations, and stress tests.
         Use it to study regimes, assess calibration and uncertainty, and harden ideas before promotion
@@ -38,8 +37,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       </p>
 
       <div class="rows">
-        <div class="row"><span>Status</span><strong>Currently crafting EQC-M2</strong></div>
-        <div class="row"><span>Focus</span><strong>Features · Validation · Engineering</strong></div>
+        <div class="row"><span>Mode</span><strong>Controlled experimentation</strong></div>
+        <div class="row"><span>Focus</span><strong>Features · Validation · Robustness</strong></div>
       </div>
 
       <div class="actions">
@@ -52,17 +51,17 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   <section class="subcard">
     <h3>How to use these</h3>
     <p>
-      Validate in the <strong>Workstation</strong>, then promote to <strong>Live</strong>.
-      The workstation is where the engineering and theoretical ideas are brought together to improve a section of the existing framework.
-      The live path implements our project into an everyday working investment team where analysis is driven from real time data.
+      Use the <strong>Workstation</strong> to test assumptions under controlled data cuts, then publish
+      suitable outputs through the <strong>Live Pipeline</strong> interface. The distinction keeps
+      experimentation separate from operational reporting without implying production trading.
     </p>
     <ul>
-      <li><strong>Live:</strong> daily selections, greeks, sector health, PID control trace, governance hooks.</li>
-      <li><strong>Workstation:</strong> windows & comparisons, calibration and ECE checks, scenario & stress testing.</li>
+      <li><strong>Live Pipeline:</strong> selections, Greeks, sector health, PID control trace and operational checks.</li>
+      <li><strong>Workstation / Sim:</strong> windows and comparisons, calibration checks, scenarios and stress tests.</li>
     </ul>
     <p>
-      Over time, the live pipeline becomes a full shop surface where multiple model families,
-      sector-specific routing, and portfolio rules layered on top of reliable process.
+      The shared architecture makes data lineage, model assumptions and portfolio constraints easier
+      to inspect as the research environment develops.
     </p>
   </section>
 
@@ -83,8 +82,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     @media (max-width:900px){ .cards{grid-template-columns:1fr} }
 
     .card{
-      background:#fff;border:1px solid var(--border);border-radius:14px;
-      padding:1rem;box-shadow:0 6px 18px rgba(0,0,0,.05);
+      background:#fff;border:1px solid var(--border);border-radius:6px;
+      padding:1rem;box-shadow:var(--shadow);
       display:flex;flex-direction:column;gap:.6rem
     }
     .meta{font-size:.75rem;color:#6b7280;letter-spacing:.06em}
@@ -104,8 +103,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     .btn:hover{filter:brightness(.95)}
 
     .subcard{
-      background:#fff;border:1px solid var(--border);border-radius:14px;
-      padding:1rem;box-shadow:0 6px 18px rgba(0,0,0,.05);
+      background:#fff;border:1px solid var(--border);border-radius:6px;
+      padding:1rem;box-shadow:var(--shadow);
       max-width:1100px;margin:0 auto;
     }
     .subcard h3{margin:.1rem 0 .4rem}

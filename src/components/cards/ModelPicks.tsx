@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Selection, TickerLeaderboard as TL, ModelSelection as MS } from "../../lib/type";
+import type { Selection, TickerLeaderboard as TL, ModelSelection as MS } from "../../lib/type";
 import { getLatestDate, getModelSelection, safeTickerLeaders } from "../../lib/api";
 
 const pct = (n: number | null | undefined) =>
-    typeof n === "number" && isFinite(n) ? `${(n * 100).toFixed(1)}%` : "—";
+    typeof n === "number" && isFinite(n) ? `${(n * 100).toFixed(1)}%` : "â€”";
 
 export default function ModelPicks() {
     const [date, setDate] = useState<string | null>(null);
@@ -25,10 +25,10 @@ export default function ModelPicks() {
     }, []);
 
     const infoLine = (() => {
-        const series = (meta as any)?.series ?? (meta as any)?.model_id ?? "—";
-        const regime = (meta as any)?.regime ?? "—";
+        const series = (meta as any)?.series ?? (meta as any)?.model_id ?? "â€”";
+        const regime = (meta as any)?.regime ?? "â€”";
         const conf = pct((meta as any)?.confidence);
-        return [date ?? "—", series, regime, `Conf ${conf}`].join(" | ");
+        return [(meta as any)?.date ?? date ?? "â€”", series, regime, `Conf ${conf}`].join(" Â· ");
     })();
 
     const top5 =
@@ -53,7 +53,7 @@ export default function ModelPicks() {
                         {picks.slice(0, 8).map((s: any, i: number) => (
                             <tr key={i}>
                                 <td>{s.ticker}</td>
-                                <td>{s.action ?? "—"}</td>
+                                <td>{s.action ?? "â€”"}</td>
                                 <td>{pct(s.conf ?? s.confidence)}</td>
                             </tr>
                         ))}
@@ -69,7 +69,7 @@ export default function ModelPicks() {
             {top5.length ? (
                 <div className="pill-grid two-col" style={{ marginTop: ".6rem" }}>
                     {top5.map((t: any, i: number) => {
-                        const ticker = t?.ticker ?? t?.symbol ?? t?.name ?? t?.[0] ?? "—";
+                        const ticker = t?.ticker ?? t?.symbol ?? t?.name ?? t?.[0] ?? "â€”";
                         const omegaVal =
                             typeof t?.omega === "number" ? t.omega :
                                 (Array.isArray(t) && typeof t[1] === "number" ? t[1] : null);
@@ -78,7 +78,7 @@ export default function ModelPicks() {
                                 {ticker}
                                 {typeof omegaVal === "number" ? (
                                     <em className="meta" style={{ marginLeft: ".4rem", opacity: .6, fontStyle: "normal" }}>
-                                        Om {omegaVal.toFixed(2)}
+                                        Î© {omegaVal.toFixed(2)}
                                     </em>
                                 ) : null}
                             </span>

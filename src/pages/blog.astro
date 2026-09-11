@@ -24,7 +24,7 @@ export const prerender = true;
       <section class="card hero">
         <h1 class="h1">Blog</h1>
         <p class="muted">
-          Project analysis, model notes, and topical macro economic commentary.
+          Project analysis, model notes and topical macroeconomic commentary.
         </p>
       </section>
 
@@ -49,8 +49,8 @@ export const prerender = true;
           macro events that affect positioning and technology notes when new tools or methods change how we build.
         </p>
         <p class="muted">
-          Most articles are authored by myself. From time to time we’ll feature outside
-          contributors and guest analysts who bring domain perspective and independent views.
+          Most articles are written by me. From time to time the section may include outside
+          contributors who bring domain perspective and independent views.
           If you’d like to contribute or share feedback, <a href="/contact/">get in touch</a>.
         </p>
       </section>
@@ -69,7 +69,7 @@ export const prerender = true;
     .rail{display:grid;gap:1rem}
     .center{display:grid;gap:1rem}
 
-    .card{border:1px solid var(--border,#e6e6e6);padding:16px;background:#fff;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .card{border:1px solid var(--border,#e6e6e6);padding:16px;background:#fff;border-radius:6px;box-shadow:var(--shadow)}
     .card-title{margin:0 0 6px 0;font-weight:700}
     .hero{padding:18px 18px 14px}
     .h1{font-size:28px;line-height:1.2;margin:0 0 6px 0}
@@ -80,8 +80,8 @@ export const prerender = true;
     .list a{text-decoration:none}
 
     .list-wrap{display:flex;flex-direction:column;gap:12px}
-    .post{display:block;text-decoration:none;color:inherit;border:1px solid var(--border,#e6e6e6);border-radius:10px;background:#fff;padding:16px;transition:box-shadow .15s ease,transform .05s ease}
-    .post:hover{box-shadow:0 6px 18px rgba(0,0,0,.06);transform:translateY(-1px)}
+    .post{display:block;text-decoration:none;color:inherit;border:1px solid var(--border,#e6e6e6);border-radius:4px;background:#fff;padding:16px;transition:border-color .15s ease,box-shadow .15s ease}
+    .post:hover{border-color:#b9b9b3;box-shadow:var(--shadow)}
     .post-title{margin:0 0 4px 0;font-size:20px;font-weight:700}
     .post-meta{color:#666;font-size:14px;margin-bottom:6px}
     .post-sum{color:#222}

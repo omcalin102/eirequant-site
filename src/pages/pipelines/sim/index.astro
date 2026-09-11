@@ -1,8 +1,8 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Workstation (Sim) · EireQuant">
-  <h1>Workstation (Sim)</h1>
+<BaseLayout title="Workstation / Sim · EireQuant">
+  <h1>Workstation / Sim</h1>
 
   <!-- HERO -->
   <section class="panel">
@@ -90,8 +90,8 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   <section class="panel">
     <h2>Calibration &amp; uncertainty</h2>
     <p>
-      We don’t just predict; we <strong>prove</strong> how often we’re right. Reliability curves and ECE bins tell us whether confidence tracks
-      realized outcomes. When bins widen or drift, the system down-weights that slice or pauses it entirely. You’ll see the same story
+      Prediction scores are useful only when their uncertainty is measured. Reliability curves and ECE bins test whether confidence tracks
+      realised outcomes out of sample. When bins widen or drift, the research process down-weights that slice or pauses it. You’ll see the same approach
       reflected in the product: model cards include a calibration snapshot, the homepage shows when confidence is thin, and Compare lets you
       check stability across different windows. The rule is simple—<strong>uncertainty is a first-class signal</strong>, not an afterthought.
     </p>
@@ -101,8 +101,8 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   <section class="panel">
     <h2>Portfolio &amp; risk</h2>
     <p>
-      Decisions flow into a constraint graph: gross/net limits, per-symbol and per-sector caps, and turnover budgets. We watch portfolio-level
-      Greeks and exposures, simulate fees and slippage, and prefer <strong>de-risking early</strong> over squeezing the last basis point.
+      Decisions flow into a constraint graph: gross/net limits, per-symbol and per-sector caps, and turnover budgets. Portfolio-level
+      Greeks and exposures are reviewed alongside simulated fees and slippage, with early exposure reduction preferred when uncertainty rises.
       The homepage “Portfolio Greeks” tile mirrors the same controls you see here. If liquidity narrows or concentration creeps up, the system
       tilts smaller or steps aside before the problem grows.
     </p>
@@ -112,7 +112,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   <section class="panel">
     <h2>Evaluation &amp; regimes</h2>
     <p>
-      Every result is produced with walk-forward validation so the clock only ever moves one way. We then score by regime—combinations of
+      Results are assessed with walk-forward validation so the clock only ever moves one way. They are then sliced by regime—combinations of
       volatility, credit stress, and liquidity—and report consistency, drawdowns, and hit-rate alongside return. Model cards summarize this as
       “by-regime performance,” while the Compare page lets you line up models and baselines over the same windows. A “pause-o-meter”
       summarizes when the safest move is to trade less or not at all.
@@ -123,11 +123,11 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   <section class="panel">
     <h2>Roadmap</h2>
     <ul class="bullets">
-      <li>Stabilize regime labeling; cross-validate thresholds.</li>
-      <li>Broaden universe coverage; stress-test liquidity filters.</li>
-      <li>Tighten calibration; monitor ECE drift.</li>
-      <li>Ablate feature families; document wins and trade-offs.</li>
-      <li>Reconcile live vs. sim; extend paper-trading harness.</li>
+      <li>Stabilise regime labelling and cross-validate thresholds.</li>
+      <li>Broaden universe coverage and stress-test liquidity filters.</li>
+      <li>Tighten calibration and monitor ECE drift.</li>
+      <li>Ablate feature families and document trade-offs.</li>
+      <li>Reconcile published pipeline output with controlled simulation.</li>
     </ul>
   </section>
 
@@ -156,18 +156,18 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     .lead{color:#444;margin:.1rem 0 .9rem;max-width:75ch}
     .quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
     @media(max-width:900px){.quick{grid-template-columns:1fr}}
-    .q{display:block;border:1px solid var(--border);border-radius:12px;background:#fff;padding:.9rem 1rem;
-       text-decoration:none;color:inherit;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .q{display:block;border:1px solid var(--border);border-radius:6px;background:#fff;padding:.9rem 1rem;
+       text-decoration:none;color:inherit;box-shadow:var(--shadow)}
     .q strong{display:block}
     .q span{display:block;color:#555;margin-top:.15rem;font-size:.95rem}
 
-    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;
-           box-shadow:0 6px 18px rgba(0,0,0,.05)}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:6px;padding:1rem;margin:1rem 0;
+           box-shadow:var(--shadow)}
     h2{font-size:1.05rem;margin:0 0 .4rem}
     .bullets{list-style:disc;margin:.25rem 0 0 1.2rem;display:grid;gap:.35rem}
 
     .steps{counter-reset: step; display:grid; gap:.6rem; padding:0; margin:.5rem 0 0}
-    .steps>li{list-style:none; background:#fff; border:1px solid var(--border); border-radius:12px; padding:.75rem .85rem}
+    .steps>li{list-style:none; background:#fff; border:1px solid var(--border); border-radius:4px; padding:.75rem .85rem}
     .steps>li strong{display:block; margin-bottom:.25rem}
   </style>
 </BaseLayout>

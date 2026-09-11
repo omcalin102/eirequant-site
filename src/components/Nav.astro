@@ -17,14 +17,14 @@ const links = {
     },
     experimental: {
       label: "Experimental Series",
-      href: "/models/series/experimental/",
+      href: "/models/series/eq-tbd/",
       marks: [{ label: "EQX-M1 (Model Card)", href: "/models/eqx-m1/" }],
     },
   },
   pipelines: [
     { label: "Overview", href: "/pipelines/" },
     { label: "Live Pipeline", href: "/pipelines/live/" },
-    { label: "Workstation (Sim)", href: "/pipelines/sim/" },
+    { label: "Workstation / Sim", href: "/pipelines/sim/" },
   ],
 };
 
@@ -38,7 +38,7 @@ const isActive = (path: string) =>
     </a>
 
     <input id="nav-toggle" class="nav-toggle" type="checkbox" aria-label="Open menu" />
-    <label for="nav-toggle" class="hamburger" aria-hidden="true">
+    <label for="nav-toggle" class="hamburger" aria-label="Toggle navigation">
       <span></span><span></span><span></span>
     </label>
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { TopDrivers, Driver } from "../../lib/type";
+import type { TopDrivers, Driver } from "../../lib/type";
 import { getLatestDate, safeTopDrivers } from "../../lib/api";
 
 const pct = (n?: number | null, d = 2) =>
-    typeof n === "number" && isFinite(n) ? `${(n * 100).toFixed(d)}%` : "—";
+    typeof n === "number" && isFinite(n) ? `${(n * 100).toFixed(d)}%` : "â€”";
 
 function kindOf(d: any): "sector" | "ticker" | "news" | "other" {
     if (d?.type === "sector" || "sector" in d) return "sector";
@@ -44,12 +44,8 @@ export default function TopDriversMini() {
     }, [drivers]);
 
     return (
-        <div className="card">
-            <div className="card-head">
-                <h3 className="card-title">Top Drivers</h3>
-                <div className="card-sub">{date ?? "—"}</div>
-            </div>
-
+        <div>
+            <div className="card-sub">{date ?? "â€”"}</div>
             {picks.length ? (
                 <ul className="list topdrivers-list" style={{ marginTop: ".5rem" }}>
                     {picks.map((d: any, i: number) => {
@@ -58,7 +54,7 @@ export default function TopDriversMini() {
                             return (
                                 <li key={`s${i}`} className="row" style={{ display: "flex", gap: ".5rem", alignItems: "center" }}>
                                     <span className="badge">Sector</span>
-                                    <span className="kv-key" style={{ flex: 1, minWidth: 0 }}>{d.sector ?? "—"}</span>
+                                    <span className="kv-key" style={{ flex: 1, minWidth: 0 }}>{d.sector ?? "â€”"}</span>
                                     <span className="kv-val muted">{pct(d.value)}</span>
                                 </li>
                             );
@@ -67,7 +63,7 @@ export default function TopDriversMini() {
                             return (
                                 <li key={`t${i}`} className="row" style={{ display: "flex", gap: ".5rem", alignItems: "center" }}>
                                     <span className="badge">Ticker</span>
-                                    <span className="kv-key" style={{ flex: 1, minWidth: 0 }}>{d.ticker ?? "—"}</span>
+                                    <span className="kv-key" style={{ flex: 1, minWidth: 0 }}>{d.ticker ?? "â€”"}</span>
                                     <span className="kv-val muted">{pct(d.value)}</span>
                                 </li>
                             );
@@ -88,8 +84,8 @@ export default function TopDriversMini() {
                         return (
                             <li key={`x${i}`} className="row" style={{ display: "flex", gap: ".5rem", alignItems: "center" }}>
                                 <span className="badge">Info</span>
-                                <span style={{ flex: 1 }}>—</span>
-                                <span className="muted">—</span>
+                                <span style={{ flex: 1 }}>â€”</span>
+                                <span className="muted">â€”</span>
                             </li>
                         );
                     })}

@@ -8,11 +8,14 @@ html {
 }
 
 :root {
-    --bg: #f7f7f5;
-    --ink: #111;
-    --muted: #6b7280;
-    --border: #e6e6e6;
+    --bg: #f4f4f0;
+    --panel: #fff;
+    --ink: #171914;
+    --muted: #62685f;
+    --border: #d9dbd3;
     --brand: #0E3B2D;
+    --radius: 6px;
+    --shadow: 0 2px 8px rgba(21,31,26,.045);
 }
 
 body {
@@ -24,6 +27,8 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+::selection { background:#dce9e2; color:var(--ink); }
 
 .site-header {
     flex: 0 0 auto
@@ -45,6 +50,8 @@ h1, h2, h3, h4 {
     margin: 0 0 .5rem;
     line-height: 1.25
 }
+
+h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight:600; }
 
 h1 {
     font-size: clamp(1.6rem,3vw,2rem)
@@ -111,23 +118,22 @@ small, .small {
 .panel {
     background: #fff;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius);
     padding: 1rem;
-    box-shadow: 0 6px 18px rgba(0,0,0,.05);
+    box-shadow: var(--shadow);
 }
 
 .card {
     background: #fff;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius);
     padding: 1rem;
-    transition: border-color .12s ease, box-shadow .12s ease, transform .08s ease;
+    transition: border-color .12s ease, box-shadow .12s ease;
 }
 
     .card:hover {
         border-color: #dcdcdc;
-        box-shadow: 0 8px 24px rgba(0,0,0,.06);
-        transform: translateY(-1px)
+        box-shadow: var(--shadow)
     }
 
 .card-head {
@@ -150,7 +156,7 @@ small, .small {
 /* pills/badges */
 .pill {
     border: 1px solid var(--border);
-    border-radius: 999px;
+    border-radius: 3px;
     padding: .35rem .55rem;
     background: #fff
 }
@@ -189,7 +195,7 @@ small, .small {
 .btn {
     display: inline-block;
     padding: .7rem 1rem;
-    border-radius: 12px;
+    border-radius: 4px;
     border: 1px solid #111;
     text-decoration: none;
     color: #111;
@@ -216,7 +222,7 @@ small, .small {
     border-collapse: separate;
     border-spacing: 0;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 4px;
     overflow: hidden;
     background: #fff
 }
@@ -245,7 +251,7 @@ img, svg, canvas, video {
 /* chips & hints */
 .chip {
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 4px;
     padding: .55rem .75rem;
     background: #fff;
     display: grid;
@@ -335,7 +341,7 @@ img, svg, canvas, video {
 
 .greek-box {
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 4px;
     padding: .5rem .6rem;
     background: #fff;
     display: grid;
@@ -448,4 +454,12 @@ img, svg, canvas, video {
 /* Optional: tighten small headings in right rail a touch */
 .rail-right .hsmall.card-title {
     margin-bottom: .25rem;
+}
+
+@media (max-width:640px) {
+    .page { margin-top:.85rem; padding:0 .75rem; }
+    .pill-grid { grid-template-columns:1fr; }
+    .greek-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .table { display:block; overflow-x:auto; white-space:nowrap; }
+    .card-head { align-items:flex-start; flex-direction:column; }
 }

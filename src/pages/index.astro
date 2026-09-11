@@ -7,6 +7,7 @@ import GreeksMini from "../components/cards/GreeksMini.tsx";
 import SectorHeatMini from "../components/cards/SectorHeatMini.tsx";
 import TickerLeadersMini from "../components/cards/TickerLeadersMini.tsx";
 import TopDriversMini from "../components/cards/TopDriversMini.tsx";
+import { dashboardFallback } from "../data/fallbackData";
 
 const posts = (await getCollection("posts"))
   .sort((a,b)=>a.data.date<b.data.date?1:-1)
@@ -14,7 +15,7 @@ const posts = (await getCollection("posts"))
 ---
 <BaseLayout
   title="EireQuant"
-  description="A next-generation quantitative research platform — blending model families, portfolios, and real-time pipelines into one open showcase.">
+  description="Independent quantitative research, model documentation and engineering notes from EireQuant.">
 
   <!-- PAGE GRID -->
   <div class="home-grid">
@@ -22,13 +23,13 @@ const posts = (await getCollection("posts"))
     <aside class="rail rail-left">
       <div class="panel">
         <div class="card-head">
-          <div class="card-title muted">Today</div>
-          <div id="today-date" class="date">—</div>
+          <div class="card-title muted">Research snapshot</div>
+          <div id="today-date" class="date">{dashboardFallback.asOf}</div>
         </div>
 
         <div class="kicker">Headlines</div>
         <ul id="headlines" class="list pill-grid" aria-live="polite">
-          <li class="muted">No headlines.</li>
+          {dashboardFallback.headlines.map((headline) => <li>{headline}</li>)}
         </ul>
 
         <div class="kicker">Recent blog</div>
@@ -51,15 +52,13 @@ const posts = (await getCollection("posts"))
       <div class="hero panel">
         <h1 class="brandtitle">EireQuant</h1>
         <p class="lede">
-          EireQuant is an end-to-end quantitative research system that turns raw market information into
-          <strong>audited, risk-aware decisions</strong>. It ingests prices, options flow, news/sentiment, and a few fundamentals; builds
-          <strong>calibrated</strong> models that can admit uncertainty; and converts those views into portfolios with explicit constraints—then
-          stress-tests them under realistic frictions.
+          EireQuant is an independent quantitative research and engineering project. It brings market data,
+          feature research, calibrated models and constrained portfolio experiments into one documented system,
+          with uncertainty and implementation costs kept visible throughout.
         </p>
         <p class="hint">
-          On this site you’ll see <strong>daily model picks</strong>, a <strong>portfolio Greeks</strong> snapshot, <strong>sector heat</strong>, and live
-          <strong>leaders & drivers</strong> from the pipeline. Explore <strong>model families</strong> (Core, Sentinel, Experimental), read
-          <strong>model cards</strong> like EQX-M1, and use <strong>Compare</strong> to benchmark models across regimes.
+          The site records model selections, portfolio Greeks, sector conditions and pipeline outputs alongside
+          model families, research artefacts such as EQX-M1, and comparative views across market regimes.
         </p>
         <div class="cta">
           <a href="/models/" class="btn primary">Explore Models</a>
@@ -69,7 +68,7 @@ const posts = (await getCollection("posts"))
 
       <!-- Split into three vertical panels -->
       <div class="panel">
-        <div class="muted">Today · <span id="today-date-2">—</span></div>
+        <div class="muted">Research snapshot · <span id="today-date-2">{dashboardFallback.asOf}</span></div>
         <h3 class="card-title">Model Picks</h3>
         <ModelPicks client:load />
       </div>
@@ -99,7 +98,7 @@ const posts = (await getCollection("posts"))
 
       <div class="panel">
         <h3 class="hsmall card-title">Spotlight Sector</h3>
-        <div id="spot-sector" class="muted">— —</div>
+        <div id="spot-sector" class="muted">{dashboardFallback.sectors[0].sector} · {dashboardFallback.sectors[0].score.toFixed(2)}</div>
       </div>
 
       <div class="panel">
@@ -134,7 +133,7 @@ const posts = (await getCollection("posts"))
 
     try {
       const latest = (await j("/data/daily/latest.json").catch(()=>null)) ?? (await j("/data/latest.json").catch(()=>null));
-      const date = latest?.date ?? "—";
+      const date = latest?.date ?? document.querySelector("#today-date")?.textContent ?? "—";
       $("#today-date").textContent = date;
       $("#today-date-2").textContent = date;
 
@@ -155,7 +154,7 @@ const posts = (await getCollection("posts"))
       // Fallback: derive from daily sector health
       setTimeout(async ()=>{
         const el = $("#spot-sector");
-        if (el && el.textContent.trim() === "— —" && date && date !== "—") {
+        if (el && date && date !== "—") {
           try {
             const d = await j(`/data/daily/${date}/sector_health.json`);
             const sectors = Array.isArray(d?.sectors) ? d.sectors : [];
@@ -170,7 +169,7 @@ const posts = (await getCollection("posts"))
         }
       }, 0);
 
-    } catch(e){ console.warn(e); }
+    } catch(e){ console.warn("homepage data:", e); }
   </script>
 </BaseLayout>
 
@@ -188,13 +187,14 @@ const posts = (await getCollection("posts"))
   @media(max-width:1000px){
     .home-grid{ grid-template-columns: 1fr; }
     .rail-left,.rail-right{ max-width:none; width:auto; }
+    .center{ order:-1; }
   }
 
   .rail{ display:grid; gap:1rem; }
   .rail-left{ width:100%; max-width:260px; }
   .rail-right{ width:100%; max-width:260px; }
 
-  .panel{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:1rem; box-shadow:0 6px 18px rgba(0,0,0,.05); }
+  .panel{ background:#fff; border:1px solid var(--border); border-radius:6px; padding:1rem; box-shadow:var(--shadow); }
 
   .center{ display:grid; gap:1rem; }
   .brandtitle{ font-size:clamp(1.8rem,3.2vw,2.4rem); margin:0; }

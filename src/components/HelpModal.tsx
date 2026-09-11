@@ -38,7 +38,7 @@ export default function HelpModal({ id, title = "Help", trigger, children }: Pro
             <div className="hm" onClick={(e) => e.stopPropagation()}>
                 <div className="hm-head">
                     <h3>{title}</h3>
-                    <button ref={closeBtn} className="hm-x" onClick={() => setOpen(false)} aria-label="Close">×</button>
+                    <button ref={closeBtn} className="hm-x" onClick={() => setOpen(false)} aria-label="Close">Ã—</button>
                 </div>
                 <div className="hm-body">{children}</div>
             </div>

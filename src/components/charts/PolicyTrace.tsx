@@ -105,8 +105,8 @@ export default function PolicyTrace() {
     return (
         <div ref={wrapRef} className="card">
             <div className="card-head">
-                <h3 className="card-title">Policy Control Trace</h3>
-                <div className="card-sub">{date ?? "—"}</div>
+                <h2 className="card-title">Policy Control Trace</h2>
+                <div className="card-sub">{date ?? "â€”"}</div>
             </div>
             <div style={{ height: 220, marginTop: ".5rem" }}>
                 <canvas ref={canvasRef} />
