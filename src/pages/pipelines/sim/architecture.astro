@@ -1,24 +1,24 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Pipeline, explained � EireQuant">
+<BaseLayout title="Pipeline, explained · EireQuant">
   <h1>Pipeline, explained</h1>
 
   <section class="panel">
-    <p class="lead">High-level view of how data moves through the system�ingest, label, feature, train/select, and publish.</p>
+    <p class="lead">High-level view of how data moves through the system—ingest, label, feature, train/select, and publish.</p>
     <div class="flow">
       <div class="node"><strong>Ingest</strong><span>Prices, fundamentals, calendars</span></div>
-      <div class="arrow">?</div>
+      <div class="arrow">→</div>
       <div class="node"><strong>Clean</strong><span>Gaps, splits, outliers</span></div>
-      <div class="arrow">?</div>
+      <div class="arrow">→</div>
       <div class="node"><strong>Label</strong><span>Targets, regimes</span></div>
-      <div class="arrow">?</div>
+      <div class="arrow">→</div>
       <div class="node"><strong>Features</strong><span>Signals, risk proxies</span></div>
-      <div class="arrow">?</div>
+      <div class="arrow">→</div>
       <div class="node"><strong>Train & Select</strong><span>Fit, CV, calibration</span></div>
-      <div class="arrow">?</div>
+      <div class="arrow">→</div>
       <div class="node"><strong>Policy</strong><span>PID, constraints</span></div>
-      <div class="arrow">?</div>
+      <div class="arrow">→</div>
       <div class="node"><strong>Publish</strong><span>Curves, tables, status</span></div>
     </div>
   </section>

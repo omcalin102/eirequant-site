@@ -129,7 +129,7 @@ export default function PerformanceViewer() {
                     y: {
                         type: "linear",
                         grid: { color: "rgba(0,0,0,0.06)" },
-                        ticks: { callback: (v) => Number(v).toFixed(1) + "×" },
+                        ticks: { callback: (v) => Number(v).toFixed(1) + "Ã—" },
                     },
                 },
                 plugins: {
@@ -138,7 +138,7 @@ export default function PerformanceViewer() {
                         callbacks: {
                             label: (ctx) => {
                                 const v = typeof ctx.parsed.y === "number" ? ctx.parsed.y : null;
-                                return `${ctx.dataset.label}: ${v !== null ? v.toFixed(3) + "×" : "—"}`;
+                                return `${ctx.dataset.label}: ${v !== null ? v.toFixed(3) + "Ã—" : "â€”"}`;
                             },
                         },
                     },
@@ -150,7 +150,7 @@ export default function PerformanceViewer() {
     return (
         <div className="card">
             <div className="card-head">
-                <h3 className="card-title">Performance Viewer</h3>
+                <h2 className="card-title">Performance Viewer</h2>
                 <div className="card-actions">
                     <select
                         value={selected ?? ""}
@@ -170,9 +170,6 @@ export default function PerformanceViewer() {
                 <canvas ref={canvasRef} />
             </div>
 
-            <div className="muted" style={{ marginTop: ".5rem" }}>
-                Series normalized to start = 1.0 for comparison.
-            </div>
         </div>
     );
 }

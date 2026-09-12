@@ -25,13 +25,19 @@ export interface RiskGreeksDaily {
     nu?: number; v?: number; Vega?: number;
 }
 
-export type DriverRow = { name?: string; score?: number } | [string, number];
+export type DriverRow = {
+    type?: "sector" | "ticker" | "news" | "other";
+    name?: string; score?: number; value?: number;
+    sector?: string; ticker?: string; title?: string;
+    sentiment?: number; note?: string;
+} | [string, number];
 export interface TopDrivers {
     date?: ISODate;
     drivers?: DriverRow[];
 }
+export type Driver = DriverRow;
 
-export type LeaderRow = { ticker?: string; score?: number } | [string, number];
+export type LeaderRow = { ticker?: string; symbol?: string; score?: number; omega?: number; hit_rate?: number } | [string, number];
 export interface TickerLeaderboard {
     date?: ISODate;
     leaders?: LeaderRow[];
@@ -108,13 +114,17 @@ export interface Status {
     trading?: boolean | "true" | "false";
     current_model?: string; model?: string;
     message?: string;
+    active?: boolean;
+    env?: string;
+    generated_at?: string;
+    last_update_utc?: string;
 }
 
 export interface SectorMap {
     [sector: string]: string[];
 }
 
-// Equity variants we’ve seen
+// Equity variants seen in published research artifacts.
 export type EquityDocVariant =
     | any[] // [[t,v], ...]
     | {

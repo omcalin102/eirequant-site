@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { SectorHealthDaily, SectorPerf } from "../../lib/type";
+import type { SectorHealthDaily, SectorPerf } from "../../lib/type";
 import { getLatestDate, safeSectorHeat } from "../../lib/api";
 
 type Row = { name: string; badge?: string; metric?: number | null; metricLabel: string; _score: number };
@@ -33,7 +33,7 @@ export default function SectorHeatMini() {
         if (daily) {
             const srcA: Row[] = Array.isArray((daily as any).sectors)
                 ? (daily as any).sectors.map((s: any) => ({
-                    name: s.sector ?? s.name ?? "—",
+                    name: s.sector ?? s.name ?? "â€”",
                     badge: s.top_names?.[0]?.symbol ?? "",
                     metric: num(s.median_beta),
                     metricLabel: "Beta",
@@ -42,7 +42,7 @@ export default function SectorHeatMini() {
                 : [];
             const srcB: Row[] = Array.isArray((daily as any).leaders)
                 ? (daily as any).leaders.map((s: any) => ({
-                    name: s.sector ?? s.name ?? "—",
+                    name: s.sector ?? s.name ?? "â€”",
                     badge: "",
                     metric: num(s.score ?? s.value),
                     metricLabel: "Score",
@@ -54,7 +54,7 @@ export default function SectorHeatMini() {
         }
         const m: Row[] = Array.isArray(perf?.sectors)
             ? (perf!.sectors as any[]).map((s: any) => ({
-                name: s.sector ?? s.name ?? "—",
+                name: s.sector ?? s.name ?? "â€”",
                 badge: "",
                 metric: num(s.omega ?? s.contribution ?? s.ret ?? s.score),
                 metricLabel: typeof s.omega === "number" ? "Omega" : "Contrib",
@@ -76,7 +76,7 @@ export default function SectorHeatMini() {
                             {r.badge ? <em className="badge" aria-label="example ticker" style={{ marginLeft: ".4rem" }}>{r.badge}</em> : null}
                         </span>
                         <span className="muted kv-val">
-                            {r.metricLabel} {typeof r.metric === "number" ? r.metric.toFixed(2) : "—"}
+                            {r.metricLabel} {typeof r.metric === "number" ? r.metric.toFixed(2) : "â€”"}
                         </span>
                     </div>
                 ))}

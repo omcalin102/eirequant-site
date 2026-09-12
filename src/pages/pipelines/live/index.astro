@@ -1,39 +1,42 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
+import { dashboardFallback } from "../../../data/fallbackData";
 ---
 <BaseLayout title="Live Pipeline · EireQuant">
   <h1>Live Pipeline</h1>
+  <p class="lead">Operational research view for published pipeline outputs, model selection and risk diagnostics. Live feeds replace the representative interface values when available.</p>
 
   <section class="panel">
     <div class="grid4">
-      <div><div class="k">Status</div><div id="st" class="v">—</div></div>
-      <div><div class="k">Last run</div><div id="lr" class="v">—</div></div>
-      <div><div class="k">Trading</div><div id="tr" class="v">—</div></div>
-      <div><div class="k">Current model</div><div id="cm" class="v">—</div></div>
+      <div><div class="k">Status</div><div id="st" class="v">{dashboardFallback.operationalState.status}</div></div>
+      <div><div class="k">Last run</div><div id="lr" class="v">{dashboardFallback.operationalState.lastRun}</div></div>
+      <div><div class="k">Execution</div><div id="tr" class="v">{dashboardFallback.operationalState.trading}</div></div>
+      <div><div class="k">Research model</div><div id="cm" class="v">{dashboardFallback.operationalState.currentModel}</div></div>
     </div>
   </section>
 
   <section class="panel">
-    <div class="head"><h2>Model Selection</h2><div class="muted" id="ms-date">—</div></div>
-    <table class="table">
+    <div class="head"><h2>Model Selection</h2><div class="muted" id="ms-date">{dashboardFallback.asOf}</div></div>
+    <div class="table-wrap"><table class="table">
       <thead><tr><th>Ticker</th><th>Action</th><th>Confidence</th></tr></thead>
-      <tbody id="ms"><tr><td colspan="3" class="muted">No selections.</td></tr></tbody>
-    </table>
+      <tbody id="ms">{dashboardFallback.selections.map((selection) => <tr><td>{selection.ticker}</td><td>{selection.action}</td><td>{(selection.confidence * 100).toFixed(1)}%</td></tr>)}</tbody>
+    </table></div>
   </section>
 
   <section class="panel">
     <h2>Portfolio Greeks</h2>
     <div class="greeks">
-      <div class="chip"><div class="gk">Δ</div><div id="g-d" class="gval">—</div></div>
-      <div class="chip"><div class="gk">Γ</div><div id="g-g" class="gval">—</div></div>
-      <div class="chip"><div class="gk">ν</div><div id="g-v" class="gval">—</div></div>
+      <div class="chip"><div class="gk">Δ</div><div id="g-d" class="gval">{dashboardFallback.greeks.delta.toFixed(3)}</div></div>
+      <div class="chip"><div class="gk">Γ</div><div id="g-g" class="gval">{dashboardFallback.greeks.gamma.toFixed(3)}</div></div>
+      <div class="chip"><div class="gk">Vega</div><div id="g-v" class="gval">{dashboardFallback.greeks.vega.toFixed(3)}</div></div>
+      <div class="chip"><div class="gk">Theta</div><div id="g-t" class="gval">{dashboardFallback.greeks.theta.toFixed(3)}</div></div>
     </div>
   </section>
 
   <section class="panel">
     <h2>Sector Health</h2>
-    <ul id="sec" class="list"><li class="muted">No sector data.</li></ul>
+    <ul id="sec" class="list">{dashboardFallback.sectors.map((sector) => <li><strong>{sector.sector}</strong> — {sector.score.toFixed(2)}</li>)}</ul>
   </section>
 
   <section class="panel">
@@ -42,7 +45,7 @@ import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
 
   <section class="panel">
     <h2>Ops Health</h2>
-    <ul id="ops" class="list"><li class="muted">No ops data.</li></ul>
+    <ul id="ops" class="list">{dashboardFallback.operationalState.modules.map((module) => <li><strong>{module.name}</strong> — {module.status} · {module.note}</li>)}</ul>
   </section>
 
   <script type="module">
@@ -61,16 +64,24 @@ import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
       return b?.date ?? null;
     }
 
+    function isRecent(value){
+      const timestamp = Date.parse(String(value ?? ""));
+      return Number.isFinite(timestamp) && Math.abs(Date.now() - timestamp) <= 45 * 24 * 60 * 60 * 1000;
+    }
+
     async function main(){
+      const date = await getLatestDate();
+      if (!isRecent(date)) return;
+
       const st = await j("/data/pipeline/status.json").catch(()=>null);
       if (st){
-        $("#st").textContent = (st.status ?? st.state ?? "—");
-        $("#lr").textContent = (st.last_run ?? st.last ?? st.date ?? "—");
-        $("#tr").textContent = (st.trading===true||st.trading==="true") ? "Yes" : (st.trading===false ? "No" : "—");
-        $("#cm").textContent = (st.current_model ?? st.model ?? "—");
+        if (st.status ?? st.state) $("#st").textContent = st.status ?? st.state;
+        if (st.last_run ?? st.last ?? st.date ?? st.last_update_utc) $("#lr").textContent = st.last_run ?? st.last ?? st.date ?? st.last_update_utc;
+        if (st.trading===true||st.trading==="true") $("#tr").textContent = "Connected";
+        if (st.trading===false) $("#tr").textContent = "No live execution";
+        if (st.current_model ?? st.model) $("#cm").textContent = st.current_model ?? st.model;
       }
 
-      const date = await getLatestDate();
       if (date) $("#ms-date").textContent = date;
 
       const sel = date ? await j(`/data/daily/${date}/model_selection.json`).catch(()=>null) : null;
@@ -81,27 +92,30 @@ import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
       }
 
       // Greeks: daily medians if present; else latest proxies
-      let dlt=null,gmm=null,vga=null;
+      let dlt=null,gmm=null,vga=null,tht=null;
       if (date){
         const g = await j(`/data/daily/${date}/risk_greeks.json`).catch(()=>null);
         if (g){
           dlt = g.delta ?? g.Delta ?? g.stats?.beta_median ?? null;
           gmm = g.gamma ?? g.Gamma ?? g.stats?.gamma_median ?? null;
           vga = g.nu ?? g.Vega ?? g.v ?? g.stats?.vega_median ?? null;
+          tht = g.theta ?? g.Theta ?? g.stats?.theta_median ?? null;
         }
       }
-      if (dlt==null || gmm==null || vga==null){
+      if (dlt==null || gmm==null || vga==null || tht==null){
         const prox = await j("/data/models/eqx-m1/greek_proxies.json").catch(()=>null);
         const last = prox?.proxies?.length ? prox.proxies[prox.proxies.length-1] : null;
         if (last){
           if (dlt==null) dlt = last.delta ?? null;
           if (gmm==null) gmm = last.gamma ?? null;
           if (vga==null) vga = last.vega ?? null;
+          if (tht==null) tht = last.theta ?? null;
         }
       }
       if (dlt!=null) $("#g-d").textContent = fmt(dlt);
       if (gmm!=null) $("#g-g").textContent = fmt(gmm);
       if (vga!=null) $("#g-v").textContent = fmt(vga);
+      if (tht!=null) $("#g-t").textContent = fmt(tht);
 
       const sh = date ? await j(`/data/daily/${date}/sector_health.json`).catch(()=>null) : null;
       if (Array.isArray(sh?.sectors) && sh.sectors.length){
@@ -119,9 +133,6 @@ import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
       const ops = await j("/data/models/eqx-m1/ops_health.json").catch(()=>null);
       if (ops?.modules?.length){
         list($("#ops"), ops.modules.map(m => `<strong>${m.name ?? "module"}</strong>: ${m.status ?? "ok"}${m.note ? ` — ${m.note}`:""}`));
-      } else if (ops && typeof ops === "object"){
-        const rows = Object.keys(ops).map(k => `<strong>${k}</strong>: ${ops[k]}`);
-        if (rows.length) list($("#ops"), rows);
       }
     }
 
@@ -129,6 +140,7 @@ import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
   </script>
 
   <style>
+    .lead{color:#444;max-width:78ch}
     .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
     .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
     @media(max-width:900px){.grid4{grid-template-columns:repeat(2,1fr)}}
@@ -136,7 +148,8 @@ import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
     .v{font-weight:700}
     .head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
     .muted{color:var(--muted)}
-    .table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .table-wrap{overflow-x:auto}
+    .table{width:100%;min-width:480px;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
     .table th,.table td{padding:.55rem .7rem;border-bottom:1px solid var(--border)}
     .table thead th{background:#fafafa;text-align:left}
     .table tr:last-child td{border-bottom:0}
@@ -145,5 +158,6 @@ import PolicyTrace from "../../../components/charts/PolicyTrace.tsx";
     .gk{font-weight:700}
     .gval{color:#333}
     .list{list-style:none;margin:.25rem 0 0;padding:0;display:grid;gap:.35rem}
+    @media(max-width:560px){.grid4{grid-template-columns:1fr}}
   </style>
 </BaseLayout>

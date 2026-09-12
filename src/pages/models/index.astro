@@ -7,13 +7,13 @@ const all = await getCollection("models");
 
 // Display overrides & series copy (kept local so we don't need to edit modelSeries now)
 const titleOverride: Record<string,string> = {
-  "eq-tbd": "EQ Experimental Series",
+  "eq-tbd": "Experimental Series",
 };
 
 const subtitleOverride: Record<string,string> = {
-  "eq-core": "Daily tilts designed to be held, not chased. Core aims for interpretable, low-churn edges that survive across regimes. Rolling-window training, budgeted turnover, sector & symbol caps, and reliability checks (ECE) keep behavior honest.",
-  "eq-sentinel": "Risk sentries and overlays. Sentinel watches for volatility spikes, liquidity stress, and structural breaks. Outputs are hedges, halts, and confidence dials rather than raw bets. The goal is to cut left-tail and time-to-recover, not maximize headline return.",
-  "eq-tbd": "Incubator for new ideas. Experimental hosts research marks under live shadowing. We monitor calibration drift, operational health, and regime stability. Candidates that pass promote to Core or become Sentinel modules; the rest are documented and retired—no curve-fitting by omission.",
+  "eq-core": "Interpretable, lower-turnover model research designed for evaluation across regimes. Rolling windows, turnover budgets, concentration limits and reliability checks keep behaviour visible.",
+  "eq-sentinel": "Risk overlays concerned with volatility, liquidity stress and structural breaks. Outputs are exposure controls and confidence adjustments rather than standalone return claims.",
+  "eq-tbd": "Exploratory research marks used to test modelling, calibration and portfolio-control ideas. Published results remain documented even when a line of research is not continued.",
 };
 
 const grouped = modelSeries.map(s => {
@@ -54,7 +54,7 @@ const grouped = modelSeries.map(s => {
         <h1>Models</h1>
         <p class="lead">
           Model families (“Series”) and their Marks. Families give us clear intent; marks give us audited evolution.
-          We optimize for <strong>reliability first</strong>: calibrated predictions, regime-aware evaluation, and explicit
+          The research prioritises <strong>reliability</strong>: calibrated predictions, regime-aware evaluation, and explicit
           constraints so results survive frictions.
         </p>
       </header>
@@ -82,8 +82,8 @@ const grouped = modelSeries.map(s => {
             </div>
           ) : (
             <div class="empty-line">
-              <span class="tag">No published marks yet</span>
-              <span class="muted"> · Coming soon.</span>
+              <span class="tag">No published marks</span>
+              <span class="muted">This family currently serves as a documented research category.</span>
             </div>
           )}
         </section>
@@ -107,9 +107,9 @@ const grouped = modelSeries.map(s => {
       <section class="panel">
         <h3 class="hsmall">Promotion path</h3>
         <p>
-          <strong>Experimental → Core/Sentinel.</strong> New ideas start in Experimental under shadow trading. If calibration
-          holds and operational checks pass, they <strong>graduate</strong> to Core (stable signal) or Sentinel (risk overlay).
-          If a mark regresses, we <strong>pause or de-list</strong> it—results stay on the record.
+          <strong>Experimental → Core or Sentinel.</strong> New ideas begin as controlled experiments. Work that remains
+          calibrated and robust across relevant tests may inform Core signals or Sentinel risk controls; unsuccessful
+          approaches remain part of the research record.
         </p>
       </section>
     </aside>

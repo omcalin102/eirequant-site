@@ -13,6 +13,7 @@ html {
     --muted: #6b7280;
     --border: #e6e6e6;
     --brand: #0E3B2D;
+    --focus: #2233cc; /* new: focus ring */
 }
 
 body {
@@ -33,7 +34,7 @@ body {
     max-width: 1120px;
     margin: 1.25rem auto 2.5rem;
     padding: 0 1rem;
-    flex: 1 0 auto
+    flex: 1 0 auto;
 }
 
 .site-footer, footer {
@@ -193,7 +194,7 @@ small, .small {
     border: 1px solid #111;
     text-decoration: none;
     color: #111;
-    background: #fff
+    background: #fff;
 }
 
     .btn.primary {
@@ -210,6 +211,43 @@ small, .small {
         opacity: .95
     }
 
+    .btn:focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px
+    }
+
+/* --- NEW: baseline form controls (mobile-friendly) --- */
+input, select, button {
+    font: inherit;
+    font-size: 16px; /* prevent iOS zoom */
+}
+
+    select, input[type="text"], input[type="number"], input[type="search"] {
+        min-height: 42px;
+        padding: .55rem .7rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+    }
+
+        select:focus-visible,
+        input:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+label {
+    user-select: none
+}
+
+@media (max-width:900px) {
+    input[type="radio"], input[type="checkbox"] {
+        transform: scale(1.15);
+        transform-origin: left center;
+        margin-right: .35rem;
+    }
+}
+
 /* tables */
 .table {
     width: 100%;
@@ -218,7 +256,7 @@ small, .small {
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
-    background: #fff
+    background: #fff;
 }
 
     .table th, .table td {
@@ -277,10 +315,10 @@ img, svg, canvas, video {
     overflow: hidden;
     clip: rect(0,0,0,0);
     white-space: nowrap;
-    border: 0
+    border: 0;
 }
 
-/* ===== NEW: layout helpers to prevent squashing ===== */
+/* ===== layout helpers ===== */
 .two-col {
     grid-template-columns: repeat(2,minmax(0,1fr))
 }
@@ -295,7 +333,7 @@ img, svg, canvas, video {
     }
 }
 
-/* ===== NEW: pill content structure ===== */
+/* ===== pill content structure ===== */
 .pill-key {
     font-weight: 600;
     min-width: 0
@@ -305,7 +343,7 @@ img, svg, canvas, video {
     white-space: nowrap
 }
 
-/* ===== NEW: key–value rows (drivers, constraints) ===== */
+/* ===== key–value rows ===== */
 .kv {
     display: grid;
     gap: .35rem
@@ -317,15 +355,12 @@ img, svg, canvas, video {
     gap: .5rem
 }
 
-    .kv-row > .kv-key {
+    .kv-row .kv-key {
         flex: 1;
         min-width: 0
     }
 
-    .kv-row > .kv-val {
-    }
-
-/* ===== NEW: Greeks tile ===== */
+/* ===== Greeks tile ===== */
 .greek-grid {
     display: grid;
     grid-template-columns: repeat(4,minmax(0,1fr));
@@ -351,7 +386,7 @@ img, svg, canvas, video {
     font-variant-numeric: tabular-nums
 }
 
-/* ===== NEW: help dot + tooltip (one per pill/row) ===== */
+/* ===== help dot + tooltip ===== */
 .help-dot {
     display: inline-flex;
     align-items: center;
@@ -395,8 +430,7 @@ img, svg, canvas, video {
             box-shadow: 0 6px 18px rgba(0,0,0,.2);
         }
 
-        .help-dot[data-tip]:hover::after,
-        .help-dot[data-tip]:focus::after {
+        .help-dot[data-tip]:hover::after, .help-dot[data-tip]:focus::after {
             opacity: 1;
             transform: translateX(-50%) translateY(-2px)
         }
@@ -405,7 +439,7 @@ img, svg, canvas, video {
 .truncate {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: nowrap
 }
 
 /* === Home: control right-rail width & layout === */
@@ -419,33 +453,29 @@ img, svg, canvas, video {
     max-width: 280px;
 }
 
-/* On tablet/phone, rails can expand normally */
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .rail-left, .rail-right {
-        max-width: none;
+        max-width: none
     }
 }
 
-/* Right rail cards should read vertically, not two-up */
 .rail-right .pill-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr
 }
 
-/* Make key–value rows in right rail align cleanly */
 .rail-right .kv-row {
-    align-items: center;
+    align-items: center
 }
 
     .rail-right .kv-row .kv-key {
         flex: 1;
-        min-width: 0;
+        min-width: 0
     }
 
     .rail-right .kv-row .kv-val {
-        white-space: nowrap;
+        white-space: nowrap
     }
 
-/* Optional: tighten small headings in right rail a touch */
 .rail-right .hsmall.card-title {
-    margin-bottom: .25rem;
+    margin-bottom: .25rem
 }

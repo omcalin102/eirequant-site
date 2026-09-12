@@ -20,7 +20,6 @@ const HEADLINE = {
   maxDD: -0.351,           // -35.1%
   recoveryDays: 107,
   pausePct: 0.0785,        // 7.85%
-  env: "dev",
   version: "v1.0.0-eqx-m1",
   window: { start: "2000-01-03", end: "2025-09-19" }
 };
@@ -68,7 +67,7 @@ const dash = (v)=> v==null ? "—" : String(v);
   <h1>EQX-M1 — Model Card</h1>
 
   <p class="intro">
-    EQX-M1 is an Experimental-series research mark built to test a lightweight, regime-aware equity policy.
+    EQX-M1 is a published Experimental-series research artefact built to test a lightweight, regime-aware equity policy.
     It blends price action with flow and simple macro proxies, decouples decisions by regime, and keeps risk honest
     via tight calibration and a “pause-o-meter” that can down-shift when signal quality degrades.
   </p>
@@ -76,10 +75,11 @@ const dash = (v)=> v==null ? "—" : String(v);
   <!-- Meta row -->
   <section class="panel meta">
     <div class="row">
+      <div><div class="k">Model family</div><div class="v">Experimental</div></div>
       <div><div class="k">Version</div><div class="v">{HEADLINE.version}</div></div>
-      <div><div class="k">Data</div><div class="v">{HEADLINE.window.start} — {HEADLINE.window.end}</div></div>
-      <div><div class="k">Objective</div><div class="v">Book</div></div>
-      <div><div class="k">Env</div><div class="v">{HEADLINE.env}</div></div>
+      <div><div class="k">Research period</div><div class="v">{HEADLINE.window.start} — {HEADLINE.window.end}</div></div>
+      <div><div class="k">Last model run</div><div class="v">2025-09-19</div></div>
+      <div><div class="k">Published</div><div class="v">September 2025</div></div>
     </div>
   </section>
 
@@ -91,7 +91,7 @@ const dash = (v)=> v==null ? "—" : String(v);
       <div class="m"><div class="label">Vol (ann.)</div><div class="val">{pct(HEADLINE.vol,1)}</div><div class="subl">Sortino {num(HEADLINE.sortino,2)}</div></div>
       <div class="m"><div class="label">Omega</div><div class="val">{num(HEADLINE.omega,3)}</div><div class="subl">Odds-like ratio</div></div>
       <div class="m"><div class="label">Max DD</div><div class="val">{pct(HEADLINE.maxDD,1)}</div><div class="subl">Recovery {HEADLINE.recoveryDays} d</div></div>
-      <div class="m"><div class="label">Current Regime</div><div id="current-reg" class="val">—</div><div id="current-reg-sub" class="subl">prob —</div></div>
+      <div class="m"><div class="label">Last classified regime</div><div id="current-reg" class="val">Published snapshot</div><div id="current-reg-sub" class="subl">as at final model run</div></div>
     </div>
   </section>
 
@@ -99,7 +99,6 @@ const dash = (v)=> v==null ? "—" : String(v);
   <div class="mosaic">
     <!-- Equity (large) -->
     <section class="panel wide">
-      <div class="head"><h2 class="h">Performance Viewer</h2></div>
       <PerformanceViewer client:load />
       <p class="note">
         Series normalised to start = 1.0; includes costs. Equities: model, SPX, PID-governed book.
@@ -108,7 +107,6 @@ const dash = (v)=> v==null ? "—" : String(v);
 
     <!-- PID trace + summary -->
     <section class="panel">
-      <h2 class="h">Policy Control Trace</h2>
       <PolicyTrace client:load />
       <ul class="kv">
         <li><span>Risk-off days</span><b>{PID.riskOffDays}</b></li>
@@ -206,14 +204,13 @@ const dash = (v)=> v==null ? "—" : String(v);
       <h2 class="h">Operations</h2>
       <table class="table slim">
         <tbody>
-          <tr><td>Stage</td><td>dev</td></tr>
-          <tr><td>Active</td><td>Yes</td></tr>
-          <tr><td>Last update (UTC)</td><td>2025-09-19</td></tr>
+          <tr><td>Model family</td><td>Experimental</td></tr>
+          <tr><td>Record</td><td>Published research artefact</td></tr>
+          <tr><td>Last model run</td><td>2025-09-19</td></tr>
           <tr><td>Artifacts</td><td>equity_25y.json, pid_policy_trace.json</td></tr>
-          <tr><td>Hashes</td><td>—</td></tr>
         </tbody>
       </table>
-      <p class="mini">Ops health looks normal; policy traces and equities render from local artifacts for reproducibility.</p>
+      <p class="mini">Policy traces and equity series render from the published local artefacts for reproducibility.</p>
     </section>
 
     <!-- Limits -->
@@ -221,7 +218,7 @@ const dash = (v)=> v==null ? "—" : String(v);
       <h2 class="h">Limitations</h2>
       <p class="mini">
         Research model; parameters subject to change. Backtest assumes fixed costs and a long-only book.
-        Regime labeling uses simple hysteresis rules and may differ from alternative taxonomies.
+        Regime labelling uses simple hysteresis rules and may differ from alternative taxonomies.
       </p>
     </section>
   </div>
@@ -231,7 +228,7 @@ const dash = (v)=> v==null ? "—" : String(v);
     <h2 class="h">Methodology (summary)</h2>
     <p class="mini">
       Selection via probability thresholding; sizes scale with surplus-over-threshold to a regime-aware gross cap.
-      For deep dives, see the <a href="/pipelines/sim/">Workstation (Sim)</a> pages.
+      For deep dives, see the <a href="/pipelines/sim/">Workstation / Sim</a> pages.
     </p>
   </section>
 
@@ -251,7 +248,7 @@ const dash = (v)=> v==null ? "—" : String(v);
         const prob = (typeof p === "number") ? `${(p*100).toFixed(1)}%` : "—";
         const el = $("#current-reg"), sub = $("#current-reg-sub");
         if (el) el.textContent = label;
-        if (sub) sub.textContent = `prob ${prob}`;
+        if (sub) sub.textContent = `published probability ${prob}`;
       }
     })();
   </script>
@@ -270,7 +267,7 @@ const dash = (v)=> v==null ? "—" : String(v);
     .subl{font-size:.8rem;color:#6b7280;margin-top:.15rem}
 
     .mosaic{display:grid;grid-template-columns:2fr 1fr;gap:1rem}
-    @media(max-width:1100px){.mosaic{grid-template-columns:1fr}}
+    @media(max-width:1100px){.mosaic{grid-template-columns:minmax(0,1fr)}.mosaic>.wide{grid-column:auto}}
     .wide{grid-column:1 / span 2}
     .head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
     .note{color:#6b7280;font-size:.85rem;margin-top:.5rem}
@@ -296,6 +293,7 @@ const dash = (v)=> v==null ? "—" : String(v);
     .chip{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:.25rem .6rem;font-size:.92rem}
     .chip.good{background:#f0fdf4;border-color:#86efac}
     .chip.bad{background:#fef2f2;border-color:#fecaca}
+    @media(max-width:640px){.table{display:block;overflow-x:auto}}
 
     .mini{color:#4b5563;margin:.5rem 0 0}
   </style>

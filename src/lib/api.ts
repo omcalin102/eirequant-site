@@ -1,4 +1,4 @@
-import {
+import type {
     Latest,
     ModelSelection,
     RiskGreeksDaily,
@@ -21,6 +21,7 @@ import {
     Status,
     SectorMap,
 } from "./type";
+import { dashboardFallback } from "../data/fallbackData";
 
 const baseHref = () =>
     (typeof document !== "undefined"
@@ -51,12 +52,29 @@ export async function getLatestDate(): Promise<string | null> {
     return _latestDate;
 }
 
+export function isRecentDate(value?: string | null, maxAgeDays = 45): boolean {
+    const timestamp = Date.parse(String(value ?? ""));
+    return Number.isFinite(timestamp) && Math.abs(Date.now() - timestamp) <= maxAgeDays * 24 * 60 * 60 * 1000;
+}
+
 const withDate = (p: string, d?: string | null) => (d ? `${p}?v=${encodeURIComponent(d)}` : p);
 
 // Daily
 export async function getModelSelection(date?: string | null) {
     const d = date ?? (await getLatestDate());
-    return await getJSON<ModelSelection>(withDate(`/data/daily/${d}/model_selection.json`, d));
+    const live = d && isRecentDate(d)
+        ? await getJSON<ModelSelection>(withDate(`/data/daily/${d}/model_selection.json`, d))
+        : null;
+    if (live?.selections?.length) return live;
+    return {
+        ...live,
+        date: dashboardFallback.asOf,
+        series: dashboardFallback.model.family,
+        model_id: dashboardFallback.model.name,
+        regime: dashboardFallback.model.regime,
+        confidence: dashboardFallback.model.confidence,
+        selections: dashboardFallback.selections.map((selection) => ({ ...selection })),
+    } as ModelSelection;
 }
 
 export async function getDailyGreeks(date?: string | null) {
@@ -204,24 +222,45 @@ export function normalizeEquity(doc: EquityDocVariant | null | undefined): Equit
 // Fallback helpers
 export async function safeTopDrivers(date?: string | null, model = "eqx-m1") {
     const d = date ?? (await getLatestDate());
-    const daily = await getTopDrivers(d);
-    if (daily?.drivers?.length) return daily;
-    return await getJSON<TopDrivers>(`/data/models/${model}/top_drivers.json`);
+    if (isRecentDate(d)) {
+        const daily = await getTopDrivers(d);
+        if (daily?.drivers?.length) return daily;
+        const modelLevel = await getJSON<TopDrivers>(`/data/models/${model}/top_drivers.json`);
+        if (modelLevel?.drivers?.length) return modelLevel;
+    }
+    return { date: dashboardFallback.asOf, drivers: dashboardFallback.marketDrivers.map((driver) => ({ ...driver })) } as TopDrivers;
 }
 
 export async function safeTickerLeaders(date?: string | null, model = "eqx-m1") {
     const d = date ?? (await getLatestDate());
-    const daily = await getTickerLeaders(d);
-    if (daily?.top?.length) return daily;
-    return await getJSON<TickerLeaderboard>(`/data/models/${model}/ticker_leaderboard.json`);
+    if (isRecentDate(d)) {
+        const daily = await getTickerLeaders(d);
+        if (daily?.top?.length) return daily;
+        const modelLevel = await getJSON<TickerLeaderboard>(`/data/models/${model}/ticker_leaderboard.json`);
+        if (modelLevel?.top?.length || modelLevel?.leaders?.length) return modelLevel;
+    }
+    return { date: dashboardFallback.asOf, top: dashboardFallback.tickerLeaders.map((leader) => ({ ...leader })) } as TickerLeaderboard;
 }
 
 export async function safeSectorHeat(date?: string | null, model = "eqx-m1") {
     const d = date ?? (await getLatestDate());
-    const daily = await getSectorHealth(d);
-    if (daily?.sectors?.length || daily?.leaders?.length) return { daily, modelPerf: null as SectorPerf | null };
-    const perf = await getSectorPerf(model);
-    return { daily: null as SectorHealthDaily | null, modelPerf: perf ?? null };
+    if (isRecentDate(d)) {
+        const daily = await getSectorHealth(d);
+        if (daily?.sectors?.length || daily?.leaders?.length) return { daily, modelPerf: null as SectorPerf | null };
+        const perf = await getSectorPerf(model);
+        if (perf?.sectors?.length) return { daily: null as SectorHealthDaily | null, modelPerf: perf };
+    }
+    return {
+        daily: {
+            date: dashboardFallback.asOf,
+            leaders: dashboardFallback.sectors.map((sector) => ({
+                sector: sector.sector,
+                score: sector.score,
+                value: sector.value,
+            })),
+        } as SectorHealthDaily,
+        modelPerf: null as SectorPerf | null,
+    };
 }
 
 export async function safePolicyTrace(date?: string | null, model = "eqx-m1") {

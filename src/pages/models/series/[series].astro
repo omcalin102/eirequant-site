@@ -18,12 +18,12 @@ const all = await getCollection("models");
 const sMeta = modelSeries.find(s => s.slug === series);
 
 const titleOverride: Record<string,string> = {
-  "eq-tbd": "EQ Experimental Series",
+  "eq-tbd": "Experimental Series",
 };
 const subtitleOverride: Record<string,string> = {
-  "eq-core": "Daily tilts designed to be held, not chased. Core aims for interpretable, low-churn edges that survive across regimes. Rolling-window training, budgeted turnover, sector & symbol caps, and reliability checks (ECE) keep behavior honest.",
-  "eq-sentinel": "Risk sentries and overlays. Sentinel watches for volatility spikes, liquidity stress, and structural breaks. Outputs are hedges, halts, and confidence dials rather than raw bets. The goal is to cut left-tail and time-to-recover, not maximize headline return.",
-  "eq-tbd": "Incubator for new ideas. Experimental hosts research marks under live shadowing. We monitor calibration drift, operational health, and regime stability. Candidates that pass promote to Core or become Sentinel modules; the rest are documented and retired—no curve-fitting by omission.",
+  "eq-core": "Interpretable, lower-turnover model research designed for evaluation across regimes. Rolling windows, turnover budgets, concentration limits and reliability checks keep behaviour visible.",
+  "eq-sentinel": "Risk overlays concerned with volatility, liquidity stress and structural breaks. Outputs are exposure controls and confidence adjustments rather than standalone return claims.",
+  "eq-tbd": "Exploratory research marks used to test modelling, calibration and portfolio-control ideas. Published results remain documented even when a line of research is not continued.",
 };
 const meta = sMeta ? {
   ...sMeta,
@@ -103,8 +103,8 @@ const merged = [...contentMarks, ...extras];
           </div>
         ) : (
           <div class="empty-line">
-            <span class="tag">No published marks yet</span>
-            <span class="muted"> · Coming soon.</span>
+              <span class="tag">No published marks</span>
+              <span class="muted">This family currently serves as a documented research category.</span>
           </div>
         )}
       </section>
@@ -115,7 +115,7 @@ const merged = [...contentMarks, ...extras];
       <section class="panel">
         <h3 class="hsmall">Resources</h3>
         <ul class="list">
-          <li><a class="pill-link" href="/pipelines/sim/">Sim / Workstation pipeline →</a></li>
+          <li><a class="pill-link" href="/pipelines/sim/">Workstation / Sim pipeline →</a></li>
           <li><a class="pill-link" href="/compare/">Compare models & benchmarks →</a></li>
         </ul>
       </section>

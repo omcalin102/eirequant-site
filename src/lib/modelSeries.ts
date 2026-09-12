@@ -3,7 +3,7 @@
 const modelSeries = [
   {
     slug: "eq-core",
-    title: "EQ Core Series",
+    title: "Core Series",
     subtitle: "Daily classification on a small universe",
     marks: [
       { slug: "eq-core-mk1", title: "Mark 1" },
@@ -13,7 +13,7 @@ const modelSeries = [
   },
   {
     slug: "eq-sentinel",
-    title: "EQ Sentinel Series",
+    title: "Sentinel Series",
     subtitle: "Low-volatility, longer holds",
     marks: [
       { slug: "eq-sentinel-mk1", title: "Mark 1" },
@@ -21,8 +21,8 @@ const modelSeries = [
   },
   {
     slug: "eq-tbd",
-    title: "Future Series",
-    subtitle: "Coming soon",
+    title: "Experimental Series",
+    subtitle: "Published research marks and exploratory model work",
     marks: [],
   },
 ];

@@ -33,7 +33,7 @@ export const helptext: HelpMap = {
     },
     eqx_viewer: {
         title: "Performance Viewer",
-        html: `<p>Switch between published equity windows. ìCBî overlay shows cash baseline. Stats are computed client-side.</p>`
+        html: `<p>Switch between published equity windows. ‚ÄúCB‚Äù overlay shows cash baseline. Stats are computed client-side.</p>`
     },
     compare: {
         title: "Compare",
@@ -49,7 +49,7 @@ export const helptext: HelpMap = {
     },
     ops_health: {
         title: "Ops Health",
-        html: `<p>Lightweight green/amber/red module checksódata freshness, publish success, artifact counts.</p>`
+        html: `<p>Lightweight green/amber/red module checks‚Äîdata freshness, publish success, artifact counts.</p>`
     },
     calibration: {
         title: "Calibration (ECE)",

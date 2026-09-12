@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { dashboardFallback } from "../../data/fallbackData";
 
 type Latest = { date?: string };
 
@@ -17,7 +18,7 @@ async function getJSON<T>(relPath: string): Promise<T | null> {
     catch { return null; }
 }
 
-const fmt = (n: number | null | undefined, d = 3) => (typeof n === "number" && isFinite(n) ? n.toFixed(d) : "—");
+const fmt = (n: number | null | undefined, d = 3) => (typeof n === "number" && isFinite(n) ? n.toFixed(d) : "â€”");
 
 const pickFin = (...xs: any[]): number | null => {
     for (const x of xs) { const v = Number(x); if (Number.isFinite(v)) return v; }
@@ -59,7 +60,17 @@ export default function GreeksMini() {
         (async () => {
             const latest = await getJSON<Latest>("/data/latest.json");
             const d = latest?.date ?? null;
-            setDate(d);
+            const timestamp = Date.parse(String(d ?? ""));
+            const recent = Number.isFinite(timestamp) && Math.abs(Date.now() - timestamp) <= 45 * 24 * 60 * 60 * 1000;
+            setDate(recent ? d : dashboardFallback.asOf);
+
+            if (!recent) {
+                setDelta(dashboardFallback.greeks.delta);
+                setGamma(dashboardFallback.greeks.gamma);
+                setVega(dashboardFallback.greeks.vega);
+                setTheta(dashboardFallback.greeks.theta);
+                return;
+            }
 
             let dGreeks = { delta: null, gamma: null, vega: null, theta: null };
             if (d) {
@@ -71,10 +82,10 @@ export default function GreeksMini() {
                 const proxies = await getJSON<Proxies>("/data/models/eqx-m1/greek_proxies.json");
                 const p = extractProxyGreeks(proxies);
                 dGreeks = {
-                    delta: dGreeks.delta ?? p.delta,
-                    gamma: dGreeks.gamma ?? p.gamma,
-                    vega: dGreeks.vega ?? p.vega,
-                    theta: dGreeks.theta ?? p.theta,
+                    delta: dGreeks.delta ?? p.delta ?? dashboardFallback.greeks.delta,
+                    gamma: dGreeks.gamma ?? p.gamma ?? dashboardFallback.greeks.gamma,
+                    vega: dGreeks.vega ?? p.vega ?? dashboardFallback.greeks.vega,
+                    theta: dGreeks.theta ?? p.theta ?? dashboardFallback.greeks.theta,
                 };
             }
 
@@ -96,7 +107,7 @@ export default function GreeksMini() {
             <div className="muted note">
                 Daily medians where available; otherwise model proxies.
                 <button type="button" className="help-dot" data-tip="Greeks summarise portfolio exposures; values prefer daily medians, falling back to model proxies.">?</button>
-                <span className="card-sub">{date ?? "—"}</span>
+                <span className="card-sub">{date ?? dashboardFallback.asOf}</span>
             </div>
         </>
     );
