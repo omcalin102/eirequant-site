@@ -19,8 +19,8 @@ export default function TopDriversMini() {
     useEffect(() => {
         (async () => {
             const d = await getLatestDate();
-            setDate(d);
             const doc: TopDrivers | null = await safeTopDrivers(d ?? undefined, "eqx-m1");
+            setDate((doc as any)?.date ?? d);
             setDrivers(doc?.drivers ?? []);
         })();
     }, []);

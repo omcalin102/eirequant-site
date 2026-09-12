@@ -1,6 +1,6 @@
 export const dashboardFallback = {
-  asOf: "2026-09-11",
-  timestamp: "2026-09-11T07:30:00Z",
+  asOf: "2026-09-12",
+  timestamp: "2026-09-12T07:30:00Z",
   model: {
     name: "EQX-M1",
     family: "Experimental",
@@ -43,7 +43,7 @@ export const dashboardFallback = {
   ],
   operationalState: {
     status: "Research interface available",
-    lastRun: "Published snapshot · 19 Sep 2025",
+    lastRun: "12 Sep 2026 · 07:30 UTC",
     trading: "No live execution",
     currentModel: "EQX-M1",
     modules: [

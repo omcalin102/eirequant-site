@@ -60,7 +60,17 @@ export default function GreeksMini() {
         (async () => {
             const latest = await getJSON<Latest>("/data/latest.json");
             const d = latest?.date ?? null;
-            setDate(d);
+            const timestamp = Date.parse(String(d ?? ""));
+            const recent = Number.isFinite(timestamp) && Math.abs(Date.now() - timestamp) <= 45 * 24 * 60 * 60 * 1000;
+            setDate(recent ? d : dashboardFallback.asOf);
+
+            if (!recent) {
+                setDelta(dashboardFallback.greeks.delta);
+                setGamma(dashboardFallback.greeks.gamma);
+                setVega(dashboardFallback.greeks.vega);
+                setTheta(dashboardFallback.greeks.theta);
+                return;
+            }
 
             let dGreeks = { delta: null, gamma: null, vega: null, theta: null };
             if (d) {

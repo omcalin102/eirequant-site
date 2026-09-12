@@ -216,7 +216,7 @@ const description = "Who I am, what I build, and why EireQuant exists.";
   .lede{font-size:1.05rem;color:#333}
   .muted{color:#666}
 
-  .card{background:#fff;border:1px solid var(--border, #e7e7e7);border-radius:6px;padding:1rem;margin:1rem 0;box-shadow:var(--shadow)}
+  .card{background:#fff;border:1px solid var(--border, #e7e7e7);border-radius:12px;padding:1rem;margin:1rem 0}
   .card-head{display:flex;justify-content:space-between;align-items:baseline;gap:.75rem;margin-bottom:.5rem}
   .card-title{font-weight:600}
   .card-sub{color:#666;font-size:.9rem}
@@ -226,7 +226,8 @@ const description = "Who I am, what I build, and why EireQuant exists.";
   }
   .portrait{margin:0;display:flex;justify-content:flex-end}
   .portrait img{
-    width:280px;height:auto;object-fit:cover;border-radius:4px;border:1px solid var(--border, #e7e7e7);
+    width:280px;height:auto;object-fit:cover;border-radius:14px;border:1px solid var(--border, #e7e7e7);
+    box-shadow:0 8px 22px rgba(0,0,0,.06)
   }
   @media (max-width:900px){
     .hero .hero-grid{grid-template-columns:1fr}
@@ -240,10 +241,10 @@ const description = "Who I am, what I build, and why EireQuant exists.";
   .exp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:.5rem}
   @media (max-width:1000px){ .exp-grid{grid-template-columns:1fr 1fr} }
   @media (max-width:700px){ .exp-grid{grid-template-columns:1fr} }
-  .exp{border:1px solid var(--border, #e7e7e7);border-radius:4px;padding:.8rem}
+  .exp{border:1px dashed var(--border, #e7e7e7);border-radius:10px;padding:.8rem}
   .exp-title{margin:0 0 .15rem;font-weight:600}
 
-  .qa{border:1px solid var(--border, #e7e7e7);border-radius:4px;padding:.65rem .8rem;margin:.5rem 0}
+  .qa{border:1px dashed var(--border, #e7e7e7);border-radius:10px;padding:.65rem .8rem;margin:.5rem 0}
   .qa > summary{cursor:pointer;font-weight:600;margin:.1rem 0}
   .qa[open] > summary{margin-bottom:.25rem}
 
@@ -257,7 +258,7 @@ const description = "Who I am, what I build, and why EireQuant exists.";
   .timeline .sep{color:#bbb;margin:0 .15rem}
   .links{display:flex;flex-wrap:wrap;gap:.6rem;padding-left:0;margin:0}
   .links li{list-style:none}
-  .links a{display:inline-block;padding:.5rem .7rem;border:1px solid var(--border, #e7e7e7);border-radius:4px;background:#fafafa}
+  .links a{display:inline-block;padding:.5rem .7rem;border:1px solid var(--border, #e7e7e7);border-radius:10px;background:#fafafa}
   @media(max-width:620px){.timeline li{display:grid;grid-template-columns:1fr}.timeline .tdate{min-width:0}.timeline .sep{display:none}}
   .links a:hover{text-decoration:underline}
 </style>

@@ -255,30 +255,32 @@ const dash = (v)=> v==null ? "—" : String(v);
 
   <style>
     .intro{color:#444;margin:.35rem 0 1rem;max-width:78ch}
-    .panel{background:#fff;border:1px solid var(--border);border-radius:6px;padding:1rem;margin:1rem 0;box-shadow:var(--shadow)}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
     .h{margin:.1rem 0 .6rem}
     .meta .row{display:flex;gap:1rem;flex-wrap:wrap}
     .meta .k{font-size:.8rem;color:#666}
     .meta .v{font-weight:700}
     .metrics{display:flex;gap:.75rem;flex-wrap:wrap}
-    .m{border:1px solid var(--border);border-radius:4px;padding:.7rem .9rem;min-width:150px}
+    .m{border:1px solid var(--border);border-radius:12px;padding:.7rem .9rem;min-width:150px}
     .label{font-size:.8rem;color:#666;margin-bottom:.1rem}
     .val{font-weight:700}
     .subl{font-size:.8rem;color:#6b7280;margin-top:.15rem}
 
     .mosaic{display:grid;grid-template-columns:2fr 1fr;gap:1rem}
-    @media(max-width:1100px){.mosaic{grid-template-columns:1fr}}
+    @media(max-width:1100px){.mosaic{grid-template-columns:minmax(0,1fr)}.mosaic>.wide{grid-column:auto}}
     .wide{grid-column:1 / span 2}
     .head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
     .note{color:#6b7280;font-size:.85rem;margin-top:.5rem}
 
-    .table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}
+    .table{width:100%;border-collapse:separate;border-spacing:0 .4rem}
     .table th,.table td{padding:.35rem .5rem;border:1px solid var(--border)}
     .table.slim td,.table.slim th{font-size:.92rem}
     .table th{background:#fafafa;color:#374151;text-align:left}
+    .table td:first-child,.table th:first-child{border-top-left-radius:8px;border-bottom-left-radius:8px}
+    .table td:last-child,.table th:last-child{border-top-right-radius:8px;border-bottom-right-radius:8px}
 
     .kv{list-style:none;padding:0;margin:.25rem 0;display:grid;gap:.4rem}
-    .kv li{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding:.4rem .2rem;gap:1rem}
+    .kv li{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:10px;padding:.4rem .6rem}
     .kv.tight li{padding:.3rem .5rem}
     .hint{color:#6b7280;font-size:.8rem;margin-top:.5rem}
 
@@ -288,9 +290,10 @@ const dash = (v)=> v==null ? "—" : String(v);
     .stat .cap{color:#6b7280;margin-top:.15rem}
 
     .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.25rem 0 .5rem}
-    .chip{display:inline-block;border:1px solid var(--border);border-radius:3px;padding:.25rem .6rem;font-size:.92rem}
+    .chip{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:.25rem .6rem;font-size:.92rem}
     .chip.good{background:#f0fdf4;border-color:#86efac}
     .chip.bad{background:#fef2f2;border-color:#fecaca}
+    @media(max-width:640px){.table{display:block;overflow-x:auto}}
 
     .mini{color:#4b5563;margin:.5rem 0 0}
   </style>

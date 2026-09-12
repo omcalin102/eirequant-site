@@ -36,7 +36,7 @@ import { dashboardFallback } from "../../../data/fallbackData";
 
   <section class="panel">
     <h2>Sector Health</h2>
-    <ul id="sec" class="list sector-list">{dashboardFallback.sectors.map((sector) => <li><strong>{sector.sector}</strong><span>{sector.score.toFixed(2)}</span></li>)}</ul>
+    <ul id="sec" class="list">{dashboardFallback.sectors.map((sector) => <li><strong>{sector.sector}</strong> — {sector.score.toFixed(2)}</li>)}</ul>
   </section>
 
   <section class="panel">
@@ -45,7 +45,7 @@ import { dashboardFallback } from "../../../data/fallbackData";
 
   <section class="panel">
     <h2>Ops Health</h2>
-    <ul id="ops" class="list ops-list">{dashboardFallback.operationalState.modules.map((module) => <li><strong>{module.name}</strong><span>{module.status} · {module.note}</span></li>)}</ul>
+    <ul id="ops" class="list">{dashboardFallback.operationalState.modules.map((module) => <li><strong>{module.name}</strong> — {module.status} · {module.note}</li>)}</ul>
   </section>
 
   <script type="module">
@@ -64,7 +64,15 @@ import { dashboardFallback } from "../../../data/fallbackData";
       return b?.date ?? null;
     }
 
+    function isRecent(value){
+      const timestamp = Date.parse(String(value ?? ""));
+      return Number.isFinite(timestamp) && Math.abs(Date.now() - timestamp) <= 45 * 24 * 60 * 60 * 1000;
+    }
+
     async function main(){
+      const date = await getLatestDate();
+      if (!isRecent(date)) return;
+
       const st = await j("/data/pipeline/status.json").catch(()=>null);
       if (st){
         if (st.status ?? st.state) $("#st").textContent = st.status ?? st.state;
@@ -74,7 +82,6 @@ import { dashboardFallback } from "../../../data/fallbackData";
         if (st.current_model ?? st.model) $("#cm").textContent = st.current_model ?? st.model;
       }
 
-      const date = await getLatestDate();
       if (date) $("#ms-date").textContent = date;
 
       const sel = date ? await j(`/data/daily/${date}/model_selection.json`).catch(()=>null) : null;
@@ -115,11 +122,11 @@ import { dashboardFallback } from "../../../data/fallbackData";
         const rows = sh.sectors.slice(0,10).map(s => {
           const nm = s.sector ?? s.name ?? "Sector";
           const val = s.score ?? s.value ?? s.median_beta ?? s.n_names ?? null;
-          return `<strong>${nm}</strong><span>${fmt(val)}</span>`;
+          return `<strong>${nm}</strong> — ${fmt(val)}`;
         });
         list($("#sec"), rows);
       } else if (Array.isArray(sh?.leaders) && sh.leaders.length){
-        const rows = sh.leaders.slice(0,10).map(s => `<strong>${s.name ?? s.sector}</strong><span>${fmt(s.score ?? s.value)}</span>`);
+        const rows = sh.leaders.slice(0,10).map(s => `<strong>${s.name ?? s.sector}</strong> — ${fmt(s.score ?? s.value)}`);
         list($("#sec"), rows);
       }
 
@@ -134,7 +141,7 @@ import { dashboardFallback } from "../../../data/fallbackData";
 
   <style>
     .lead{color:#444;max-width:78ch}
-    .panel{background:#fff;border:1px solid var(--border);border-radius:6px;padding:1rem;margin:1rem 0;box-shadow:var(--shadow)}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(0,0,0,.05)}
     .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
     @media(max-width:900px){.grid4{grid-template-columns:repeat(2,1fr)}}
     .k{font-size:.8rem;color:#666}
@@ -142,18 +149,15 @@ import { dashboardFallback } from "../../../data/fallbackData";
     .head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
     .muted{color:var(--muted)}
     .table-wrap{overflow-x:auto}
-    .table{width:100%;min-width:480px;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+    .table{width:100%;min-width:480px;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
     .table th,.table td{padding:.55rem .7rem;border-bottom:1px solid var(--border)}
     .table thead th{background:#fafafa;text-align:left}
     .table tr:last-child td{border-bottom:0}
     .greeks{display:flex;gap:.6rem;flex-wrap:wrap}
-    .chip{border:1px solid var(--border);border-radius:4px;padding:.55rem .75rem;display:grid;grid-template-columns:auto 1fr;gap:.5rem;align-items:center;background:#fff}
+    .chip{border:1px solid var(--border);border-radius:12px;padding:.55rem .75rem;display:grid;grid-template-columns:auto 1fr;gap:.5rem;align-items:center;background:#fff}
     .gk{font-weight:700}
     .gval{color:#333}
     .list{list-style:none;margin:.25rem 0 0;padding:0;display:grid;gap:.35rem}
-    .sector-list li,.ops-list li{display:flex;justify-content:space-between;gap:1rem;padding:.45rem 0;border-bottom:1px solid var(--border)}
-    .sector-list li:last-child,.ops-list li:last-child{border-bottom:0}
-    .sector-list span,.ops-list span{color:var(--muted);text-align:right}
-    @media(max-width:560px){.grid4{grid-template-columns:1fr}.sector-list li,.ops-list li{align-items:flex-start}.ops-list li{display:grid;gap:.15rem}.ops-list span{text-align:left}}
+    @media(max-width:560px){.grid4{grid-template-columns:1fr}}
   </style>
 </BaseLayout>

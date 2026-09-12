@@ -156,18 +156,18 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     .lead{color:#444;margin:.1rem 0 .9rem;max-width:75ch}
     .quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
     @media(max-width:900px){.quick{grid-template-columns:1fr}}
-    .q{display:block;border:1px solid var(--border);border-radius:6px;background:#fff;padding:.9rem 1rem;
-       text-decoration:none;color:inherit;box-shadow:var(--shadow)}
+    .q{display:block;border:1px solid var(--border);border-radius:12px;background:#fff;padding:.9rem 1rem;
+       text-decoration:none;color:inherit;box-shadow:0 6px 18px rgba(0,0,0,.05)}
     .q strong{display:block}
     .q span{display:block;color:#555;margin-top:.15rem;font-size:.95rem}
 
-    .panel{background:#fff;border:1px solid var(--border);border-radius:6px;padding:1rem;margin:1rem 0;
-           box-shadow:var(--shadow)}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;
+           box-shadow:0 6px 18px rgba(0,0,0,.05)}
     h2{font-size:1.05rem;margin:0 0 .4rem}
     .bullets{list-style:disc;margin:.25rem 0 0 1.2rem;display:grid;gap:.35rem}
 
     .steps{counter-reset: step; display:grid; gap:.6rem; padding:0; margin:.5rem 0 0}
-    .steps>li{list-style:none; background:#fff; border:1px solid var(--border); border-radius:4px; padding:.75rem .85rem}
+    .steps>li{list-style:none; background:#fff; border:1px solid var(--border); border-radius:12px; padding:.75rem .85rem}
     .steps>li strong{display:block; margin-bottom:.25rem}
   </style>
 </BaseLayout>
